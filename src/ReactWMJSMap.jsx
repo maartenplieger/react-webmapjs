@@ -8,7 +8,7 @@ import { layerSetStyles, layerChangeStyle, layerSetDimensions } from './ReactWMJ
 import { registerWMJSLayer, getWMJSLayerById, registerWMJSMap } from './ReactWMJSTools.jsx';
 import { parseWMJSLayerAndDispatchActions } from './ReactWMJSParseLayer.jsx';
 import { webMapJSReducer, WEBMAPJS_REDUCERNAME } from './ReactWMJSReducer';
-import AdagucMapDraw from '../../components/AdagucMapDraw';
+import AdagucMapDraw from './AdagucMapDraw';
 let xml2jsonrequestURL = 'http://localhost:10000/XML2JSON?';
 export default class ReactWMJSMap extends Component {
   constructor (props) {

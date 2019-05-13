@@ -31,8 +31,11 @@
   "homepage": "https://gitlab.com/KNMI/EU-Team/react-webmapjs#readme",
   "peerDependencies": {},
   "dependencies": {
+    "adaguc-webmapjs": "3.2.10",
+    "es6-enum": "^1.1.0",
+    "lodash.clonedeep": "^4.5.0",
     "react": "^16.6.0",
-    "adaguc-webmapjs": "3.2.10"
+    "throttle-debounce": "^2.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
