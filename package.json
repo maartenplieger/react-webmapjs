@@ -1,0 +1,57 @@
+{
+  "name": "react-webmapjs",
+  "version": "0.0.1",
+  "description": "React wrapper for webmapjs, which is an interactive maps library, capable of parsing a OGC WMS getcapabilities and display geographical layers",
+  "main": "./dist/react-webmapjs.js",
+  "module": "./src/index.js",
+  "scripts": {
+    "build": "webpack --display-modules",
+    "babel": "babel src --out-dir lib",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com:KNMI/EU-Team/react-webmapjs.git"
+  },
+  "keywords": [
+    "OGC",
+    "WMS",
+    "Geographical",
+    "Maps",
+    "Layers",
+    "Visualization",
+    "Canvas"
+  ],
+  "author": "Maarten Plieger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/KNMI/EU-Team/react-webmapjs"
+  },
+  "homepage": "https://gitlab.com/KNMI/EU-Team/react-webmapjs#readme",
+  "peerDependencies": {},
+  "dependencies": {
+    "react": "^16.6.0",
+    "adaguc-webmapjs": "3.2.10"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-stage-2": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "source-map": "^0.7.3",
+    "webpack": "^4.22.0",
+    "webpack-cli": "^3.1.2",
+    "@storybook/react": "^5.0.11",
+    "@storybook/addon-actions": "^5.0.11",
+    "@storybook/addon-links": "^5.0.11",
+    "@storybook/addons": "^5.0.11"
+  }
+}
