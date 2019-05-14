@@ -6,9 +6,16 @@ module.exports = {
   mode:'production',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'react-webmapjs.js',
-    library: "react-webmapjs",
-    libraryTarget: "umd"
+    filename: 'index.js',
+    library: 'react-webmapjs',
+    libraryTarget: 'umd'
+  },
+  externals: {
+    jquery: 'jQuery',
+    moment: 'moment',
+    proj4: 'proj4',
+    react: 'react',
+    'adaguc-webmapjs': 'adaguc-webmapjs'
   },
   module: {
     rules : [
