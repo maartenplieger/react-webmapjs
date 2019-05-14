@@ -18,5 +18,5 @@ https://docs.npmjs.com/creating-and-viewing-authentication-tokens
 
 As soon as you've created the token, go to GitLab and:
 1. Click on Settings --> CI/CD --> Variables
-2. Change or create the NPM_AUTHENTICATION_TOKEN variable to the created authentication token.
+2. Change or create the NPM_TOKEN variable to the created authentication token.
 
