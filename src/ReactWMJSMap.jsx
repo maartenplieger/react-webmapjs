@@ -27,7 +27,11 @@ export default class ReactWMJSMap extends Component {
     this.checkAdaguc = this.checkAdaguc.bind(this);
     this.drawFeatures = this.drawFeatures.bind(this);
     this.currentWMJSProps = {};
-    window.reducerManager.add(WEBMAPJS_REDUCERNAME, webMapJSReducer);
+    if (window.reducerManager) {
+      window.reducerManager.add(WEBMAPJS_REDUCERNAME, webMapJSReducer)
+    } else {
+      console.error('No reducermanager to register the webMapJSReducer to.');
+    }
   }
   _handleWindowResize () {
     this.resize();
@@ -243,7 +247,6 @@ export default class ReactWMJSMap extends Component {
   }
 
   componentDidMount () {
-    // console.log('componentDidMount', this.props);
     this.checkAdaguc();
     this.checkNewProps(this.props);
     window.addEventListener('resize', this._handleWindowResize);
@@ -289,7 +292,6 @@ export default class ReactWMJSMap extends Component {
   }
 
   render () {
-
     return (<div className='ReactWMJSMap'
       style={{ height:'100%', width:'100%', border:'none', display:'block', overflow:'hidden' }} >
       <div ref='adaguccontainer' style={{
