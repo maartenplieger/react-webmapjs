@@ -5,7 +5,7 @@
   "main": "./dist/react-webmapjs.js",
   "module": "./src/index.js",
   "scripts": {
-    "build": "webpack --display-modules",
+    "build": "webpack --mode production",
     "babel": "babel src --out-dir lib",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
