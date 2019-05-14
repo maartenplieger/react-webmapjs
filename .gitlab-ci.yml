@@ -1,0 +1,23 @@
+image: docker:latest
+
+variables:
+
+services:
+  - docker:dind
+
+before_script:
+
+stages:
+  - publish
+
+publish_npm_package:
+  stage: publish
+  before_script:
+    - apk add --no-cache npm
+  script:
+    - npm install
+    - npm run build
+    - npm publish --access public
+  only:
+    refs:
+    - branches # TODO: Change to master! Now set at branches for testing purposes.
