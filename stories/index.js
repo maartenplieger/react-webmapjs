@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf, specs, describe, it } from '../.storybook/facade';
-import { ReactWMJSLayer, ReactWMJSMap, getWMJSLayerById } from '@adaguc/react-webmapjs';
+import { ReactWMJSLayer2, ReactWMJSMap, getWMJSLayerById } from '@adaguc/react-webmapjs';
 
 import { mount } from 'enzyme';
 
