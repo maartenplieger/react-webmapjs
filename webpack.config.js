@@ -7,22 +7,20 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.js',
-    library: 'react-webmapjs',
     libraryTarget: 'umd'
   },
   externals: {
     jquery: 'jQuery',
     moment: 'moment',
     proj4: 'proj4',
-    react: 'react',
-    'adaguc-webmapjs': 'adaguc-webmapjs'
+    react: 'react'
   },
   module: {
     rules : [
       // JavaScript/JSX Files
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        exclude: /(node_modules|dist)/,
         use: ['babel-loader']
       },
       // CSS Files
@@ -37,6 +35,3 @@ module.exports = {
   },
   plugins: []
 };
-module.loaders = [
-  { test: /\.js$/, exclude: /node_modules/, use: "babel-loader" }
-]
