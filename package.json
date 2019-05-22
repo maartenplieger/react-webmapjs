@@ -1,6 +1,6 @@
 {
   "name": "@adaguc/react-webmapjs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "React wrapper for webmapjs, which is an interactive maps library, capable of parsing a OGC WMS getcapabilities and display geographical layers",
   "main": "./dist/index.js",
   "scripts": {

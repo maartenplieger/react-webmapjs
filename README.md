@@ -1,5 +1,11 @@
 # react-webmapjs
 
+# Usage
+To also use the styling, one should import the stylesheet from the dist folder:
+```
+import '@adaguc/react-webmapjs/dist/main.css';
+```
+
 # Development
 ## Inspecting the components with storybook
 Storybook can be used to view the components.
