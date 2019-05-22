@@ -17,6 +17,13 @@ Test can be run by the following command:
 This will run all the tests specified in the stories without starting a browser.
 Currently only the mounting of components is tested, no interaction testing is implemented yet.
 
+## Testing the package in another project
+To test the package in another project without publishing it, you can follow these steps:
+1. `npm run build`
+2. `npm pack`
+3. `cd <path/to/your/project>`
+4. `npm install <absolute path/to/tar/created/by/npm pack>`
+
 # Setting up CI/CD
 ## Creating an authentication token
 To be able to publish to npm CI/CD requires an authentication token.
