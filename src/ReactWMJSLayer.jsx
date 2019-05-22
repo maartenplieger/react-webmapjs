@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './main.css';
 import PropTypes from 'prop-types';
 export default class ReactWMJSLayer extends Component {
   render () {

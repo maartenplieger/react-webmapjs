@@ -1,20 +1,21 @@
 # react-webmapjs
 
-
 # Development
 ## Inspecting the components with storybook
 Storybook can be used to view the components.
-If you run `npm run storybook` a storbook server will start in which you can see all the components for which stories
+If you run `npm run storybook` a storybook server will start in which you can see all the components for which stories
 are written.
 
 ## Writing a new story
-Stories live in the stories folder. Here is the documentation on the syntax for adding new stories: 
+Stories live in the stories folder. 
+Here is the documentation on the syntax for adding new stories: 
 https://storybook.js.org/docs/basics/writing-stories/
 
 ## Tests
 Test can be run by the following command:
 `npm test`
 This will run all the tests specified in the stories without starting a browser.
+Currently only the mounting of components is tested, no interaction testing is implemented yet.
 
 # Setting up CI/CD
 ## Creating an authentication token
