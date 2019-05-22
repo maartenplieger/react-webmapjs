@@ -78,7 +78,8 @@ module.exports = {
   // A map from regular expressions to module names that allow to stub out resources with a single module
   moduleNameMapper: {
     "^@adaguc/react-webmapjs$": "<rootDir>/src",
-    "adaguc-webmapjs": "<rootDir>/node_modules/adaguc-webmapjs/src"
+    "adaguc-webmapjs": "<rootDir>/node_modules/adaguc-webmapjs/src",
+    "\\.(css|less|scss|sss|styl)$": "<rootDir>/node_modules/jest-css-modules"
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
