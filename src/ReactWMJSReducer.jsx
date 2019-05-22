@@ -9,7 +9,8 @@ import { WEBMAPJS_LAYER_CHANGE_OPACITY,
   WEBMAPJS_LAYER_DELETE,
   WEBMAPJS_LAYER_MOVE,
   WEBMAPJS_SET_LAYERS,
-  WEBMAPJS_SET_FEATURE_LAYERS
+  WEBMAPJS_SET_FEATURE_LAYERS,
+  WEBMAPJS_SET_BASELAYERS
 } from './ReactWMJSConstants';
 
 import { generateMapId, generateLayerId, getLayerIndexFromAction, getDimensionIndexFromAction, getMapPanelIndexFromAction } from './ReactWMJSTools.jsx';
@@ -38,13 +39,6 @@ const initialState = {
           id:generateLayerId(),
           name:'WorldMap_Light_Grey_Canvas',
           type:'twms',
-          baseLayer:true,
-          enabled:false
-        }, {
-          id:generateLayerId(),
-          name:'SKYVECTOR',
-          title:'Skyvector map',
-          type: 'twms',
           baseLayer:true,
           enabled:true
         }
@@ -144,6 +138,9 @@ export const webMapJSReducer = (state = initialState, action = { type:null }) =>
     case WEBMAPJS_SET_LAYERS:
       const layersWithIds = createLayersWithIds(action.payload.layers);
       return produce(state, draft => { draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].layers = layersWithIds; });
+    case WEBMAPJS_SET_BASELAYERS:
+      const baseLayersWithIds = createLayersWithIds(action.payload.baseLayers);
+      return produce(state, draft => { draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].baseLayers = baseLayersWithIds; });
     case WEBMAPJS_SET_FEATURE_LAYERS:
       const featureLayersWithIds = createLayersWithIds(action.payload.featureLayers);
       return produce(state, draft => { draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].featureLayers = featureLayersWithIds; });
