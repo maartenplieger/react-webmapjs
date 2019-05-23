@@ -45,6 +45,7 @@ module.exports = {
       '@adaguc/react-webmapjs': path.resolve(__dirname, '../src/')
     }
   },
+  devtool: 'source-map',
   externals: {
     'jsdom': 'window',
     'cheerio': 'window',

@@ -16,6 +16,7 @@ module.exports = {
     proj4: 'proj4',
     react: 'react'
   },
+  devtool: 'source-map',
   module: {
     rules : [
       // JavaScript/JSX Files

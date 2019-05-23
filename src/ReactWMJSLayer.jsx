@@ -10,5 +10,6 @@ export default class ReactWMJSLayer extends Component {
   }
 };
 ReactWMJSLayer.propTypes = {
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
+  onLayerReady: PropTypes.func
 };

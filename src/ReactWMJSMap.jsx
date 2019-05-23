@@ -17,6 +17,7 @@ export default class ReactWMJSMap extends Component {
     super(props);
     this.adaguc = {
       webMapJSCreated:false,
+      initialized: false,
       baseLayers:[]
     };
     this.state = {
@@ -94,16 +95,15 @@ export default class ReactWMJSMap extends Component {
     // TODO: Now the map resizes when the right panel opens, (called via promise at EProfileTest.jsx) that is nice. But this reference is Ugly! How do we see a resize if no event is triggered?
     this.adaguc.webMapJS.handleWindowResize = this._handleWindowResize;
 
-    if (this.props.webMapJSInitializedCallback && this.adaguc.webMapJS) {
-      this.props.webMapJSInitializedCallback(this.adaguc.webMapJS, true);
-    }
+  
   }
 
   checkNewProps (props) {
     if (!props) { return; }
     /* Check children */
     if (props.children) {
-      const { children, dispatch } = props;
+      const { children } = props;
+      const dispatch = props.dispatch ? props.dispatch : () => {}
       if (children !== this.currentWMJSProps.children) {
         let wmjsLayers = this.adaguc.webMapJS.getLayers();
         let wmjsBaseLayers = this.adaguc.webMapJS.getBaseLayers();
@@ -168,7 +168,11 @@ export default class ReactWMJSMap extends Component {
                   wmjsLayer.ReactWMJSLayerId = child.props.id;
                   this.adaguc.webMapJS.addLayer(wmjsLayer);
                   wmjsLayer.reactWebMapJSLayer = child;
-                  parseWMJSLayerAndDispatchActions(wmjsLayer, dispatch, this.props.id, xml2jsonrequestURL);
+                  parseWMJSLayerAndDispatchActions(wmjsLayer, dispatch, this.props.id, xml2jsonrequestURL).then(() => {
+                    if (child.props.onLayerReady) {
+                      child.props.onLayerReady(wmjsLayer, this.adaguc.webMapJS);
+                    }
+                  });
                   needsRedraw = true;
                 } else {
                   /* Set the name of the ADAGUC WMJSLayer */
@@ -252,6 +256,10 @@ export default class ReactWMJSMap extends Component {
     this.checkAdaguc();
     this.checkNewProps(this.props);
     window.addEventListener('resize', this._handleWindowResize);
+    if (this.adaguc.initialized === false && this.props.webMapJSInitializedCallback && this.adaguc.webMapJS) {
+      this.adaguc.initialized = true;
+      this.props.webMapJSInitializedCallback(this.adaguc.webMapJS, true);
+    }
   }
 
   componentWillUnmount () {
