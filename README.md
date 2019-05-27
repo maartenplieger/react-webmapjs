@@ -17,6 +17,10 @@ Stories live in the stories folder.
 Here is the documentation on the syntax for adding new stories: 
 https://storybook.js.org/docs/basics/writing-stories/
 
+## Deploying a static version of your storybook
+
+The storybook can be compiled to a static version via `npm run build-storybook`. The static contents is then placed in the folder storybook-react-webmapjs.
+
 ## Tests
 Test can be run by the following command:
 `npm test`
@@ -41,3 +45,11 @@ As soon as you've created the token, go to GitLab and:
 1. Click on Settings --> CI/CD --> Variables
 2. Change or create the NPM_TOKEN variable to the created authentication token.
 
+# To create a new package:
+
+1. Adjust version number in package.json
+2. Adjust version numberin WMJSMap.js
+3. Publish: 
+```
+npm run clean && npm install && npm run build && npm publish
+```
