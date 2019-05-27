@@ -1,12 +1,12 @@
 import React from 'react';
 import { storiesOf, specs, describe, it } from '../.storybook/facade';
-import { ReactWMJSLayer, ReactWMJSMap, getWMJSLayerById, generateLayerId } from '@adaguc/react-webmapjs';
+import { ReactWMJSLayer, ReactWMJSMap, getWMJSLayerById, generateLayerId, generateMapId } from '@adaguc/react-webmapjs';
 
 import { mount } from 'enzyme';
 
 const baseLayer = {
-  name:"NaturalEarth2",
-  title:"NaturalEarth2",
+  name:"arcGisSat",
+  title:"arcGisSat",
   type: 'twms',
   baseLayer: true,
   enabled:true,
@@ -24,17 +24,18 @@ const overLayer = {
 };
 const radarLayer = {
   service: 'https://geoservices.knmi.nl/cgi-bin/RADNL_OPER_R___25PCPRR_L3.cgi?',
-  name: 'RADNL_OPER_R___25PCPRR_L3_COLOR',
+  name: 'RADNL_OPER_R___25PCPRR_L3_KNMI',
   format: 'image/png',
   enabled: true,
+  style: 'knmiradar/nearest',
   id: generateLayerId()
 };
 
 storiesOf('ReactWMJSMap', module)
   .add('Map with radar data', () => {
     const story = (
-      <div style={{ height: '500px' }}>
-        <ReactWMJSMap id={'Map1'} >
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} >
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...radarLayer} onLayerReady={ (layer, webMapJS) => { layer.zoomToLayer(); }} />
           <ReactWMJSLayer {...overLayer} />
@@ -58,7 +59,7 @@ storiesOf('ReactWMJSMap', module)
   .add('Map with radar animation', () => {
     return (
       <div style={{ height: '100vh' }}>
-        <ReactWMJSMap id={'Map1'} >
+        <ReactWMJSMap id={generateMapId()} >
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...radarLayer} onLayerReady={ (layer, webMapJS) => {
               if (layer) {
