@@ -25,7 +25,7 @@ const initialState = {
         id: generateMapId(),
         // bbox: [0, 40, 10, 60],
         // srs: 'EPSG:4326',
-        bbox: [-2439977.836801867,2292675.187961922,7220923.985435895,9229121.851961922],
+        bbox: [-2439977.836801867, 2292675.187961922, 7220923.985435895, 9229121.851961922],
         srs: 'EPSG:3857',
         baseLayers:[{
           service:'http://geoservices.knmi.nl/cgi-bin/worldmaps.cgi?',
