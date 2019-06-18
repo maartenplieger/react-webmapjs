@@ -31,4 +31,4 @@ publish_npm_package:
     - npm publish --access public
   only:
     refs:
-    - branches # TODO: Change to master! Now set at branches for testing purposes.
+    - master
