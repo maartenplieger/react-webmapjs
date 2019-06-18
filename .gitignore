@@ -1,2 +1,4 @@
 node_modules
 dist
+storybook-react-webmapjs/
+storybook-dist/

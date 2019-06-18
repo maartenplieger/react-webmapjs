@@ -8,13 +8,19 @@ import { layerSetStyles, layerChangeStyle, layerSetDimensions } from './ReactWMJ
 import { registerWMJSLayer, getWMJSLayerById, registerWMJSMap } from './ReactWMJSTools.jsx';
 import { parseWMJSLayerAndDispatchActions } from './ReactWMJSParseLayer.jsx';
 import { webMapJSReducer, WEBMAPJS_REDUCERNAME } from './ReactWMJSReducer';
-import AdagucMapDraw from '../../components/AdagucMapDraw';
+import AdagucMapDraw from './AdagucMapDraw';
+import './main.css';
+import { Button } from 'reactstrap';
+import { Icon } from 'react-fa';
+import moment from 'moment';
 let xml2jsonrequestURL = 'http://localhost:10000/XML2JSON?';
+
 export default class ReactWMJSMap extends Component {
   constructor (props) {
     super(props);
     this.adaguc = {
       webMapJSCreated:false,
+      initialized: false,
       baseLayers:[]
     };
     this.state = {
@@ -27,7 +33,11 @@ export default class ReactWMJSMap extends Component {
     this.checkAdaguc = this.checkAdaguc.bind(this);
     this.drawFeatures = this.drawFeatures.bind(this);
     this.currentWMJSProps = {};
-    window.reducerManager.add(WEBMAPJS_REDUCERNAME, webMapJSReducer);
+    if (window.reducerManager) {
+      window.reducerManager.add(WEBMAPJS_REDUCERNAME, webMapJSReducer);
+    } else {
+      console.error('No reducermanager to register the webMapJSReducer to.');
+    }
   }
   _handleWindowResize () {
     this.resize();
@@ -87,17 +97,14 @@ export default class ReactWMJSMap extends Component {
 
     // TODO: Now the map resizes when the right panel opens, (called via promise at EProfileTest.jsx) that is nice. But this reference is Ugly! How do we see a resize if no event is triggered?
     this.adaguc.webMapJS.handleWindowResize = this._handleWindowResize;
-
-    if (this.props.webMapJSInitializedCallback && this.adaguc.webMapJS) {
-      this.props.webMapJSInitializedCallback(this.adaguc.webMapJS, true);
-    }
   }
 
   checkNewProps (props) {
     if (!props) { return; }
     /* Check children */
     if (props.children) {
-      const { children, dispatch } = props;
+      const { children } = props;
+      const dispatch = props.dispatch ? props.dispatch : () => { };
       if (children !== this.currentWMJSProps.children) {
         let wmjsLayers = this.adaguc.webMapJS.getLayers();
         let wmjsBaseLayers = this.adaguc.webMapJS.getBaseLayers();
@@ -162,7 +169,11 @@ export default class ReactWMJSMap extends Component {
                   wmjsLayer.ReactWMJSLayerId = child.props.id;
                   this.adaguc.webMapJS.addLayer(wmjsLayer);
                   wmjsLayer.reactWebMapJSLayer = child;
-                  parseWMJSLayerAndDispatchActions(wmjsLayer, dispatch, this.props.id, xml2jsonrequestURL);
+                  parseWMJSLayerAndDispatchActions(wmjsLayer, dispatch, this.props.id, xml2jsonrequestURL).then(() => {
+                    if (child.props.onLayerReady) {
+                      child.props.onLayerReady(wmjsLayer, this.adaguc.webMapJS);
+                    }
+                  });
                   needsRedraw = true;
                 } else {
                   /* Set the name of the ADAGUC WMJSLayer */
@@ -215,10 +226,10 @@ export default class ReactWMJSMap extends Component {
                   if (child.props.isProfileLayer) {
                     const currentBbox = this.adaguc.webMapJS.getBBOX();
                     const newBbox = new WMJSBBOX(props.bbox);
-                    if (currentBbox != newBbox) {
+                    if (currentBbox !== newBbox) {
                       this.adaguc.webMapJS.suspendEvent('onupdatebbox');
                       this.adaguc.webMapJS.setBBOX(props.bbox);
-                      needsRedraw=true;
+                      needsRedraw = true;
                       this.adaguc.webMapJS.resumeEvent('onupdatebbox');
                     }
                   }
@@ -243,10 +254,13 @@ export default class ReactWMJSMap extends Component {
   }
 
   componentDidMount () {
-    // console.log('componentDidMount', this.props);
     this.checkAdaguc();
     this.checkNewProps(this.props);
     window.addEventListener('resize', this._handleWindowResize);
+    if (this.adaguc.initialized === false && this.props.webMapJSInitializedCallback && this.adaguc.webMapJS) {
+      this.adaguc.initialized = true;
+      this.props.webMapJSInitializedCallback(this.adaguc.webMapJS, true);
+    }
   }
 
   componentWillUnmount () {
@@ -289,20 +303,37 @@ export default class ReactWMJSMap extends Component {
   }
 
   render () {
-
-    return (<div className='ReactWMJSMap'
+    return (<div className={'ReactWMJSMap'}
       style={{ height:'100%', width:'100%', border:'none', display:'block', overflow:'hidden' }} >
       <div ref='adaguccontainer' style={{
-        minWidth:'inherit',
-        minHeight:'inherit',
+        minWidth: 'inherit',
+        minHeight: 'inherit',
         width: 'inherit',
         height: 'inherit',
         overflow: 'hidden',
         display:'block',
         border: 'none'
       }}>
-        <div className={'ReactWMJSMapComponent'} >
+        <div className={'ReactWMJSMapComponent'}>
           <div ref='adagucwebmapjs' />
+        </div>
+        <div className={'ReactWMJSMapTimeValue'} style={{ color: 'black' }}>
+          { this.adaguc.webMapJS && this.adaguc.webMapJS.getDimension('time') &&
+          moment.utc(this.adaguc.webMapJS.getDimension('time').currentValue).local().format('YYYY-MM-DD HH:mm:SS') + ' UTC'
+          }
+        </div>
+        {/* ReactWMJSZoomPanel */}
+        <div className={'ReactWMJSZoomPanel'} style={{ color: 'black' }}>
+          <Button onClick={() => {
+            this.adaguc.webMapJS && this.adaguc.webMapJS.zoomOut();
+          }}><Icon name='minus' /></Button>
+          <Button onClick={() => {
+            this.adaguc.webMapJS && this.adaguc.webMapJS.zoomToLayer(this.adaguc.webMapJS.getActiveLayer());
+          }}><Icon name='home' /></Button>
+          <Button onClick={() => {
+            this.adaguc.webMapJS && this.adaguc.webMapJS.zoomIn();
+          }}><Icon name='plus' /></Button>
+
         </div>
         <div className='ReactWMJSLayerProps'>
           <div>{this.props.children}</div>

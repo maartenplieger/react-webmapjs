@@ -4,6 +4,7 @@ module.exports = function (api) {
     '@babel/preset-react'
   ];
   const plugins =  [
+    'macros'
   ];
 
   api.cache(false);
@@ -12,4 +13,4 @@ module.exports = function (api) {
     presets,
     plugins
   };
-}
+};
