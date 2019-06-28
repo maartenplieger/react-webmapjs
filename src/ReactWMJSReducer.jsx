@@ -10,7 +10,9 @@ import { WEBMAPJS_LAYER_CHANGE_OPACITY,
   WEBMAPJS_LAYER_MOVE,
   WEBMAPJS_SET_LAYERS,
   WEBMAPJS_SET_FEATURE_LAYERS,
-  WEBMAPJS_SET_BASELAYERS
+  WEBMAPJS_SET_BASELAYERS,
+  WEBMAPJS_SET_ACTIVE_MAPPANEL_INDEX
+
 } from './ReactWMJSConstants';
 
 import { generateMapId, generateLayerId, getLayerIndexFromAction, getDimensionIndexFromAction, getMapPanelIndexFromAction } from './ReactWMJSTools.jsx';
@@ -68,6 +70,10 @@ export const WEBMAPJS_REDUCERNAME = 'react-webmapjs';
 
 export const webMapJSReducer = (state = initialState, action = { type:null }) => {
   switch (action.type) {
+    case WEBMAPJS_SET_ACTIVE_MAPPANEL_INDEX:
+      return produce(state, draft => {
+        draft.webmapjs.activeMapPanelIndex = action.payload.activeMapPanelIndex;
+      });
     case WEBMAPJS_LAYER_MOVE:
       return produce(state, draft => {
         draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].layers[action.payload.oldIndex] =
