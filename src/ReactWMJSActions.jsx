@@ -10,7 +10,8 @@ import { WEBMAPJS_LAYER_CHANGE_OPACITY,
   WEBMAPJS_LAYER_MOVE,
   WEBMAPJS_SET_LAYERS,
   WEBMAPJS_SET_BASELAYERS,
-  WEBMAPJS_SET_FEATURE_LAYERS
+  WEBMAPJS_SET_FEATURE_LAYERS,
+  WEBMAPJS_SET_ACTIVE_MAPPANEL_INDEX
 } from './ReactWMJSConstants';
 
 export const layerChangeOpacity = obj => ({ type: WEBMAPJS_LAYER_CHANGE_OPACITY, payload: obj });
@@ -26,4 +27,5 @@ export const layerMoveLayer = obj => ({ type: WEBMAPJS_LAYER_MOVE, payload: obj 
 export const setLayers = obj => ({ type: WEBMAPJS_SET_LAYERS, payload: obj });
 export const setBaseLayers = obj => ({ type: WEBMAPJS_SET_BASELAYERS, payload: obj });
 export const setFeatureLayers = obj => ({ type: WEBMAPJS_SET_FEATURE_LAYERS, payload: obj });
+export const setActiveMapPanelIndex = obj => ({ type: WEBMAPJS_SET_ACTIVE_MAPPANEL_INDEX, payload: obj });
 // export const layerFocus = obj => ({ type: LAYER_FOCUS, payload: obj });
