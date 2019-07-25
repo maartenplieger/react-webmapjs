@@ -319,7 +319,7 @@ export default class ReactWMJSMap extends Component {
         </div>
         <div className={'ReactWMJSMapTimeValue'} style={{ color: 'black' }}>
           { this.adaguc.webMapJS && this.adaguc.webMapJS.getDimension('time') &&
-          moment.utc(this.adaguc.webMapJS.getDimension('time').currentValue).local().format('YYYY-MM-DD HH:mm:SS') + ' UTC'
+          moment.utc(this.adaguc.webMapJS.getDimension('time').currentValue).format('YYYY-MM-DD HH:mm:SS') + ' UTC'
           }
         </div>
         {/* ReactWMJSZoomPanel */}
