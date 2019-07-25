@@ -30,7 +30,7 @@
     float: top;
     overflow: hidden;
     display:block;
-    padding: 10px 0px;
+    padding: 0px 7px;
     margin:10px 0px 0px 10px;
     z-index:100;
     background: rgba(32, 32, 32, 0.2);
