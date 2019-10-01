@@ -62,26 +62,44 @@ storiesOf('ReactWMJSMap', module)
         <ReactWMJSMap id={generateMapId()} >
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...radarLayer} onLayerReady={ (layer, webMapJS) => {
-              if (layer) {
-                var timeDim = layer.getDimension('time');
-                if (timeDim) {
-                  var numTimeSteps = timeDim.size();
-                  if (timeDim.getValueForIndex(numTimeSteps - 1) != currentLatestDate) {
-                    var currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
-                    var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 12);
-                    var dates = [];
-                    for (var j = numTimeSteps - 12; j < numTimeSteps; j++) {
-                      dates.push({ name:'time', value:timeDim.getValueForIndex(j) });
-                    }
-                    webMapJS.stopAnimating();
-                    layer.zoomToLayer();
-                    webMapJS.draw(dates);
+            if (layer) {
+              var timeDim = layer.getDimension('time');
+              if (timeDim) {
+                var numTimeSteps = timeDim.size();
+                if (timeDim.getValueForIndex(numTimeSteps - 1) != currentLatestDate) {
+                  var currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
+                  var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 12);
+                  var dates = [];
+                  for (var j = numTimeSteps - 12; j < numTimeSteps; j++) {
+                    dates.push({ name:'time', value:timeDim.getValueForIndex(j) });
                   }
+                  webMapJS.stopAnimating();
+                  layer.zoomToLayer();
+                  webMapJS.draw(dates);
                 }
               }
+            }
           }} />
           <ReactWMJSLayer key={'3'} {...overLayer} />
         </ReactWMJSMap>
       </div>
     );
+  }).add('Map DWD Warning WMS', () => {
+    const dwdWarningLayer =  {
+      service: 'https://maps.dwd.de/geoserver/ows?',
+      name: 'dwd:Warnungen_Gemeinden_vereinigt',
+      format: 'image/png',
+      enabled: true,
+      id: generateLayerId()
+    };
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} >
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...dwdWarningLayer} onLayerReady={ (layer, webMapJS) => { layer.zoomToLayer(); }} />
+          <ReactWMJSLayer {...overLayer} />
+        </ReactWMJSMap>
+      </div>
+    )
+    return story;
   });
