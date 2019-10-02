@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { createStore } from 'redux';
 import { storiesOf, specs, describe, it } from '../.storybook/facade';
-import { setLayers, ReactWMJSLayer, ReactWMJSMap, generateLayerId, generateMapId, WEBMAPJS_REDUCERNAME, webMapJSReducer, createReducerManager } from '@adaguc/react-webmapjs';
+import { setLayers, layerChangeEnabled, layerChangeOpacity, mapChangeDimension, ReactWMJSLayer, ReactWMJSMap,
+  generateLayerId, generateMapId, WEBMAPJS_REDUCERNAME, webMapJSReducer, createReducerManager, getWMJSLayerById } from '../src/index';
 import Provider from '../storyComponents/Provider';
 import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
-import { Button } from 'reactstrap';
+import { Button, Input } from 'reactstrap';
 import '../storyComponents/storybook.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { connect } from 'react-redux';
+import moment from 'moment';
 
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -40,7 +43,7 @@ const overLayer = {
 };
 const radarLayer = {
   service: 'https://geoservices.knmi.nl/cgi-bin/RADNL_OPER_R___25PCPRR_L3.cgi?',
-  name: 'RADNL_OPER_R___25PCPRR_L3_KNMI',
+  name: 'RADNL_OPER_R___25PCPRR_L3_COLOR',
   format: 'image/png',
   enabled: true,
   style: 'knmiradar/nearest',
@@ -62,6 +65,15 @@ const dwdWarningLayer = {
   format: 'image/png',
   enabled: true,
   id: generateLayerId()
+};
+
+const mapStateToProps = state => {
+  /* Return initial state if not yet set */
+  const webMapJSState = state[WEBMAPJS_REDUCERNAME] ? state[WEBMAPJS_REDUCERNAME] : webMapJSReducer();
+  return {
+    layers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].layers,
+    baseLayers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].baseLayers
+  };
 };
 
 storiesOf('ReactWMJSMap', module)
@@ -96,15 +108,16 @@ storiesOf('ReactWMJSMap', module)
         <ReactWMJSMap id={generateMapId()} >
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => {
+            webMapJS.setAnimationDelay(100);
             if (layer) {
               var timeDim = layer.getDimension('time');
               if (timeDim) {
                 var numTimeSteps = timeDim.size();
                 if (timeDim.getValueForIndex(numTimeSteps - 1) !== currentLatestDate) {
                   currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
-                  // var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 12);
+                  // var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 48);
                   var dates = [];
-                  for (var j = numTimeSteps - 12; j < numTimeSteps; j++) {
+                  for (var j = numTimeSteps - 48; j < numTimeSteps; j++) {
                     dates.push({ name:'time', value:timeDim.getValueForIndex(j) });
                   }
                   webMapJS.stopAnimating();
@@ -129,10 +142,13 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
-  }).add('KNMI setLayers via Redux', () => {
+  }).add('setLayers action', () => {
     const story = (
       <Provider store={store} >
-        <div style={{ height: '20vh' }}>
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <Button onClick={() => {
             store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
           }}>SetLayer Radar</Button>
@@ -143,8 +159,126 @@ storiesOf('ReactWMJSMap', module)
             store.dispatch(setLayers({ layers: [dwdWarningLayer], mapPanelId: 'mapid_1' }));
           }}>SetLayer DWD Warnings</Button>
         </div>
-        <div style={{ height: '80vh' }}>
+
+      </Provider>
+    );
+    return story;
+  }).add('layerChangeEnabled action', () => {
+    store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
+    /* Just a button inside a component to connect it to redux */
+    class LayerEnableButton extends Component {
+      render () {
+        const isLayerEnabled = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[0].enabled;
+        return (<div>
+          <Button onClick={() => {
+            store.dispatch(layerChangeEnabled({ layerId: radarLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabled }));
+          }}>{!isLayerEnabled ? 'Enable' : 'Disable'}</Button>
+        </div>);
+      }
+    };
+    const ConnectedLayerEnableButton = connect(mapStateToProps)(LayerEnableButton);
+    const story = (
+      <Provider store={store} >
+        <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <ConnectedLayerEnableButton store={store} />
+        </div>
+      </Provider>
+    );
+    return story;
+  }).add('layerChangeOpacity action', () => {
+    store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
+    /* Just a button inside a component to connect it to redux */
+    class LayerChangeOpacityInput extends Component {
+      constructor () {
+        super();
+        this.state = {
+          opacity: '1.0'
+        };
+      }
+      render () {
+        let layerOpacity = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[0].opacity;
+        console.log('Render: layerOpacity from redux state ' + layerOpacity);
+        if (!layerOpacity && layerOpacity !== 0) layerOpacity = 1.0;
+        return (<div style={{ border: '1px solid black', padding: '20px', backgroundColor: 'white' }}>
+          <Input type='range' min='0' max='1' step='0.1' value={this.state.opacity}
+            onChange={(e) => {
+              this.setState({ opacity: e.currentTarget.value });
+              let opacity = parseFloat(e.currentTarget.value);
+              store.dispatch(layerChangeOpacity({ layerId: radarLayer.id, mapPanelId: 'mapid_1', opacity: opacity }));
+            }} /><span>Current opacity: {layerOpacity}</span>
+        </div>);
+      }
+    };
+    const ConnectedLayerChangeOpacityInput = connect(mapStateToProps)(LayerChangeOpacityInput);
+    const story = (
+      <Provider store={store} >
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <ConnectedLayerChangeOpacityInput store={store} />
+        </div>
+      </Provider>
+    );
+    return story;
+  }).add('mapChangeDimension action', () => {
+    store.dispatch(setLayers({ layers: [radarLayer, msgCppLayer], mapPanelId: 'mapid_1' }));
+    /* Just a button inside a component to connect it to redux */
+    class MapChangeDimension extends Component {
+      render () {
+        console.log('Render MapChangeDimension');
+        // let dimensions = store.getState()['react-webmapjs'].webmapjs.mapPanel[0];
+        // console.log(JSON.stringify(dimensions, null, 2));
+        console.log(JSON.stringify(this.props.layers, null, 2));
+        const wmjsLayer = getWMJSLayerById(radarLayer.id);
+        if (!wmjsLayer) {
+          return (<div>Layer is loading...</div>);
+        }
+        const timeDimension = wmjsLayer.getDimension('time');
+        const startValue = timeDimension.getValueForIndex(timeDimension.size() - 12);
+        const endValue = timeDimension.getValueForIndex(timeDimension.size());
+        const unixStart = moment(startValue).utc().unix();
+        const unixEnd = moment(endValue).utc().unix();
+        return (<div style={{ border: '1px solid black', padding: '20px', width:'800px', backgroundColor: 'white' }}>
+          <Input type='range' min={unixStart} max={unixEnd} step={300}
+            onChange={(e) => {
+              const timeValue = timeDimension.getClosestValue(moment.unix(e.currentTarget.value).toISOString());
+              store.dispatch(mapChangeDimension({
+                mapPanelId: 'mapid_1',
+                dimension: {
+                  name: 'time',
+                  currentValue: timeValue
+                }
+              }));
+            }} />
+          <div>Num time steps: {timeDimension.size()}</div>
+          <div>StartValue: {startValue}</div>
+          <div>endValue: {endValue}</div>
+          <div>Unix start: {unixStart}</div>
+          <div>Unix stop: {unixEnd}</div>
+        </div>);
+      }
+    };
+    const mapStateToPropsForDim = state => {
+      /* Return initial state if not yet set */
+      console.log('mapStateToPropsForDim');
+      const webMapJSState = state[WEBMAPJS_REDUCERNAME] ? state[WEBMAPJS_REDUCERNAME] : webMapJSReducer();
+      return {
+        layers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].layers,
+        baseLayers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].baseLayers
+      };
+    };
+    const ConnectedMapChangeDimension = connect(mapStateToPropsForDim)(MapChangeDimension);
+    const story = (
+      <Provider store={store} >
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <ConnectedMapChangeDimension store={store} />
         </div>
       </Provider>
     );
