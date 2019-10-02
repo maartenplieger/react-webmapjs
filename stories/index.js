@@ -11,6 +11,7 @@ import '../storyComponents/storybook.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -229,10 +230,6 @@ storiesOf('ReactWMJSMap', module)
     /* Just a button inside a component to connect it to redux */
     class MapChangeDimension extends Component {
       render () {
-        console.log('Render MapChangeDimension');
-        // let dimensions = store.getState()['react-webmapjs'].webmapjs.mapPanel[0];
-        // console.log(JSON.stringify(dimensions, null, 2));
-        console.log(JSON.stringify(this.props.layers, null, 2));
         const wmjsLayer = getWMJSLayerById(radarLayer.id);
         if (!wmjsLayer) {
           return (<div>Layer is loading...</div>);
@@ -257,21 +254,21 @@ storiesOf('ReactWMJSMap', module)
           <div>Num time steps: {timeDimension.size()}</div>
           <div>StartValue: {startValue}</div>
           <div>endValue: {endValue}</div>
-          <div>Unix start: {unixStart}</div>
-          <div>Unix stop: {unixEnd}</div>
+          {
+            this.props.layers.map((layer, index) => {
+              return (<div key={index}>
+                <div>Layer {layer.name}:</div>
+                <div style={{ paddingLeft:'10px' }}>Dim time: {layer.dimensions && layer.dimensions.length && layer.dimensions[0].currentValue}</div>
+              </div>);
+            })
+          }
         </div>);
       }
     };
-    const mapStateToPropsForDim = state => {
-      /* Return initial state if not yet set */
-      console.log('mapStateToPropsForDim');
-      const webMapJSState = state[WEBMAPJS_REDUCERNAME] ? state[WEBMAPJS_REDUCERNAME] : webMapJSReducer();
-      return {
-        layers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].layers,
-        baseLayers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].baseLayers
-      };
+    MapChangeDimension.propTypes = {
+      layers: PropTypes.array
     };
-    const ConnectedMapChangeDimension = connect(mapStateToPropsForDim)(MapChangeDimension);
+    const ConnectedMapChangeDimension = connect(mapStateToProps)(MapChangeDimension);
     const story = (
       <Provider store={store} >
         <div style={{ height: '100vh' }}>

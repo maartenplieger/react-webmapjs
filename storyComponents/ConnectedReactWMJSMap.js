@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { WEBMAPJS_REDUCERNAME, webMapJSReducer, ReactWMJSLayer, ReactWMJSMap } from '../src/index';
 class ConnectedReactWMJSMap extends Component {
   render () {
-    console.log('ConnectedReactWMJSMap', JSON.stringify(this.props.layers, null, 2));
     return (
       <div style={{ height: '100%' }}>
         <ReactWMJSMap bbox={[-541070, 6233113, 1666808, 7555081]} id={'mapid_1'} dispatch={this.props.dispatch} >
