@@ -1,12 +1,28 @@
 import React from 'react';
+import { createStore } from 'redux';
 import { storiesOf, specs, describe, it } from '../.storybook/facade';
-import { ReactWMJSLayer, ReactWMJSMap, getWMJSLayerById, generateLayerId, generateMapId } from '@adaguc/react-webmapjs';
-
+import { setLayers, ReactWMJSLayer, ReactWMJSMap, generateLayerId, generateMapId, WEBMAPJS_REDUCERNAME, webMapJSReducer, createReducerManager } from '@adaguc/react-webmapjs';
+import Provider from '../storyComponents/Provider';
+import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
+import { Button } from 'reactstrap';
+import '../storyComponents/storybook.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Initialize the store.
+const rootReducer = (state = {}, action = { type:null }) => { return state; };
+const reducerManager = createReducerManager({ root: rootReducer });
+const store = createStore(reducerManager.reduce, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+store.reducerManager = reducerManager;
+
+reducerManager.add(WEBMAPJS_REDUCERNAME, webMapJSReducer);
+
+// Add the reducermanager to the window
+window.reducerManager = reducerManager;
 
 const baseLayer = {
-  name:"arcGisSat",
-  title:"arcGisSat",
+  name:'arcGisSat',
+  title:'arcGisSat',
   type: 'twms',
   baseLayer: true,
   enabled:true,
@@ -31,13 +47,30 @@ const radarLayer = {
   id: generateLayerId()
 };
 
+const msgCppLayer = {
+  service: 'http://msgcpp-ogc-realtime.knmi.nl/msgrt.cgi',
+  name: 'lwe_precipitation_rate',
+  format: 'image/png',
+  enabled: true,
+  style: 'precip/nearest',
+  id: generateLayerId()
+};
+
+const dwdWarningLayer = {
+  service: 'https://maps.dwd.de/geoserver/ows?',
+  name: 'dwd:Warnungen_Gemeinden_vereinigt',
+  format: 'image/png',
+  enabled: true,
+  id: generateLayerId()
+};
+
 storiesOf('ReactWMJSMap', module)
   .add('Map with radar data', () => {
     const story = (
       <div style={{ height: '100vh' }}>
         <ReactWMJSMap id={generateMapId()} >
           <ReactWMJSLayer {...baseLayer} />
-          <ReactWMJSLayer {...radarLayer} onLayerReady={ (layer, webMapJS) => { layer.zoomToLayer(); }} />
+          <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
           <ReactWMJSLayer {...overLayer} />
         </ReactWMJSMap>
       </div>
@@ -57,18 +90,19 @@ storiesOf('ReactWMJSMap', module)
     return story;
   })
   .add('Map with radar animation', () => {
+    var currentLatestDate;
     return (
       <div style={{ height: '100vh' }}>
         <ReactWMJSMap id={generateMapId()} >
           <ReactWMJSLayer {...baseLayer} />
-          <ReactWMJSLayer {...radarLayer} onLayerReady={ (layer, webMapJS) => {
+          <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => {
             if (layer) {
               var timeDim = layer.getDimension('time');
               if (timeDim) {
                 var numTimeSteps = timeDim.size();
-                if (timeDim.getValueForIndex(numTimeSteps - 1) != currentLatestDate) {
-                  var currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
-                  var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 12);
+                if (timeDim.getValueForIndex(numTimeSteps - 1) !== currentLatestDate) {
+                  currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
+                  // var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 12);
                   var dates = [];
                   for (var j = numTimeSteps - 12; j < numTimeSteps; j++) {
                     dates.push({ name:'time', value:timeDim.getValueForIndex(j) });
@@ -85,21 +119,34 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
   }).add('Map DWD Warning WMS', () => {
-    const dwdWarningLayer =  {
-      service: 'https://maps.dwd.de/geoserver/ows?',
-      name: 'dwd:Warnungen_Gemeinden_vereinigt',
-      format: 'image/png',
-      enabled: true,
-      id: generateLayerId()
-    };
     const story = (
       <div style={{ height: '100vh' }}>
         <ReactWMJSMap id={generateMapId()} >
           <ReactWMJSLayer {...baseLayer} />
-          <ReactWMJSLayer {...dwdWarningLayer} onLayerReady={ (layer, webMapJS) => { layer.zoomToLayer(); }} />
+          <ReactWMJSLayer {...dwdWarningLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
           <ReactWMJSLayer {...overLayer} />
         </ReactWMJSMap>
       </div>
-    )
+    );
+    return story;
+  }).add('KNMI setLayers via Redux', () => {
+    const story = (
+      <Provider store={store} >
+        <div style={{ height: '20vh' }}>
+          <Button onClick={() => {
+            store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
+          }}>SetLayer Radar</Button>
+          <Button onClick={() => {
+            store.dispatch(setLayers({ layers: [msgCppLayer], mapPanelId: 'mapid_1' }));
+          }}>SetLayer MSGCPP</Button>
+          <Button onClick={() => {
+            store.dispatch(setLayers({ layers: [dwdWarningLayer], mapPanelId: 'mapid_1' }));
+          }}>SetLayer DWD Warnings</Button>
+        </div>
+        <div style={{ height: '80vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+      </Provider>
+    );
     return story;
   });

@@ -12,7 +12,6 @@ import AdagucMapDraw from './AdagucMapDraw';
 import './main.css';
 import { Button } from 'reactstrap';
 import { Icon } from 'react-fa';
-import moment from 'moment';
 let xml2jsonrequestURL = 'http://localhost:10000/XML2JSON?';
 
 export default class ReactWMJSMap extends Component {
@@ -317,11 +316,11 @@ export default class ReactWMJSMap extends Component {
         <div className={'ReactWMJSMapComponent'}>
           <div ref='adagucwebmapjs' />
         </div>
-        <div className={'ReactWMJSMapTimeValue'} style={{ color: 'black' }}>
+        {/* <div className={'ReactWMJSMapTimeValue'} style={{ color: 'black' }}>
           { this.adaguc.webMapJS && this.adaguc.webMapJS.getDimension('time') &&
           moment.utc(this.adaguc.webMapJS.getDimension('time').currentValue).format('YYYY-MM-DD HH:mm:SS') + ' UTC'
           }
-        </div>
+        </div> */}
         {/* ReactWMJSZoomPanel */}
         <div className={'ReactWMJSZoomPanel'} style={{ color: 'black' }}>
           <Button onClick={() => {
