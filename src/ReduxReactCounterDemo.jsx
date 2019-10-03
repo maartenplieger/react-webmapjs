@@ -41,7 +41,7 @@ class ReduxReactCounterDemo extends Component {
     console.log('componentDidMount. You can attach your events now');
   }
   componentWillUnmount () {
-    console.log('componentWillUnmount. You can deattach your events now');
+    console.log('componentWillUnmount. You can detach your events now');
   }
   componentDidUpdate (prevProps) {
     console.log('componentDidUpdate:', prevProps.value, this.props.value);
@@ -50,10 +50,11 @@ class ReduxReactCounterDemo extends Component {
     return (
       <div style={{ height: '100%' }}>
         <div>I am a counter and my value is {this.props.value}. </div>
-        <div><Button onClick={() => { this.props.dispatch(addAction(1)); }}>Add one</Button></div>
-        <div><Button onClick={() => { this.props.dispatch(addAction(2)); }}>Add two</Button></div>
-        <div><Button onClick={() => { this.props.dispatch(addAction(-1)); }}>Substract one</Button></div>
+        <span><Button onClick={() => { this.props.dispatch(addAction(1)); }}>Add one</Button></span>
+        <span><Button onClick={() => { this.props.dispatch(addAction(2)); }}>Add two</Button></span>
+        <span><Button onClick={() => { this.props.dispatch(addAction(-1)); }}>Substract one</Button></span>
         <div>
+          The layers from the webMapJSState are:
           <ul>
             {
               this.props.mylayers.map((layer, key) => {
