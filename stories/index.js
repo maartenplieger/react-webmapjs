@@ -6,7 +6,7 @@ import { setLayers, layerChangeEnabled, layerChangeOpacity, mapChangeDimension, 
 import Provider from '../storyComponents/Provider';
 import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
-import { Button, Input } from 'reactstrap';
+import { Button } from 'reactstrap';
 import '../storyComponents/storybook.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -14,6 +14,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
+import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -288,6 +289,14 @@ storiesOf('ReactWMJSMap', module)
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ConnectedMapChangeDimension store={store} />
         </div>
+      </Provider>
+    );
+    return story;
+  }).add('ReduxReactCounterDemo', () => {
+    /* Just a button inside a component to connect it to redux */
+    const story = (
+      <Provider store={store} >
+        <ReduxReactCounterDemo />
       </Provider>
     );
     return story;
