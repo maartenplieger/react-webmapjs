@@ -59,7 +59,7 @@ class SimpleLayerManager extends Component {
           {
             this.props.webmapjslayers.map((layer, key) => {
               return (
-                <div className='reactwebmapjs-simplelayermanager-layercontainer'>
+                <div className='reactwebmapjs-simplelayermanager-layercontainer' key={key}>
                   <div>
                     <input type='checkbox' defaultChecked={layer.enabled} onChange={() => { dispatch(layerChangeEnabled({ layerId: layer.id, mapPanelId: mapId, enabled: !layer.enabled })); }} />
                     <label>{getLayerTitle(layerNameMappings, layer)}</label>

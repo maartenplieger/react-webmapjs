@@ -101,7 +101,7 @@ storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () =>
       <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
         <SimpleLayerManager
           store={store}
-          layers={[ dwdWarningLayer, radarLayer, dwdRadarLayer, msgCppLayer ]}
+          layers={[ radarLayer, dwdRadarLayer ]}
           mapId={'mapid_1'}
           layerNameMappings={[
             { layer: dwdWarningLayer, title: 'DWD Warnings' },
