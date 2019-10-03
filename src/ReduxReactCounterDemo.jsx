@@ -10,6 +10,7 @@ const REDUXREACTCOUNTERDEMO_ADD = 'COUNTERDEMO_ADD';
 const REDUXREACTCOUNTERDEMO_REDUCERNAME = 'COUNTERDEMO';
 
 /* Action creators */
+// eslint-disable-next-line no-unused-vars
 const initAction = obj => ({ type: REDUXREACTCOUNTERDEMO_INIT, payload: obj });
 const addAction = obj => ({ type: REDUXREACTCOUNTERDEMO_ADD, payload: obj });
 

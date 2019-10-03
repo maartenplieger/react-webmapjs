@@ -15,6 +15,8 @@ import PropTypes from 'prop-types';
 import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
+import SimpleLayerManager from '../src/SimpleLayerManager';
+import SimpleTimeSlider from '../src/SimpleTimeSlider';
 
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -64,8 +66,16 @@ const msgCppLayer = {
 };
 
 const dwdWarningLayer = {
-  service: 'https://maps.dwd.de/geoserver/ows?',
-  name: 'dwd:Warnungen_Gemeinden_vereinigt',
+  service: 'https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?',
+  name: 'Warnungen_Gemeinden_vereinigt',
+  format: 'image/png',
+  enabled: true,
+  id: generateLayerId()
+};
+
+const dwdRadarLayer = {
+  service: 'https://maps.dwd.de/geoserver/dwd/WX-Produkt/ows?',
+  name: 'WX-Produkt',
   format: 'image/png',
   enabled: true,
   id: generateLayerId()
@@ -79,6 +89,40 @@ const mapStateToProps = state => {
     baseLayers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].baseLayers
   };
 };
+
+storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () => {
+  // store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
+  /* Just a button inside a component to connect it to redux */
+  const story = (
+    <Provider store={store} >
+      <div style={{ height: '100vh' }}>
+        <ConnectedReactWMJSMap />
+      </div>
+      <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+        <SimpleLayerManager
+          store={store}
+          layers={[ dwdWarningLayer, radarLayer, dwdRadarLayer, msgCppLayer ]}
+          mapId={'mapid_1'}
+          layerNameMappings={[
+            { layer: dwdWarningLayer, title: 'DWD Warnings' },
+            { layer: radarLayer, title: 'KNMI precipitation radar' },
+            { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+            { layer: dwdRadarLayer, title: 'DWD Radar' }
+          ]}
+        />
+      </div>
+      <div style={{ position:'absolute', left:'10px', bottom: '10px', zIndex: '10000', right:'200px' }}>
+        <SimpleTimeSlider
+          store={store}
+          mapId={'mapid_1'}
+          startValue={moment.utc().subtract(6, 'h').toISOString()}
+          endValue={moment.utc().add(-5, 'm').toISOString()}
+        />
+      </div>
+    </Provider>
+  );
+  return story;
+});
 
 storiesOf('ReactWMJSMap', module)
   .add('Map with radar data', () => {
@@ -297,6 +341,9 @@ storiesOf('ReactWMJSMap', module)
     /* Just some checkboxes inside a component to connect it to redux */
     class LayerEnableDiv extends Component {
       render () {
+        if (store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers.length !== 3) {
+          return (<div>Loading</div>);
+        }
         const isLayerEnabledRadar = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[0].enabled;
         const isLayerEnabledRadarSat = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[1].enabled;
         const isLayerEnabledDWDWarning = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[2].enabled;

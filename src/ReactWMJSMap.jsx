@@ -190,7 +190,7 @@ export default class ReactWMJSMap extends Component {
 
                   /* Set the Opacity of the ADAGUC WMJSLayer */
                   if (child.props.opacity !== undefined && parseFloat(wmjsLayer.opacity) !== parseFloat(child.props.opacity)) {
-                    console.log('UPDATE_LAYER: setting opacity to [' + child.props.opacity + '] - ' + wmjsLayer.opacity);
+                    // console.log('UPDATE_LAYER: setting opacity to [' + child.props.opacity + '] - ' + wmjsLayer.opacity);
                     wmjsLayer.setOpacity(child.props.opacity);
                     needsRedraw = false;
                   }
