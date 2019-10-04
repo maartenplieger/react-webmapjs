@@ -4,6 +4,7 @@ import { storiesOf, specs, describe, it } from '../.storybook/facade';
 import { SimpleLayerManager,
   SimpleTimeSlider,
   setLayers,
+  setBaseLayers,
   layerChangeEnabled,
   layerChangeOpacity,
   mapChangeDimension,
@@ -33,6 +34,7 @@ const rootReducer = (state = {}, action = { type:null }) => { return state; };
 const reducerManager = createReducerManager({ root: rootReducer });
 const store = createStore(reducerManager.reduce, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 store.reducerManager = reducerManager;
+window.store = store;
 
 reducerManager.add(WEBMAPJS_REDUCERNAME, webMapJSReducer);
 
@@ -114,6 +116,7 @@ const dwdObservationsWetterLayer = {
   format: 'image/png',
   enabled: true,
   id: generateLayerId()
+  // headers: [{ name: 'Authorization', value: 'Basic ...' }]
 };
 
 // this needs authentication to work
@@ -141,13 +144,13 @@ const warningStory = {
   title:  'DWD warning map WMS',
   storyfn:  () => {
     const story = (
-      <Provider store={store} >
+      <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <SimpleLayerManager
-            store={store}
+            store={window.store}
             layers={[ dwdWarningLayer, dwdGaforLayer ]}
             mapId={'mapid_1'}
             layerNameMappings={[
@@ -216,13 +219,13 @@ const timesliderdemoStory = {
   title:  'Simple map with timeslider',
   storyfn:  () => {
     const story = (
-      <Provider store={store} >
+      <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <SimpleLayerManager
-            store={store}
+            store={window.store}
             layers={[ radarLayer, dwdRadarLayer, msgCppLayer ]}
             mapId={'mapid_1'}
             layerNameMappings={[
@@ -235,7 +238,7 @@ const timesliderdemoStory = {
         </div>
         <div style={{ position:'absolute', left:'200px', bottom: '10px', zIndex: '10000', right:'200px' }}>
           <SimpleTimeSlider
-            store={store}
+            store={window.store}
             mapId={'mapid_1'}
             startValue={moment.utc().subtract(6, 'h').toISOString()}
             endValue={moment.utc().add(-30, 'm').toISOString()}
@@ -253,6 +256,22 @@ const timesliderdemoStory = {
   }
 };
 
+const reduxReactCounterDemo = {
+  title: 'ReduxReactCounterDemo',
+  storyFn: () => {
+    /* Just a button inside a component to connect it to redux */
+    const story = (
+      <Provider store={window.store} >
+        <ReduxReactCounterDemo />
+      </Provider>
+    );
+    return story;
+  }
+};
+
+storiesOf('React Redux example', module)
+  .add(reduxReactCounterDemo.title, reduxReactCounterDemo.storyFn);
+
 /* assemble stories from prebuilt elements */
 
 storiesOf('KNMI-DWD Demo 04-10-2019', module)
@@ -263,15 +282,15 @@ storiesOf('KNMI-DWD Demo 04-10-2019', module)
 
 /* random assortion of stories */
 
-storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () => {
+storiesOf('Simple layer manager', module).add('Simple Layer manager and Time slider', () => {
   const story = (
-    <Provider store={store} >
+    <Provider store={window.store} >
       <div style={{ height: '100vh' }}>
         <ConnectedReactWMJSMap />
       </div>
       <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
         <SimpleLayerManager
-          store={store}
+          store={window.store}
           layers={[ radarLayer, dwdRadarLayer ]}
           mapId={'mapid_1'}
           layerNameMappings={[
@@ -284,7 +303,7 @@ storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () =>
       </div>
       <div style={{ position:'absolute', left:'200px', bottom: '10px', zIndex: '10000', right:'200px' }}>
         <SimpleTimeSlider
-          store={store}
+          store={window.store}
           mapId={'mapid_1'}
           startValue={moment.utc().subtract(6, 'h').toISOString()}
           endValue={moment.utc().add(-5, 'm').toISOString()}
@@ -299,7 +318,7 @@ storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () =>
       { // second timeslider element can be used
         /* <div style={{ position:'absolute', left:'10px', bottom: '150px', zIndex: '10000', width:'500px' }}>
         <SimpleTimeSlider
-          store={store}
+          store={window.store}
           mapId={'mapid_1'}
           startValue={moment.utc().subtract(6, 'h').toISOString()}
           endValue={moment.utc().add(-5, 'm').toISOString()}
@@ -374,9 +393,11 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
-  }).add('setLayers action', () => {
+  });
+storiesOf('ReactWMJSMap with redux', module)
+  .add('setLayers action', () => {
     const story = (
-      <Provider store={store} >
+      <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
         </div>
@@ -384,6 +405,28 @@ storiesOf('ReactWMJSMap', module)
           <Button onClick={() => {
             store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
           }}>SetLayer Radar</Button>
+          <Button onClick={() => {
+            store.dispatch(setLayers({ layers: [msgCppLayer], mapPanelId: 'mapid_1' }));
+          }}>SetLayer MSGCPP</Button>
+          <Button onClick={() => {
+            store.dispatch(setLayers({ layers: [dwdWarningLayer], mapPanelId: 'mapid_1' }));
+          }}>SetLayer DWD Warnings</Button>
+        </div>
+
+      </Provider>
+    );
+    return story;
+  }).add('setBaseLayers action', () => {
+    store.dispatch(setLayers({ layers: [], mapPanelId: 'mapid_1' }));
+    const story = (
+      <Provider store={window.store} >
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <Button onClick={() => {
+            store.dispatch(setBaseLayers({ baseLayers: [baseLayer], mapPanelId: 'mapid_1' }));
+          }}>SetBaseLayer ArcGIS satellite</Button>
           <Button onClick={() => {
             store.dispatch(setLayers({ layers: [msgCppLayer], mapPanelId: 'mapid_1' }));
           }}>SetLayer MSGCPP</Button>
@@ -410,12 +453,12 @@ storiesOf('ReactWMJSMap', module)
     };
     const ConnectedLayerEnableButton = connect(mapStateToProps)(LayerEnableButton);
     const story = (
-      <Provider store={store} >
+      <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <ConnectedLayerEnableButton store={store} />
+          <ConnectedLayerEnableButton store={window.store} />
         </div>
       </Provider>
     );
@@ -450,12 +493,12 @@ storiesOf('ReactWMJSMap', module)
     };
     const ConnectedLayerChangeOpacityInput = connect(mapStateToProps)(LayerChangeOpacityInput);
     const story = (
-      <Provider store={store} >
+      <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <ConnectedLayerChangeOpacityInput store={store} />
+          <ConnectedLayerChangeOpacityInput store={window.store} />
         </div>
       </Provider>
     );
@@ -508,45 +551,15 @@ storiesOf('ReactWMJSMap', module)
     MapChangeDimension.propTypes = {
       layers: PropTypes.array
     };
-    const ConnectedMapChangeDimension = connect(mapStateToProps)(MapChangeDimension);
+    const ConnectedChangeDimension = connect(mapStateToProps)(MapChangeDimension);
     const story = (
-      <Provider store={store} >
+      <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <ConnectedMapChangeDimension store={store} />
+          <ConnectedChangeDimension store={window.store} />
         </div>
-      </Provider>
-    );
-    return story;
-  }).add('Simple layer component', () => {
-    store.dispatch(setLayers({ layers: [radarLayer, dwdRadarLayer, msgCppLayer], mapPanelId: 'mapid_1' }));
-    const story = (
-      <Provider store={store} >
-        <div style={{ height: '100vh' }}>
-          <ConnectedReactWMJSMap />
-        </div>
-        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <SimpleLayerManager
-            store={store}
-            mapId={'mapid_1'}
-            layerNameMappings={[
-              { layer: dwdWarningLayer, title: 'DWD Warnings' },
-              { layer: radarLayer, title: 'KNMI precipitation radar' },
-              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
-              { layer: dwdRadarLayer, title: 'DWD Radar' }
-            ]}
-          />
-        </div>
-      </Provider>
-    );
-    return story;
-  }).add('ReduxReactCounterDemo', () => {
-    /* Just a button inside a component to connect it to redux */
-    const story = (
-      <Provider store={store} >
-        <ReduxReactCounterDemo />
       </Provider>
     );
     return story;

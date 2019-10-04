@@ -122,7 +122,7 @@ export default class ReactWMJSMap extends Component {
             return;
           }
         }
-
+        // TODO: remove baselayers as well
         this.setState({ featureLayers: myChilds.filter(c => c.props.geojson).map(c => c.props) });
 
         /* Loop through all layers and update WMJSLayer properties where needed */
@@ -151,6 +151,9 @@ export default class ReactWMJSMap extends Component {
                   wmjsLayer.reactWebMapJSLayer = child;
                   this.adaguc.webMapJS.setBaseLayers(this.adaguc.baseLayers.reverse());
                   needsRedraw = true;
+                  // console.log('ok', this.adaguc.baseLayers);
+                } else {
+                  // console.log('wmjsLayer is not null', this.adaguc.baseLayers);
                 }
               } else if (child.props.service) {
                 /* Standard layer */

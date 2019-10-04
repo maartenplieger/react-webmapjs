@@ -34,6 +34,7 @@ export const getLayerTitle = (nameMappings, layer) => {
   const wmjsLayer = getWMJSLayerById(layer.id);
   /* Get the layer title from the WMJSLayer with fallbacks to layer name */
   let title = wmjsLayer ? wmjsLayer.title || layer.name : layer.name;
+  if (!nameMappings || nameMappings.length === 0) return title;
   /* Override the retrieved title by using the provided nameMappings */
   const foundLayers = nameMappings.filter(l => l.layer.id === layer.id);
   if (foundLayers.length === 1) {
@@ -63,7 +64,7 @@ class SimpleLayerManager extends Component {
                 <div className='reactwebmapjs-simplelayermanager-layercontainer' key={key}>
                   <div>
                     <input type='checkbox' defaultChecked={layer.enabled} onChange={() => { dispatch(layerChangeEnabled({ layerId: layer.id, mapPanelId: mapId, enabled: !layer.enabled })); }} />
-                    <label className = 'reactwebmapjs-simplelayermanager-layerlabel'>{getLayerTitle(layerNameMappings, layer)}</label>
+                    <label className='reactwebmapjs-simplelayermanager-layerlabel'>{getLayerTitle(layerNameMappings, layer)}</label>
                   </div>
                   <div>
                     <ReactSlider
