@@ -111,7 +111,7 @@ storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () =>
           ]}
         />
       </div>
-      <div style={{ position:'absolute', left:'10px', bottom: '10px', zIndex: '10000', right:'200px' }}>
+      <div style={{ position:'absolute', left:'200px', bottom: '10px', zIndex: '10000', right:'200px' }}>
         <SimpleTimeSlider
           store={store}
           mapId={'mapid_1'}
@@ -119,6 +119,14 @@ storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () =>
           endValue={moment.utc().add(-5, 'm').toISOString()}
         />
       </div>
+      {/* <div style={{ position:'absolute', left:'10px', bottom: '150px', zIndex: '10000', width:'500px' }}>
+        <SimpleTimeSlider
+          store={store}
+          mapId={'mapid_1'}
+          startValue={moment.utc().subtract(6, 'h').toISOString()}
+          endValue={moment.utc().add(-5, 'm').toISOString()}
+        />
+      </div> */}
     </Provider>
   );
   return story;
