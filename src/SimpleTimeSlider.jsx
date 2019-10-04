@@ -7,15 +7,16 @@ import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import moment from 'moment';
 import { Row, Col } from 'reactstrap';
+import {getLayerTitle} from './SimpleLayerManager.jsx';
 
 class SimpleTimeSlider extends Component {
   render () {
-    const { dispatch, mapId, startValue, endValue } = this.props;
+    const { dispatch, mapId, startValue, endValue, layerNameMappings } = this.props;
     const unixStart = moment(startValue).utc().unix();
     const unixEnd = moment(endValue).utc().unix();
     return (<div className={'reactwebmapjs-simpletimeslider'}>
       <ReactSlider
-        className={'horizontal-slider'}
+        className={'horizontal-slider reactwebmapjs-simpletimeslidercomponent'}
         thumbClassName={'horizontal-slider-track'}
         trackClassName={'horizontal-slider-thumb'}
         min={unixStart} max={unixEnd} step={300}
@@ -34,7 +35,7 @@ class SimpleTimeSlider extends Component {
       {
         this.props.layers.map((layer, index) => {
           return (<Row key={index}>
-            <Col xs='7'>{layer.name}:</Col>
+            <Col xs='7'>{getLayerTitle(layerNameMappings, layer)}:</Col>
             <Col xs='5' style={{ paddingLeft:'10px' }}>{layer.dimensions && layer.dimensions.length && layer.dimensions[0].currentValue}</Col>
           </Row>);
         })
@@ -47,7 +48,8 @@ SimpleTimeSlider.propTypes = {
   layers: PropTypes.array,
   mapId: PropTypes.string,
   startValue: PropTypes.string,
-  endValue: PropTypes.string
+  endValue: PropTypes.string,
+  layerNameMappings: PropTypes.array
 };
 
 const mapStateToProps = state => {

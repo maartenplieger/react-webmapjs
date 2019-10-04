@@ -117,6 +117,12 @@ storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () =>
           mapId={'mapid_1'}
           startValue={moment.utc().subtract(6, 'h').toISOString()}
           endValue={moment.utc().add(-5, 'm').toISOString()}
+          layerNameMappings={[
+            { layer: dwdWarningLayer, title: 'DWD Warnings' },
+            { layer: radarLayer, title: 'KNMI precipitation radar' },
+            { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+            { layer: dwdRadarLayer, title: 'DWD Radar' }
+          ]}
         />
       </div>
     </Provider>
