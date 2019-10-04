@@ -29,6 +29,11 @@ reducerManager.add(WEBMAPJS_REDUCERNAME, webMapJSReducer);
 // Add the reducermanager to the window
 window.reducerManager = reducerManager;
 
+/* define layers to be used
+    - http endpoints might cause a 'mixed content' error if a built storybook is hosted externally
+    - some layers require authorization
+*/
+
 const baseLayer = {
   name:'arcGisSat',
   title:'arcGisSat',
@@ -47,6 +52,7 @@ const overLayer = {
   enabled: true,
   id: generateLayerId()
 };
+
 const radarLayer = {
   service: 'https://geoservices.knmi.nl/cgi-bin/RADNL_OPER_R___25PCPRR_L3.cgi?',
   name: 'RADNL_OPER_R___25PCPRR_L3_COLOR',
@@ -110,16 +116,6 @@ const dwdObservationsWindLayer = {
   id: generateLayerId()
 };
 
-const dwdSatLayer = {
-  service: 'https://maps.dwd.de/geoserver/dwd/SAT_EU_central_RGB_cloud/ows?',
-  name: 'SAT_EU_central_RGB_cloud',
-  format: 'image/png',
-  enabled: true,
-  id: generateLayerId()
-};
-
-
-
 const mapStateToProps = state => {
   /* Return initial state if not yet set */
   const webMapJSState = state[WEBMAPJS_REDUCERNAME] ? state[WEBMAPJS_REDUCERNAME] : webMapJSReducer();
@@ -129,7 +125,7 @@ const mapStateToProps = state => {
   };
 };
 
-
+/* construct story elements for later use */
 
 const warningStory = {
   title:  'DWD warning map WMS',
@@ -157,7 +153,7 @@ const warningStory = {
 };
 
 const radarloopStory = {
-  title: "DWD Radar loop",
+  title: 'DWD radar loop',
   storyfn: () => {
     var currentLatestDate;
     return (
@@ -172,7 +168,7 @@ const radarloopStory = {
                 var numTimeSteps = timeDim.size();
                 if (timeDim.getValueForIndex(numTimeSteps - 1) !== currentLatestDate) {
                   currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
-                  //var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 48);
+                  // var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 48);
                   var dates = [];
                   for (var j = numTimeSteps - 72; j < numTimeSteps; j++) {
                     dates.push({ name:'time', value:timeDim.getValueForIndex(j) });
@@ -190,42 +186,6 @@ const radarloopStory = {
   }
 };
 
-
-const satStory = {
-  title:  'Sat map',
-  storyfn:  () => {
-    const story = (
-      <Provider store={store} >
-        <div style={{ height: '100vh' }}>
-          <ConnectedReactWMJSMap />
-        </div>
-        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <SimpleLayerManager
-            store={store}
-            layers={[ dwdRadarLayer, msgCppLayer, dwdSatLayer ]}
-            mapId={'mapid_1'}
-            layerNameMappings={[
-              { layer: dwdSatLayer, title: 'Meteosat rgb' },
-              { layer: dwdRadarLayer, title: 'DWD Radar' },
-              { layer: msgCppLayer, title: 'KNMI Precip' }
-            ]}
-          />
-        </div>
-        <div style={{ position:'absolute', left:'200px', bottom: '10px', zIndex: '10000', right:'200px' }}>
-          <SimpleTimeSlider
-            store={store}
-            mapId={'mapid_1'}
-            startValue={moment.utc().subtract(6, 'h').toISOString()}
-            endValue={moment.utc().add(-1, 'h').toISOString()}
-          />
-        </div>
-      </Provider>
-    );
-    return story;
-  }
-};
-
-
 const obsStory = {
   title:  'DWD obs map WMS (needs login)',
   storyfn:   () => {
@@ -242,8 +202,8 @@ const obsStory = {
   }
 };
 
-const mapStory1 = {
-  title:  'Simple map',
+const timesliderdemoStory = {
+  title:  'Simple map with timeslider',
   storyfn:  () => {
     const story = (
       <Provider store={store} >
@@ -283,26 +243,17 @@ const mapStory1 = {
   }
 };
 
+/* assemble stories from prebuilt elements */
 
 storiesOf('KNMI-DWD Demo 04-10-2019', module)
-.add(obsStory.title, obsStory.storyfn)
-.add(radarloopStory.title, radarloopStory.storyfn)
-.add(warningStory.title, warningStory.storyfn)
-//.add(satStory.title, satStory.storyfn)
-.add(mapStory1.title, mapStory1.storyfn);
+  .add(obsStory.title, obsStory.storyfn)
+  .add(radarloopStory.title, radarloopStory.storyfn)
+  .add(warningStory.title, warningStory.storyfn)
+  .add(timesliderdemoStory.title, timesliderdemoStory.storyfn);
 
-/*
-- demo1 stories
-  - warnings/gafor layermanager
-  - observations?
-  - radar loop
-  - simple layermanager + timeslider
-*/
-
+/* random assortion of stories */
 
 storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () => {
-  // store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
-  /* Just a button inside a component to connect it to redux */
   const story = (
     <Provider store={store} >
       <div style={{ height: '100vh' }}>
@@ -335,7 +286,8 @@ storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () =>
           ]}
         />
       </div>
-      {/* <div style={{ position:'absolute', left:'10px', bottom: '150px', zIndex: '10000', width:'500px' }}>
+      { // second timeslider element can be used
+        /* <div style={{ position:'absolute', left:'10px', bottom: '150px', zIndex: '10000', width:'500px' }}>
         <SimpleTimeSlider
           store={store}
           mapId={'mapid_1'}
@@ -359,7 +311,6 @@ storiesOf('ReactWMJSMap', module)
         </ReactWMJSMap>
       </div>
     );
-
     // Test which tries to mount the story to verify if this is possible.
     specs(() => describe('reactWMJSTest', function () {
       it('Should be able to mount', function () {
@@ -370,7 +321,6 @@ storiesOf('ReactWMJSMap', module)
         global.document.body.removeChild(div);
       });
     }));
-
     return story;
   })
   .add('Map with radar animation', () => {
