@@ -6,3 +6,5 @@ export * from './ReactWMJSReducer';
 export * from './ReactWMJSTools';
 export { default as ReactWMJSLayer } from './ReactWMJSLayer';
 export { default as ReactWMJSMap } from './ReactWMJSMap';
+export { default as SimpleTimeSlider } from './SimpleTimeSlider';
+export { default as SimpleLayerManager } from './SimpleLayerManager';

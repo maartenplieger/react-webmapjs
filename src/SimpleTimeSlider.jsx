@@ -19,13 +19,13 @@ class SimpleTimeSlider extends Component {
     const unixEnd = moment(endValue).utc().unix();
     let timeSliderValue = mapTimeValue ? moment(mapTimeValue).utc().unix() : parseFloat(unixStart);
     timeSliderValue = parseFloat(parseInt((timeSliderValue / timeSliderStep) + 0.5) * timeSliderStep);
+    if (isNaN(timeSliderValue)) timeSliderValue = 0;
     return (<div className={'reactwebmapjs-simpletimeslider'}>
       <ReactSlider
         className={'horizontal-slider'}
         thumbClassName={'horizontal-slider-track'}
         trackClassName={'horizontal-slider-thumb'}
         min={unixStart} max={unixEnd} step={timeSliderStep}
-        defaultValue={timeSliderValue}
         value={timeSliderValue}
         onChange={(v) => {
           dispatch(mapChangeDimension({
