@@ -69,6 +69,7 @@ const dwdWarningLayer = {
   service: 'https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?',
   name: 'Warnungen_Gemeinden_vereinigt',
   format: 'image/png',
+  style: 'warnungen_gemeinden_vereinigt_event_seamless_param',
   enabled: true,
   id: generateLayerId()
 };
