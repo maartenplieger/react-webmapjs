@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import produce from 'immer';
-import { WEBMAPJS_REDUCERNAME, webMapJSReducer, setLayers, layerChangeEnabled, getWMJSLayerById, layerChangeOpacity } from '@adaguc/react-webmapjs';
+import { WEBMAPJS_REDUCERNAME, webMapJSReducer, setLayers, layerChangeEnabled, getWMJSLayerById, layerChangeOpacity } from './index';
 import './SimpleLayerManager.css';
 import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
@@ -47,8 +47,9 @@ class SimpleLayerManager extends Component {
     super(props);
     /* Register this new simpleLayerManagerReducer reducer with the reducerManager */
     window.reducerManager.add(SIMPLELAYERMANAGER_REDUCERNAME, simpleLayerManagerReducer);
-
-    this.props.dispatch(setLayers({ layers: this.props.layers, mapPanelId: this.props.mapId }));
+    if (this.props.layers) {
+      this.props.dispatch(setLayers({ layers: this.props.layers, mapPanelId: this.props.mapId }));
+    }
   }
 
   render () {

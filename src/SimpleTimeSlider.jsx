@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { WEBMAPJS_REDUCERNAME, webMapJSReducer, mapChangeDimension } from '@adaguc/react-webmapjs';
+import { WEBMAPJS_REDUCERNAME, webMapJSReducer, mapChangeDimension } from './index';
 import './SimpleTimeSlider.css';
 import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import moment from 'moment';
 import { Row, Col } from 'reactstrap';
-import {getLayerTitle} from './SimpleLayerManager.jsx';
+import { getLayerTitle } from './SimpleLayerManager.jsx';
 
 class SimpleTimeSlider extends Component {
   render () {

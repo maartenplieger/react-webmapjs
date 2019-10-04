@@ -521,44 +521,23 @@ storiesOf('ReactWMJSMap', module)
     );
     return story;
   }).add('Simple layer component', () => {
-    store.dispatch(setLayers({ layers: [radarLayer, msgCppLayer, dwdWarningLayer], mapPanelId: 'mapid_1' }));
-    /* Just some checkboxes inside a component to connect it to redux */
-    class LayerEnableDiv extends Component {
-      render () {
-        if (store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers.length !== 3) {
-          return (<div>Loading</div>);
-        }
-        const isLayerEnabledRadar = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[0].enabled;
-        const isLayerEnabledRadarSat = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[1].enabled;
-        const isLayerEnabledDWDWarning = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[2].enabled;
-        return (<div style={{ border: '1px solid grey', borderRadius: '10px', padding: '10px', width:'180px', backgroundColor: 'white' }}>
-          <div>
-            <input type='checkbox' defaultChecked={isLayerEnabledRadar} onChange={() => {
-              store.dispatch(layerChangeEnabled({ layerId: radarLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabledRadar }));
-            }} /> <label>Radar Layer</label>
-          </div>
-          <div>
-            <input type='checkbox' defaultChecked={isLayerEnabledRadarSat} onChange={() => {
-              store.dispatch(layerChangeEnabled({ layerId: msgCppLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabledRadarSat }));
-            }} /> <label>Satellite Radar</label>
-          </div>
-          <div>
-            <input type='checkbox' defaultChecked={isLayerEnabledDWDWarning} onChange={() => {
-              store.dispatch(layerChangeEnabled({ layerId: dwdWarningLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabledDWDWarning }));
-            }} /> <label>DWD Warning</label>
-          </div>
-        </div>
-        );
-      }
-    };
-    const ConnectedLayerEnableDiv = connect(mapStateToProps)(LayerEnableDiv);
+    store.dispatch(setLayers({ layers: [radarLayer, dwdRadarLayer, msgCppLayer], mapPanelId: 'mapid_1' }));
     const story = (
       <Provider store={store} >
         <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <ConnectedLayerEnableDiv store={store} />
+          <SimpleLayerManager
+            store={store}
+            mapId={'mapid_1'}
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: radarLayer, title: 'KNMI precipitation radar' },
+              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+              { layer: dwdRadarLayer, title: 'DWD Radar' }
+            ]}
+          />
         </div>
       </Provider>
     );
