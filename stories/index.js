@@ -226,7 +226,7 @@ const satStory = {
 
 
 const obsStory = {
-  title:  'DWD obs map WMS',
+  title:  'DWD obs map WMS (needs login)',
   storyfn:   () => {
     const story = (
       <div style={{ height: '100vh' }}>
@@ -277,7 +277,7 @@ const mapStory1 = {
 };
 
 
-storiesOf('KNMI-DWD Demo 04.10.2019', module)
+storiesOf('KNMI-DWD Demo 04-10-2019', module)
 .add(obsStory.title, obsStory.storyfn)
 .add(radarloopStory.title, radarloopStory.storyfn)
 .add(warningStory.title, warningStory.storyfn)
