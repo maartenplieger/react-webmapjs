@@ -1,8 +1,20 @@
 import React, { Component } from 'react';
 import { createStore } from 'redux';
 import { storiesOf, specs, describe, it } from '../.storybook/facade';
-import { setLayers, layerChangeEnabled, layerChangeOpacity, mapChangeDimension, ReactWMJSLayer, ReactWMJSMap,
-  generateLayerId, generateMapId, WEBMAPJS_REDUCERNAME, webMapJSReducer, createReducerManager, getWMJSLayerById } from '../src/index';
+import { SimpleLayerManager,
+  SimpleTimeSlider,
+  setLayers,
+  layerChangeEnabled,
+  layerChangeOpacity,
+  mapChangeDimension,
+  ReactWMJSLayer,
+  ReactWMJSMap,
+  generateLayerId,
+  generateMapId,
+  WEBMAPJS_REDUCERNAME,
+  webMapJSReducer,
+  createReducerManager,
+  getWMJSLayerById } from '../src/index';
 import Provider from '../storyComponents/Provider';
 import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
@@ -15,8 +27,6 @@ import PropTypes from 'prop-types';
 import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
-import SimpleLayerManager from '../src/SimpleLayerManager';
-import SimpleTimeSlider from '../src/SimpleTimeSlider';
 
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
