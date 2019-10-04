@@ -146,7 +146,7 @@ const warningStory = {
             mapId={'mapid_1'}
             layerNameMappings={[
               { layer: dwdWarningLayer, title: 'DWD Warnings' },
-              { layer: dwdGaforLayer, title: 'DWD GAFOR' },
+              { layer: dwdGaforLayer, title: 'DWD GAFOR' }
             ]}
           />
         </div>
@@ -269,6 +269,12 @@ const mapStory1 = {
             mapId={'mapid_1'}
             startValue={moment.utc().subtract(6, 'h').toISOString()}
             endValue={moment.utc().add(-30, 'm').toISOString()}
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: radarLayer, title: 'KNMI precipitation radar' },
+              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+              { layer: dwdRadarLayer, title: 'DWD Radar' }
+            ]}
           />
         </div>
       </Provider>
@@ -321,6 +327,12 @@ storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () =>
           mapId={'mapid_1'}
           startValue={moment.utc().subtract(6, 'h').toISOString()}
           endValue={moment.utc().add(-5, 'm').toISOString()}
+          layerNameMappings={[
+            { layer: dwdWarningLayer, title: 'DWD Warnings' },
+            { layer: radarLayer, title: 'KNMI precipitation radar' },
+            { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+            { layer: dwdRadarLayer, title: 'DWD Radar' }
+          ]}
         />
       </div>
       {/* <div style={{ position:'absolute', left:'10px', bottom: '150px', zIndex: '10000', width:'500px' }}>
