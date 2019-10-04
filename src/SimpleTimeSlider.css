@@ -1,0 +1,14 @@
+.reactwebmapjs-simpletimeslider{
+  background-color: #6c757d;
+  padding: 15px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px #888;
+  font: normal normal normal 16px/1 Verdana, Geneva, sans-serif;
+  color: #fff;
+}
+
+.reactwebmapjs-simpletimeslidercomponent{
+  margin-bottom: 15px;
+}
+

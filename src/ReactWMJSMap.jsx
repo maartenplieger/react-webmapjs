@@ -78,7 +78,6 @@ export default class ReactWMJSMap extends Component {
     // eslint-disable-next-line no-undef
     this.adaguc.webMapJS = new WMJSMap(this.refs.adagucwebmapjs);
     registerWMJSMap(this.adaguc.webMapJS, this.props.id);
-    console.log('new WMJSMAP instance with id [' + this.adaguc.webMapJS.getId() + ']');
     this.adaguc.webMapJS.setBaseURL('./adagucwebmapjs/');
     this.adaguc.webMapJS.setXML2JSONURL(xml2jsonrequestURL);
     this.adaguc.webMapJS.setProjection({ srs:this.props.srs || 'EPSG:3857', bbox:this.props.bbox || [-19000000, -19000000, 19000000, 19000000] });
@@ -190,7 +189,7 @@ export default class ReactWMJSMap extends Component {
 
                   /* Set the Opacity of the ADAGUC WMJSLayer */
                   if (child.props.opacity !== undefined && parseFloat(wmjsLayer.opacity) !== parseFloat(child.props.opacity)) {
-                    console.log('UPDATE_LAYER: setting opacity to [' + child.props.opacity + '] - ' + wmjsLayer.opacity);
+                    // console.log('UPDATE_LAYER: setting opacity to [' + child.props.opacity + '] - ' + wmjsLayer.opacity);
                     wmjsLayer.setOpacity(child.props.opacity);
                     needsRedraw = false;
                   }

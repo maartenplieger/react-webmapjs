@@ -1,0 +1,20 @@
+.reactwebmapjs-simplelayermanager{
+  background-color: #6c757d;
+  padding: 5px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px #888;
+}
+
+.reactwebmapjs-simplelayermanager-layercontainer {
+  border: 1px solid #9299a0;
+  padding: 8px;
+  margin: 2px;
+  border-radius: 5px;
+}
+
+.reactwebmapjs-simplelayermanager-layerlabel{
+  font: normal normal normal 16px/1 Verdana, Geneva, sans-serif;
+  color: #fff;
+  padding-left: 5px;
+}

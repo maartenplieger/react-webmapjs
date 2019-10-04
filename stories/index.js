@@ -1,12 +1,24 @@
 import React, { Component } from 'react';
 import { createStore } from 'redux';
 import { storiesOf, specs, describe, it } from '../.storybook/facade';
-import { setLayers, layerChangeEnabled, layerChangeOpacity, mapChangeDimension, ReactWMJSLayer, ReactWMJSMap,
-  generateLayerId, generateMapId, WEBMAPJS_REDUCERNAME, webMapJSReducer, createReducerManager, getWMJSLayerById } from '../src/index';
+import { SimpleLayerManager,
+  SimpleTimeSlider,
+  setLayers,
+  layerChangeEnabled,
+  layerChangeOpacity,
+  mapChangeDimension,
+  ReactWMJSLayer,
+  ReactWMJSMap,
+  generateLayerId,
+  generateMapId,
+  WEBMAPJS_REDUCERNAME,
+  webMapJSReducer,
+  createReducerManager,
+  getWMJSLayerById } from '../src/index';
 import Provider from '../storyComponents/Provider';
 import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
-import { Button, Input } from 'reactstrap';
+import { Button } from 'reactstrap';
 import '../storyComponents/storybook.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -14,6 +26,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
+import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -25,6 +38,11 @@ reducerManager.add(WEBMAPJS_REDUCERNAME, webMapJSReducer);
 
 // Add the reducermanager to the window
 window.reducerManager = reducerManager;
+
+/* define layers to be used
+    - http endpoints might cause a 'mixed content' error if a built storybook is hosted externally
+    - some layers require authorization
+*/
 
 const baseLayer = {
   name:'arcGisSat',
@@ -44,6 +62,7 @@ const overLayer = {
   enabled: true,
   id: generateLayerId()
 };
+
 const radarLayer = {
   service: 'https://geoservices.knmi.nl/cgi-bin/RADNL_OPER_R___25PCPRR_L3.cgi?',
   name: 'RADNL_OPER_R___25PCPRR_L3_COLOR',
@@ -63,8 +82,45 @@ const msgCppLayer = {
 };
 
 const dwdWarningLayer = {
-  service: 'https://maps.dwd.de/geoserver/ows?',
-  name: 'dwd:Warnungen_Gemeinden_vereinigt',
+  service: 'https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?',
+  name: 'Warnungen_Gemeinden_vereinigt',
+  format: 'image/png',
+  style: 'warnungen_gemeinden_vereinigt_event_seamless_param',
+  enabled: true,
+  id: generateLayerId()
+};
+
+const dwdGaforLayer = {
+  service: 'https://maps.dwd.de/geoserver/dwd/GAFOR/ows?',
+  name: 'GAFOR',
+  format: 'image/png',
+  enabled: true,
+  id: generateLayerId()
+};
+
+const dwdRadarLayer = {
+  service: 'https://maps.dwd.de/geoserver/dwd/WX-Produkt/ows?',
+  name: 'WX-Produkt',
+  format: 'image/png',
+  enabled: true,
+  id: generateLayerId()
+};
+
+// this needs authentication to work
+const dwdObservationsWetterLayer = {
+  service: 'https://maps.dwd.de/geoserver/dwd/Wetter_Beobachtungen/ows?',
+  name: 'Wetter_Beobachtungen',
+  style: 'Wetter_Symbole',
+  format: 'image/png',
+  enabled: true,
+  id: generateLayerId()
+};
+
+// this needs authentication to work
+const dwdObservationsWindLayer = {
+  service: 'https://maps.dwd.de/geoserver/dwd/Wetter_Beobachtungen/ows?',
+  name: 'Wetter_Beobachtungen',
+  style: 'Wetter_Wind',
   format: 'image/png',
   enabled: true,
   id: generateLayerId()
@@ -79,6 +135,181 @@ const mapStateToProps = state => {
   };
 };
 
+/* construct story elements for later use */
+
+const warningStory = {
+  title:  'DWD warning map WMS',
+  storyfn:  () => {
+    const story = (
+      <Provider store={store} >
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <SimpleLayerManager
+            store={store}
+            layers={[ dwdWarningLayer, dwdGaforLayer ]}
+            mapId={'mapid_1'}
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: dwdGaforLayer, title: 'DWD GAFOR' }
+            ]}
+          />
+        </div>
+      </Provider>
+    );
+    return story;
+  }
+};
+
+const radarloopStory = {
+  title: 'DWD radar loop',
+  storyfn: () => {
+    var currentLatestDate;
+    return (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} >
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...dwdRadarLayer} onLayerReady={(layer, webMapJS) => {
+            webMapJS.setAnimationDelay(150);
+            if (layer) {
+              var timeDim = layer.getDimension('time');
+              if (timeDim) {
+                var numTimeSteps = timeDim.size();
+                if (timeDim.getValueForIndex(numTimeSteps - 1) !== currentLatestDate) {
+                  currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
+                  // var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 48);
+                  var dates = [];
+                  for (var j = numTimeSteps - 72; j < numTimeSteps; j++) {
+                    dates.push({ name:'time', value:timeDim.getValueForIndex(j) });
+                  }
+                  webMapJS.stopAnimating();
+                  layer.zoomToLayer();
+                  webMapJS.draw(dates);
+                }
+              }
+            }
+          }} />
+        </ReactWMJSMap>
+      </div>
+    );
+  }
+};
+
+const obsStory = {
+  title:  'DWD obs map WMS (needs login)',
+  storyfn:   () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} >
+          <ReactWMJSLayer {...dwdObservationsWindLayer} />
+          <ReactWMJSLayer {...dwdObservationsWetterLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
+          <ReactWMJSLayer {...overLayer} />
+        </ReactWMJSMap>
+      </div>
+    );
+    return story;
+  }
+};
+
+const timesliderdemoStory = {
+  title:  'Simple map with timeslider',
+  storyfn:  () => {
+    const story = (
+      <Provider store={store} >
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <SimpleLayerManager
+            store={store}
+            layers={[ radarLayer, dwdRadarLayer, msgCppLayer ]}
+            mapId={'mapid_1'}
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: radarLayer, title: 'KNMI precipitation radar' },
+              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+              { layer: dwdRadarLayer, title: 'DWD Radar' }
+            ]}
+          />
+        </div>
+        <div style={{ position:'absolute', left:'200px', bottom: '10px', zIndex: '10000', right:'200px' }}>
+          <SimpleTimeSlider
+            store={store}
+            mapId={'mapid_1'}
+            startValue={moment.utc().subtract(6, 'h').toISOString()}
+            endValue={moment.utc().add(-30, 'm').toISOString()}
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: radarLayer, title: 'KNMI precipitation radar' },
+              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+              { layer: dwdRadarLayer, title: 'DWD Radar' }
+            ]}
+          />
+        </div>
+      </Provider>
+    );
+    return story;
+  }
+};
+
+/* assemble stories from prebuilt elements */
+
+storiesOf('KNMI-DWD Demo 04-10-2019', module)
+  .add(obsStory.title, obsStory.storyfn)
+  .add(radarloopStory.title, radarloopStory.storyfn)
+  .add(warningStory.title, warningStory.storyfn)
+  .add(timesliderdemoStory.title, timesliderdemoStory.storyfn);
+
+/* random assortion of stories */
+
+storiesOf('Simple layer manager', module).add('layerChangeEnabled action', () => {
+  const story = (
+    <Provider store={store} >
+      <div style={{ height: '100vh' }}>
+        <ConnectedReactWMJSMap />
+      </div>
+      <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+        <SimpleLayerManager
+          store={store}
+          layers={[ radarLayer, dwdRadarLayer ]}
+          mapId={'mapid_1'}
+          layerNameMappings={[
+            { layer: dwdWarningLayer, title: 'DWD Warnings' },
+            { layer: radarLayer, title: 'KNMI precipitation radar' },
+            { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+            { layer: dwdRadarLayer, title: 'DWD Radar' }
+          ]}
+        />
+      </div>
+      <div style={{ position:'absolute', left:'200px', bottom: '10px', zIndex: '10000', right:'200px' }}>
+        <SimpleTimeSlider
+          store={store}
+          mapId={'mapid_1'}
+          startValue={moment.utc().subtract(6, 'h').toISOString()}
+          endValue={moment.utc().add(-5, 'm').toISOString()}
+          layerNameMappings={[
+            { layer: dwdWarningLayer, title: 'DWD Warnings' },
+            { layer: radarLayer, title: 'KNMI precipitation radar' },
+            { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+            { layer: dwdRadarLayer, title: 'DWD Radar' }
+          ]}
+        />
+      </div>
+      { // second timeslider element can be used
+        /* <div style={{ position:'absolute', left:'10px', bottom: '150px', zIndex: '10000', width:'500px' }}>
+        <SimpleTimeSlider
+          store={store}
+          mapId={'mapid_1'}
+          startValue={moment.utc().subtract(6, 'h').toISOString()}
+          endValue={moment.utc().add(-5, 'm').toISOString()}
+        />
+      </div> */}
+    </Provider>
+  );
+  return story;
+});
+
 storiesOf('ReactWMJSMap', module)
   .add('Map with radar data', () => {
     const story = (
@@ -90,7 +321,6 @@ storiesOf('ReactWMJSMap', module)
         </ReactWMJSMap>
       </div>
     );
-
     // Test which tries to mount the story to verify if this is possible.
     specs(() => describe('reactWMJSTest', function () {
       it('Should be able to mount', function () {
@@ -101,7 +331,6 @@ storiesOf('ReactWMJSMap', module)
         global.document.body.removeChild(div);
       });
     }));
-
     return story;
   })
   .add('Map with radar animation', () => {
@@ -288,6 +517,57 @@ storiesOf('ReactWMJSMap', module)
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ConnectedMapChangeDimension store={store} />
         </div>
+      </Provider>
+    );
+    return story;
+  }).add('Simple layer component', () => {
+    store.dispatch(setLayers({ layers: [radarLayer, msgCppLayer, dwdWarningLayer], mapPanelId: 'mapid_1' }));
+    /* Just some checkboxes inside a component to connect it to redux */
+    class LayerEnableDiv extends Component {
+      render () {
+        if (store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers.length !== 3) {
+          return (<div>Loading</div>);
+        }
+        const isLayerEnabledRadar = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[0].enabled;
+        const isLayerEnabledRadarSat = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[1].enabled;
+        const isLayerEnabledDWDWarning = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[2].enabled;
+        return (<div style={{ border: '1px solid grey', borderRadius: '10px', padding: '10px', width:'180px', backgroundColor: 'white' }}>
+          <div>
+            <input type='checkbox' defaultChecked={isLayerEnabledRadar} onChange={() => {
+              store.dispatch(layerChangeEnabled({ layerId: radarLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabledRadar }));
+            }} /> <label>Radar Layer</label>
+          </div>
+          <div>
+            <input type='checkbox' defaultChecked={isLayerEnabledRadarSat} onChange={() => {
+              store.dispatch(layerChangeEnabled({ layerId: msgCppLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabledRadarSat }));
+            }} /> <label>Satellite Radar</label>
+          </div>
+          <div>
+            <input type='checkbox' defaultChecked={isLayerEnabledDWDWarning} onChange={() => {
+              store.dispatch(layerChangeEnabled({ layerId: dwdWarningLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabledDWDWarning }));
+            }} /> <label>DWD Warning</label>
+          </div>
+        </div>
+        );
+      }
+    };
+    const ConnectedLayerEnableDiv = connect(mapStateToProps)(LayerEnableDiv);
+    const story = (
+      <Provider store={store} >
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <ConnectedLayerEnableDiv store={store} />
+        </div>
+      </Provider>
+    );
+    return story;
+  }).add('ReduxReactCounterDemo', () => {
+    /* Just a button inside a component to connect it to redux */
+    const story = (
+      <Provider store={store} >
+        <ReduxReactCounterDemo />
       </Provider>
     );
     return story;
