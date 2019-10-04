@@ -98,43 +98,78 @@ export const webMapJSReducer = (state = initialState, action = { type:null }) =>
       });
     case WEBMAPJS_LAYER_CHANGE_DIMENSION:
       return produce(state, draft => {
-        let layerIndex = getLayerIndexFromAction(action, state.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].layers);
+        const mapPanelIndex = getMapPanelIndexFromAction(action, draft.webmapjs.mapPanel);
+        const mapPanel = draft.webmapjs.mapPanel[mapPanelIndex];
+        const wmjsMap = getWMJSMapById(action.payload.mapPanelId);
+        let layerIndex = getLayerIndexFromAction(action, mapPanel.layers);
         if (layerIndex === null) return;
-        const dimensions = draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].layers[layerIndex].dimensions || [];
+        const dimensions = mapPanel.layers[layerIndex].dimensions || [];
         let dimensionIndex = getDimensionIndexFromAction(action, dimensions);
         if (dimensionIndex === null) {
           dimensions.push(action.payload.dimension);
         } else {
           dimensions[dimensionIndex] = action.payload.dimension;
         }
-        draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].layers[layerIndex].dimensions = dimensions;
+        mapPanel.layers[layerIndex].dimensions = dimensions;
+        /* Also set the dimensions object for the map */
+        const mapDimension = wmjsMap.getDimension(action.payload.dimension.name);
+        if (mapDimension) {
+          const reduxMapDimensions = mapPanel.dimensions || [];
+          let dimensionIndex = getDimensionIndexFromAction(action, reduxMapDimensions);
+          if (dimensionIndex === null) {
+            reduxMapDimensions.push({
+              name: mapDimension.name,
+              units: mapDimension.units,
+              currentValue: mapDimension.currentValue
+            });
+          } else {
+            reduxMapDimensions[dimensionIndex].currentValue = mapDimension.currentValue;
+          }
+          draft.webmapjs.mapPanel[mapPanelIndex].dimensions = reduxMapDimensions;
+        }
       });
     case WEBMAPJS_MAP_CHANGE_DIMENSION:
       return produce(state, draft => {
         const mapPanelIndex = getMapPanelIndexFromAction(action, draft.webmapjs.mapPanel);
         const mapPanel = draft.webmapjs.mapPanel[mapPanelIndex];
         const wmjsMap = getWMJSMapById(action.payload.mapPanelId);
+        /* Set the dimension value in the map, the map will figure out the valid dim values for each layer */
         wmjsMap.setDimension(action.payload.dimension.name, action.payload.dimension.currentValue, false);
-        // console.log('WEBMAPJS_MAP_CHANGE_DIMENSION to ' + action.payload.dimension.currentValue);
         wmjsMap.draw();
+        /* Now list all dimensions of each layer and set the state to the values from the layers */
         const wmjsLayers = wmjsMap.getLayers();
         for (let d = 0; d < wmjsLayers.length; d++) {
           const layer = wmjsLayers[d];
-          const dimension = layer.getDimension(action.payload.dimension.name);
-          if (dimension) {
+          const layerDimension = layer.getDimension(action.payload.dimension.name);
+          if (layerDimension) {
             let layerIndex = getLayerIndexFromAction({ payload: { layerId: layer.id } }, mapPanel.layers);
             const dimensions = mapPanel.layers[layerIndex].dimensions || [];
             let dimensionIndex = getDimensionIndexFromAction(action, dimensions);
             if (dimensionIndex === null) {
               dimensions.push({
-                name: dimension.name,
-                units: dimension.units,
-                currentValue: dimension.currentValue
+                name: layerDimension.name,
+                units: layerDimension.units,
+                currentValue: layerDimension.currentValue
               });
             } else {
-              dimensions[dimensionIndex].currentValue = dimension.currentValue;
+              dimensions[dimensionIndex].currentValue = layerDimension.currentValue;
             }
-            draft.webmapjs.mapPanel[mapPanelIndex].layers[layerIndex].dimensions = dimensions;
+            /* Also set the dimensions object for the map */
+            const mapDimension = wmjsMap.getDimension(action.payload.dimension.name);
+            if (mapDimension) {
+              const reduxMapDimensions = mapPanel.dimensions || [];
+              let dimensionIndex = getDimensionIndexFromAction(action, reduxMapDimensions);
+              if (dimensionIndex === null) {
+                reduxMapDimensions.push({
+                  name: mapDimension.name,
+                  units: mapDimension.units,
+                  currentValue: mapDimension.currentValue
+                });
+              } else {
+                reduxMapDimensions[dimensionIndex].currentValue = mapDimension.currentValue;
+              }
+              draft.webmapjs.mapPanel[mapPanelIndex].dimensions = reduxMapDimensions;
+            }
           }
         }
       });

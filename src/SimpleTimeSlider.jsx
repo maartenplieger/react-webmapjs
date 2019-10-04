@@ -11,16 +11,23 @@ import {getLayerTitle} from './SimpleLayerManager.jsx';
 
 class SimpleTimeSlider extends Component {
   render () {
-    const { dispatch, mapId, startValue, endValue, layerNameMappings } = this.props;
+    const { dispatch, mapId, startValue, endValue, dimensions, layerNameMappings } = this.props;
+    const timeIndex = dimensions ? dimensions.findIndex(value => value.name === 'time') : -1;
+    const reduxMapTimeDimension = timeIndex >= 0 ? dimensions[timeIndex] : null;
+    const mapTimeValue = reduxMapTimeDimension !== null ? reduxMapTimeDimension.currentValue : null;
+    const timeSliderStep = 300;
     const unixStart = moment(startValue).utc().unix();
     const unixEnd = moment(endValue).utc().unix();
+    let timeSliderValue = mapTimeValue ? moment(mapTimeValue).utc().unix() : parseFloat(unixStart);
+    timeSliderValue = parseFloat(parseInt((timeSliderValue / timeSliderStep) + 0.5) * timeSliderStep);
     return (<div className={'reactwebmapjs-simpletimeslider'}>
       <ReactSlider
         className={'horizontal-slider reactwebmapjs-simpletimeslidercomponent'}
         thumbClassName={'horizontal-slider-track'}
         trackClassName={'horizontal-slider-thumb'}
-        min={unixStart} max={unixEnd} step={300}
-        defaultValue={parseFloat(unixStart)}
+        min={unixStart} max={unixEnd} step={timeSliderStep}
+        defaultValue={timeSliderValue}
+        value={timeSliderValue}
         onChange={(v) => {
           dispatch(mapChangeDimension({
             mapPanelId: mapId,
@@ -49,13 +56,15 @@ SimpleTimeSlider.propTypes = {
   mapId: PropTypes.string,
   startValue: PropTypes.string,
   endValue: PropTypes.string,
-  layerNameMappings: PropTypes.array
+  layerNameMappings: PropTypes.array,
+  dimensions: PropTypes.array
 };
 
 const mapStateToProps = state => {
   /* Return initial state if not yet set */
   const webMapJSState = state[WEBMAPJS_REDUCERNAME] ? state[WEBMAPJS_REDUCERNAME] : webMapJSReducer();
   return {
+    dimensions: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].dimensions,
     layers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].layers,
     baseLayers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].baseLayers
   };
