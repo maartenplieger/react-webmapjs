@@ -197,6 +197,20 @@ export default class ReactWMJSMap extends Component {
                     needsRedraw = false;
                   }
 
+                  /* Set the haders of the ADAGUC WMJSLayer */
+                  if (child.props.headers !== undefined && wmjsLayer.headers !== child.props.headers) {
+                    console.log('UPDATE_LAYER: setting headers to [' + child.props.headers + '] - ' + wmjsLayer.headers);
+                    wmjsLayer.headers = child.props.headers;
+                    parseWMJSLayerAndDispatchActions(wmjsLayer, dispatch, this.props.id, xml2jsonrequestURL, true).then(() => {
+                      if (child.props.onLayerReady) {
+                        child.props.onLayerReady(wmjsLayer, this.adaguc.webMapJS);
+                      }
+                      this.adaguc.webMapJS.draw();
+                    });
+                    this.adaguc.webMapJS.draw();
+                    needsRedraw = true;
+                  }
+
                   /* Set the Style of the ADAGUC WMJSLayer */
                   if (child.props.style !== undefined && wmjsLayer.currentStyle !== child.props.style) {
                     console.log('UPDATE_LAYER: setting style to [' + child.props.style + '] was ' + wmjsLayer.currentStyle);

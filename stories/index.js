@@ -15,11 +15,14 @@ import { SimpleLayerManager,
   WEBMAPJS_REDUCERNAME,
   webMapJSReducer,
   createReducerManager,
-  getWMJSLayerById } from '../src/index';
+  getWMJSLayerById,
+  layerSetHeaders,
+  getWMJSMapById
+} from '../src/index';
 import Provider from '../storyComponents/Provider';
 import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
-import { Button } from 'reactstrap';
+import { Button, Input, Label } from 'reactstrap';
 import '../storyComponents/storybook.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -559,6 +562,55 @@ storiesOf('ReactWMJSMap with redux', module)
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ConnectedChangeDimension store={window.store} />
+        </div>
+      </Provider>
+    );
+    return story;
+  }).add('layerSetHeaders action', () => {
+    const layersWithAuthenticationArray = [dwdObservationsWetterLayer, dwdObservationsWindLayer];
+    const layersWithoutAuthenticationArray = [radarLayer];
+    store.dispatch(setLayers({ layers: [...layersWithAuthenticationArray, ...layersWithoutAuthenticationArray], mapPanelId: 'mapid_1' }));
+    class UserNamePasswordComponent extends Component {
+      constructor (props) {
+        super(props);
+        this.submit = this.submit.bind(this);
+        this.state = {
+          username: null,
+          password: null
+        };
+      }
+      submit () {
+        const base64Encoded = btoa(this.state.username + ':' + this.state.password);
+        layersWithAuthenticationArray.forEach((layer) => {
+          this.props.dispatch(
+            layerSetHeaders({
+              layerId: layer.id,
+              mapPanelId: 'mapid_1',
+              headers: [{ name: 'Authorization', value: 'Basic ' + base64Encoded }]
+            })
+          );
+        });
+        window.setTimeout(() => { getWMJSMapById('mapid_1').draw(); }, 1500);
+      }
+      render () {
+        return (<div style={{ backgroundColor: '#CCCCCCC0', padding: '20px' }}>
+          <span><Label>User name:</Label><Input type='text' onChange={(e) => { this.setState({ username: e.currentTarget.value }); }} /></span>
+          <span><Label>Password:</Label><Input type='password' onChange={(e) => { this.setState({ password: e.currentTarget.value }); }} /></span>
+          <span><Button onClick={() => { this.submit(); }}>Submit</Button></span>
+        </div>);
+      }
+    };
+    UserNamePasswordComponent.propTypes = {
+      dispatch: PropTypes.func
+    };
+    const ConnectedUserNamePasswordModal = connect(mapStateToProps)(UserNamePasswordComponent);
+    const story = (
+      <Provider store={window.store} >
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <ConnectedUserNamePasswordModal store={window.store} />
         </div>
       </Provider>
     );

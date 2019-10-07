@@ -12,7 +12,8 @@ import { WEBMAPJS_LAYER_CHANGE_OPACITY,
   WEBMAPJS_SET_FEATURE_LAYERS,
   WEBMAPJS_SET_BASELAYERS,
   WEBMAPJS_SET_ACTIVE_MAPPANEL_INDEX,
-  WEBMAPJS_MAP_CHANGE_DIMENSION
+  WEBMAPJS_MAP_CHANGE_DIMENSION,
+  WEBMAPJS_LAYER_SETHEADERS
 
 } from './ReactWMJSConstants';
 
@@ -186,6 +187,12 @@ export const webMapJSReducer = (state = initialState, action = { type:null }) =>
       const mapPanelIndex = getMapPanelIndexFromAction(action, state.webmapjs.mapPanel);
       const layerIndex = getLayerIndexFromAction(action, state.webmapjs.mapPanel[mapPanelIndex].layers);
       return produce(state, draft => { draft.webmapjs.mapPanel[mapPanelIndex].layers[layerIndex].opacity = action.payload.opacity; });
+    case WEBMAPJS_LAYER_SETHEADERS:
+      return produce(state, draft => {
+        const mapPanelIndex = getMapPanelIndexFromAction(action, state.webmapjs.mapPanel);
+        const layerIndex = getLayerIndexFromAction(action, state.webmapjs.mapPanel[mapPanelIndex].layers);
+        return produce(state, draft => { draft.webmapjs.mapPanel[mapPanelIndex].layers[layerIndex].headers = action.payload.headers; });
+      });
     case WEBMAPJS_SERVICE_LAYER_SET_STYLES:
       return produce(state, draft => {
         if (!action.payload.service || !action.payload.name) { return; }

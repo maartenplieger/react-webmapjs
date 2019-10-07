@@ -12,7 +12,8 @@ import { WEBMAPJS_LAYER_CHANGE_OPACITY,
   WEBMAPJS_SET_BASELAYERS,
   WEBMAPJS_SET_FEATURE_LAYERS,
   WEBMAPJS_SET_ACTIVE_MAPPANEL_INDEX,
-  WEBMAPJS_MAP_CHANGE_DIMENSION
+  WEBMAPJS_MAP_CHANGE_DIMENSION,
+  WEBMAPJS_LAYER_SETHEADERS
 } from './ReactWMJSConstants';
 
 /**
@@ -38,6 +39,13 @@ export const layerChangeEnabled = obj => ({ type: WEBMAPJS_LAYER_CHANGE_ENABLED,
  * @param {*} obj Object with a array of layers and mapPanelId {layers:[<layer object>], mapPanelId:<string>}
  */
 export const setLayers = obj => ({ type: WEBMAPJS_SET_LAYERS, payload: obj });
+
+/**
+ * Set the headers to be sent with the requests of the layer (GetMap, GetCapabilities). Can for example be used to set an authorization header.
+ * @param {*} obj Object with a layerId/layerIndex, mapPanelId, and a headers array of object which consist of a name and a value.
+ * E.g. {mapPanelId:'map_id1', layerId: 'layerid1', headers: [{'name': <header name>, 'value': <value name>}]}
+ */
+export const layerSetHeaders = obj => ({ type: WEBMAPJS_LAYER_SETHEADERS, payload: obj });
 
 export const mapChangeDimension = obj => ({ type: WEBMAPJS_MAP_CHANGE_DIMENSION, payload: obj });
 
