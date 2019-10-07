@@ -1,15 +1,4 @@
 {
-    "SKYVECTOR": {
-      "EPSG:3857": {
-        "home": "https://t.skyvector.com/V7pMh4zRihflnr61/302/1904/",
-        "minLevel": 1,
-        "maxLevel": 10,
-        "tileServerType": "skyvector",
-        "tms": false,
-        "tileServerFormat": "jpg",
-        "copyRight": "Basemap copyright: www.skyvector.com"
-      }
-    },
     "WorldMap_Light_Grey_Canvas": {
       "EPSG:3857": {
         "home": "https://s3.eu-central-1.amazonaws.com/knmi-basemaps/WorldMap_Light_Grey_Canvas/EPSG3857/",

@@ -1,5 +1,5 @@
 import { configure } from '@storybook/react';
-import '@storybook/addon-console';
+// import '@storybook/addon-console';
 import requireContext from 'require-context.macro';
 import {configure as configureEnzyme }  from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';

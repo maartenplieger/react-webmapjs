@@ -219,9 +219,24 @@ export const webMapJSReducer = (state = initialState, action = { type:null }) =>
       });
     case WEBMAPJS_SET_LAYERS:
       const layersWithIds = createLayersWithIds(action.payload.layers);
-      return produce(state, draft => { draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].layers = layersWithIds; });
+      if (!layersWithIds) {
+        console.error('WEBMAPJS_SET_LAYERS, no layers defined');
+        return state;
+      }
+      return produce(state, draft => {
+        const mapPanel = draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)];
+        if (!mapPanel) {
+          console.error('WEBMAPJS_SET_LAYERS, mapPanel not found', action);
+          return state;
+        }
+        mapPanel.layers = layersWithIds;
+      });
     case WEBMAPJS_SET_BASELAYERS:
       const baseLayersWithIds = createLayersWithIds(action.payload.baseLayers);
+      if (!baseLayersWithIds || !baseLayersWithIds.length) {
+        console.error('WEBMAPJS_SET_BASELAYERS: baselayers not set or is not an array');
+        return state;
+      }
       return produce(state, draft => { draft.webmapjs.mapPanel[getMapPanelIndexFromAction(action, state.webmapjs.mapPanel)].baseLayers = baseLayersWithIds; });
     case WEBMAPJS_SET_FEATURE_LAYERS:
       const featureLayersWithIds = createLayersWithIds(action.payload.featureLayers);
@@ -231,6 +246,7 @@ export const webMapJSReducer = (state = initialState, action = { type:null }) =>
   }
 
   function createLayersWithIds (layers) {
+    if (!layers) return layers;
     return produce(layers, draft => {
       for (let j = 0; j < draft.length; j++) {
         const layer = draft[j];

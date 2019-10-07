@@ -61,8 +61,7 @@ export const getWMJSMapById = (wmjsMapId) => {
  */
 export const getLayerIndexFromAction = (action, layers) => {
   if (!action.payload.layerId && !action.payload.layerIndex) {
-    console.log(action);
-    console.warn(action.type + ': invalid action payload, either layerId or layerIndex is required');
+    console.warn(action.type + ': invalid action payload, either layerId or layerIndex is required', action);
     return null;
   }
   if (!action.payload.layerId) {

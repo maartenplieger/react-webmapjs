@@ -31,6 +31,7 @@ import PropTypes from 'prop-types';
 import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
+import tilesettings from '../src/tilesettings';
 
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -420,22 +421,33 @@ storiesOf('ReactWMJSMap with redux', module)
     );
     return story;
   }).add('setBaseLayers action', () => {
-    store.dispatch(setLayers({ layers: [], mapPanelId: 'mapid_1' }));
+    const { dispatch } = store;
+    dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
           <ConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <Button onClick={() => {
-            store.dispatch(setBaseLayers({ baseLayers: [baseLayer], mapPanelId: 'mapid_1' }));
-          }}>SetBaseLayer ArcGIS satellite</Button>
-          <Button onClick={() => {
-            store.dispatch(setLayers({ layers: [msgCppLayer], mapPanelId: 'mapid_1' }));
-          }}>SetLayer MSGCPP</Button>
-          <Button onClick={() => {
-            store.dispatch(setLayers({ layers: [dwdWarningLayer], mapPanelId: 'mapid_1' }));
-          }}>SetLayer DWD Warnings</Button>
+          <ul>
+            <li><Button onClick={() => { dispatch(setBaseLayers({ baseLayers: [baseLayer], mapPanelId: 'mapid_1' })); }}>SetBaseLayer ArcGIS satellite</Button></li>
+            <li><Button onClick={() => { dispatch(setBaseLayers({ baseLayers: [overLayer], mapPanelId: 'mapid_1' })); }}>SetLayer KNMI Overlay</Button></li>
+            <li>From tilesettings:</li>
+            {
+              Object.keys(tilesettings).map((tilesettingName, key) => {
+                if (!tilesettings[tilesettingName]['EPSG:3857']) return (null);
+                return (
+                  <li key={key}>
+                    <Button
+                      style={{ height: '30px' }}
+                      onClick={() => { dispatch(setBaseLayers({ baseLayers: [{ baseLayer: true, name:tilesettingName, type:'twms' }], mapPanelId: 'mapid_1' })); }}>
+                      {tilesettingName}
+                    </Button>
+                  </li>
+                );
+              })
+            }
+          </ul>
         </div>
 
       </Provider>

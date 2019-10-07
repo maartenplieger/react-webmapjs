@@ -117,17 +117,36 @@ export default class ReactWMJSMap extends Component {
         /* Detect all ReactLayers connected to WMJSLayers, remove WMJSLayer if there is no ReactLayer */
         for (let l = 0; l < wmjsLayers.length; l++) {
           if (myChilds.filter(c => c.props.id === wmjsLayers[l].ReactWMJSLayerId).length === 0) {
+            /* This will call the remove property of the WMJSLayer, which will adjust the layers array of WebMapJS */
             wmjsLayers[l].remove();
             this.checkNewProps(props);
             return;
           }
         }
-        // TODO: remove baselayers as well
-        this.setState({ featureLayers: myChilds.filter(c => c.props.geojson).map(c => c.props) });
+        /* For the baseLayers, detect all ReactLayers connected to WMJSLayers, remove WMJSLayer if there is no ReactLayer */
+        for (let l = 0; l < wmjsBaseLayers.length; l++) {
+          if (myChilds.filter(c => c && c.props ? c.props.id === wmjsBaseLayers[l].ReactWMJSLayerId : false).length === 0) {
+            /* TODO: The remove property for the baselayer is not working yet */
+            wmjsBaseLayers.splice(l, 1);
+            this.adaguc.webMapJS.setBaseLayers(wmjsBaseLayers);
+            wmjsBaseLayers = this.adaguc.webMapJS.getBaseLayers();
+            this.checkNewProps(props);
+            return;
+          }
+        }
+        this.setState({ featureLayers: myChilds.filter(c => c && c.props && c.props.geojson).map(c => c.props) });
 
         /* Loop through all layers and update WMJSLayer properties where needed */
         for (let c = 0; c < myChilds.length; c++) {
           let child = myChilds[c];
+          if (!child) {
+            console.warn('Encounterd empty child');
+            continue;
+          }
+          if (!child.type) {
+            console.warn('Encounterd unknown child type');
+            continue;
+          }
           if (child.type) {
             /* Check layers */
             if (typeof child.type === typeof ReactWMJSLayer) {
@@ -150,6 +169,7 @@ export default class ReactWMJSMap extends Component {
                   this.adaguc.baseLayers.push(wmjsLayer);
                   wmjsLayer.reactWebMapJSLayer = child;
                   this.adaguc.webMapJS.setBaseLayers(this.adaguc.baseLayers.reverse());
+                  wmjsBaseLayers = this.adaguc.webMapJS.getBaseLayers();
                   needsRedraw = true;
                   // console.log('ok', this.adaguc.baseLayers);
                 } else {
@@ -253,7 +273,6 @@ export default class ReactWMJSMap extends Component {
             }
           }
         };
-
         if (needsRedraw) {
           this.adaguc.webMapJS.draw();
         }
