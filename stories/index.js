@@ -22,7 +22,7 @@ import { SimpleLayerManager,
 import Provider from '../storyComponents/Provider';
 import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
-import { Button, Input, Label } from 'reactstrap';
+import { Modal, ModalBody, ModalHeader, Button, Input, Label, Container } from 'reactstrap';
 import '../storyComponents/storybook.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -33,6 +33,7 @@ import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import tilesettings from '../src/tilesettings';
 import { simplePolygonGeoJSON, simplePointsGeojson } from './geojsonExamples';
+
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
 const reducerManager = createReducerManager({ root: rootReducer });
@@ -472,7 +473,7 @@ storiesOf('ReactWMJSMap', module)
         super(props);
         this.mapMouseClicked = this.mapMouseClicked.bind(this);
         this.state = {
-          gfiUrl: 'Click on the map to trigger a getfeatureinfo.',
+          gfiUrl: 'Click on the map to trigger a getfeatureinfo.\nShift-click to trigger a full info.',
           gfiResult: null
         };
       }
@@ -490,11 +491,12 @@ storiesOf('ReactWMJSMap', module)
       mapMouseClicked (webMapJS, mouse) {
         console.log('mouseclicked', mouse);
         /* Compose the getfeatureinfo URL for a layer based on the map's pixel coordinates, use json as format */
-        const gfiUrl = webMapJS.getWMSGetFeatureInfoRequestURL(
-          getWMJSLayerById(radarLayer.id),
+        let gfiUrl = webMapJS.getWMSGetFeatureInfoRequestURL(
+          getWMJSLayerById(dwdWarningLayer.id),
           mouse.x,
           mouse.y);
-        this.setState({ gfiUrl: gfiUrl });
+        if (!mouse.shiftKeyPressed) { gfiUrl += 'propertyName=SEVERITY,EVENT,HEADLINE,SENT,ONSET,EXPIRES'; }
+        // this.setState({ gfiUrl: gfiUrl });
 
         /* Start fetching the obtained getfeatureinfo url */
         fetch(gfiUrl, {
@@ -521,7 +523,7 @@ storiesOf('ReactWMJSMap', module)
                 }, true);
               }}>
               <ReactWMJSLayer {...baseLayer} />
-              <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
+              <ReactWMJSLayer {...dwdWarningLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
               <ReactWMJSLayer {...overLayer} />
             </ReactWMJSMap>
           </div>
@@ -794,6 +796,60 @@ storiesOf('ReactWMJSMap with redux', module)
     };
     UserNamePasswordComponent.propTypes = {
       dispatch: PropTypes.func
+    };
+    const ConnectedUserNamePasswordModal = connect(mapStateToProps)(UserNamePasswordComponent);
+    const story = (
+      <Provider store={window.store} >
+        <div style={{ height: '100vh' }}>
+          <ConnectedReactWMJSMap />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <ConnectedUserNamePasswordModal store={window.store} />
+        </div>
+      </Provider>
+    );
+    return story;
+  }).add('login modal', () => {
+    class UserNamePasswordComponent extends Component {
+      constructor (props) {
+        super(props);
+        this.submit = this.submit.bind(this);
+        this.state = {
+          username: null,
+          password: null
+        };
+        this.isOpen = true;
+        this.toggleModal = this.toggleModal.bind(this);
+      }
+      toggleModal () {
+        console.log('this should set the state to isOpen=false');
+        this.isOpen = false;
+        // this.setState({ isOpen: false });
+        this.setState({ username: false });
+      }
+      submit () {
+        console.log(this.state.username + ':' + this.state.password);
+      }
+      render () {
+        return (
+          <Modal isOpen={this.isOpen} toggle={this.toggleModal}>
+            <ModalHeader toggle={this.toggleModal}>
+              Please sign in to use the application
+            </ModalHeader>
+            <ModalBody>
+              <Container>
+                <div style={{ backgroundColor: '#CCCCCCC0', padding: '20px' }}>
+                  <span><Label>User name:</Label><Input type='text' onChange={(e) => { this.setState({ username: e.currentTarget.value }); }} /></span>
+                  <span><Label>Password:</Label><Input type='password' onChange={(e) => { this.setState({ password: e.currentTarget.value }); }} /></span>
+                  <span><Button onClick={() => { this.submit(); }}>Submit</Button></span>
+                </div>
+              </Container>
+            </ModalBody>
+          </Modal>);
+      }
+    };
+    UserNamePasswordComponent.propTypes = {
+      // dispatch: PropTypes.func
     };
     const ConnectedUserNamePasswordModal = connect(mapStateToProps)(UserNamePasswordComponent);
     const story = (
