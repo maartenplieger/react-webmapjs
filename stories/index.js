@@ -92,7 +92,7 @@ const dwdWarningLayer = {
   service: 'https://maps.dwd.de/geoserver/dwd/Warnungen_Gemeinden_vereinigt/ows?',
   name: 'Warnungen_Gemeinden_vereinigt',
   format: 'image/png',
-  style: 'warnungen_gemeinden_vereinigt_event_seamless_param',
+  // style: 'warnungen_gemeinden_vereinigt_event_seamless_param',
   enabled: true,
   id: generateLayerId()
 };
@@ -495,7 +495,10 @@ storiesOf('ReactWMJSMap', module)
           getWMJSLayerById(dwdWarningLayer.id),
           mouse.x,
           mouse.y);
-        if (!mouse.shiftKeyPressed) { gfiUrl += 'propertyName=SEVERITY,EVENT,HEADLINE,SENT,ONSET,EXPIRES'; }
+        // restrict the getFeatureInfo by default to interesting properties only if geoserver is used
+        if (!mouse.shiftKeyPressed) { gfiUrl += '&propertyName=SEVERITY,EVENT,HEADLINE,SENT,ONSET,EXPIRES'; }
+        // tell geoserver to return multiple features if necessary (e.g. overlapping warnings)
+        gfiUrl += '&FEATURE_COUNT=999';
         // this.setState({ gfiUrl: gfiUrl });
 
         /* Start fetching the obtained getfeatureinfo url */
