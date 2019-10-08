@@ -4,7 +4,7 @@ import { debounce } from 'throttle-debounce';
 import { WMJSMap, WMJSLayer, WMJSBBOX } from 'adaguc-webmapjs';
 import tileRenderSettings from './tilesettings.json';
 import ReactWMJSLayer from './ReactWMJSLayer.jsx';
-import { layerSetStyles, layerChangeStyle, layerSetDimensions } from './ReactWMJSActions';
+import { layerSetStyles, layerChangeStyle, layerSetDimensions, mapChangeDimension } from './ReactWMJSActions';
 import { registerWMJSLayer, getWMJSLayerById, registerWMJSMap } from './ReactWMJSTools.jsx';
 import { parseWMJSLayerAndDispatchActions } from './ReactWMJSParseLayer.jsx';
 import { webMapJSReducer, WEBMAPJS_REDUCERNAME } from './ReactWMJSReducer';
@@ -74,6 +74,7 @@ export default class ReactWMJSMap extends Component {
     if (this.adaguc.webMapJSCreated) {
       return;
     }
+    const dispatch = this.props.dispatch ? this.props.dispatch : () => { };
     this.adaguc.webMapJSCreated = true;
     // eslint-disable-next-line no-undef
     this.adaguc.webMapJS = new WMJSMap(this.refs.adagucwebmapjs);
@@ -88,6 +89,17 @@ export default class ReactWMJSMap extends Component {
         this.adaguc.webMapJS.addListener(listener.name, (data) => { listener.callbackfunction(this.adaguc.webMapJS, data); }, listener.keep);
       });
     }
+
+    this.adaguc.webMapJS.addListener('ondimchange', () => {
+      // console.log('ondimchange' + this.adaguc.webMapJS.getDimension('time').currentValue);
+      dispatch(mapChangeDimension({
+        mapPanelId: this.props.id,
+        dimension: {
+          name: 'time',
+          currentValue: this.adaguc.webMapJS.getDimension('time').currentValue
+        }
+      }));
+    }, true);
 
     this.resize();
     // this.componentDidUpdate();
@@ -385,5 +397,6 @@ ReactWMJSMap.propTypes = {
   webMapJSInitializedCallback: PropTypes.func,
   srs: PropTypes.string,
   children: PropTypes.array,
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
+  dispatch: PropTypes.func
 };

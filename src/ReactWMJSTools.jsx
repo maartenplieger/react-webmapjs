@@ -38,11 +38,12 @@ export const getWMJSLayerById = (layerId) => {
 var registeredWMJSMapForReactMapId = {};
 
 /**
- * Registers a WMJSLayer in a lookuptable with a wmjsMapId
+ * Registers a WMJSMap in a lookuptable with a wmjsMapId
  * @param {WMJSMap} wmjsMap
  * @param {string} wmjsMapId
  */
 export const registerWMJSMap = (wmjsMap, wmjsMapId) => {
+  console.info('Registering WebMapJS with id [' + wmjsMapId + ']')
   registeredWMJSMapForReactMapId[wmjsMapId] = wmjsMap;
 };
 
@@ -83,6 +84,7 @@ export const getLayerIndexFromAction = (action, layers) => {
  * Gets the mapPanelIndex from either the mapPanelId or mapPanelIndex provided in the actions payload object.
  * @param {action} action
  * @param {array} mapPanels mapPanels of the mappanel in the state.
+ * @returns An integer on success, otherwise null
  */
 export const getMapPanelIndexFromAction = (action, mapPanels) => {
   if (!action.payload || (!action.payload.mapPanelId && !action.payload.mapPanelIndex)) {
@@ -98,7 +100,7 @@ export const getMapPanelIndexFromAction = (action, mapPanels) => {
   }
   const mapPanelIndex = mapPanels.findIndex(mapPanel => mapPanel.id === action.payload.mapPanelId);
   if (mapPanelIndex === -1) {
-    console.warn(action.type + ': mapPanelId ' + action.payload.mapPanelId + ' not found');
+    console.warn(action.type + ': mapPanelId ' + action.payload.mapPanelId + ' not found from action', action);
     return null;
   }
   return mapPanelIndex;
