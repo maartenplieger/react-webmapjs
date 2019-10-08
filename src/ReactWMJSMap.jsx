@@ -80,6 +80,7 @@ export default class ReactWMJSMap extends Component {
     // eslint-disable-next-line no-undef
     this.adaguc.webMapJS = new WMJSMap(this.refs.adagucwebmapjs);
     registerWMJSMap(this.adaguc.webMapJS, this.props.id);
+    this.adaguc.webMapJS.removeAllLayers();
     this.adaguc.webMapJS.setBaseURL('./adagucwebmapjs/');
     this.adaguc.webMapJS.setXML2JSONURL(xml2jsonrequestURL);
     this.adaguc.webMapJS.setProjection({ srs:this.props.srs || 'EPSG:3857', bbox:this.props.bbox || [-19000000, -19000000, 19000000, 19000000] });
@@ -176,6 +177,7 @@ export default class ReactWMJSMap extends Component {
               }
               if (child.props.baseLayer) {
                 /* Base layer */
+                wmjsBaseLayers = this.adaguc.webMapJS.getBaseLayers();
                 let obj = this.getWMJSLayerFromReactLayer(wmjsBaseLayers, child, adagucWMJSBaseLayerIndex);
                 if (obj.layerArrayMutated) {
                   this.checkNewProps(prevProps, props);
@@ -198,6 +200,7 @@ export default class ReactWMJSMap extends Component {
                 }
               } else if (child.props.service) {
                 /* Standard layer */
+                wmjsLayers = this.adaguc.webMapJS.getLayers();
                 let obj = this.getWMJSLayerFromReactLayer(wmjsLayers, child, adagucWMJSLayerIndex);
                 if (obj.layerArrayMutated) {
                   this.checkNewProps(prevProps, props);
