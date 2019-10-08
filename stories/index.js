@@ -356,6 +356,23 @@ storiesOf('ReactWMJSMap', module)
     }));
     return story;
   })
+  .add('Passive map without controls', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()}
+          controls={{}}
+          showLegend={false}
+          showScaleBar={false}
+          passiveMap
+          onClick={() => { console.log('Passive map clicked'); }}>
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
+          <ReactWMJSLayer {...overLayer} />
+        </ReactWMJSMap>
+      </div>
+    );
+    return story;
+  })
   .add('Map with radar animation', () => {
     var currentLatestDate;
     return (

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-prop-types */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'throttle-debounce';
@@ -109,8 +110,16 @@ export default class ReactWMJSMap extends Component {
     this.adaguc.webMapJS.handleWindowResize = this._handleWindowResize;
   }
 
-  checkNewProps (props) {
+  checkNewProps (prevProps, props) {
     if (!props) { return; }
+    /* Check map props */
+    if (!prevProps || prevProps.showLegend !== props.showLegend) {
+      this.adaguc.webMapJS.displayScaleBarInMap(props.showLegend !== false);
+    }
+    if (!prevProps || prevProps.showScalebar !== props.showScalebar) {
+      this.adaguc.webMapJS.displayLegendInMap(props.showLegend !== false);
+    }
+
     /* Check children */
     if (props.children) {
       const { children } = props;
@@ -131,7 +140,7 @@ export default class ReactWMJSMap extends Component {
           if (myChilds.filter(c => c.props.id === wmjsLayers[l].ReactWMJSLayerId).length === 0) {
             /* This will call the remove property of the WMJSLayer, which will adjust the layers array of WebMapJS */
             wmjsLayers[l].remove();
-            this.checkNewProps(props);
+            this.checkNewProps(prevProps, props);
             return;
           }
         }
@@ -142,7 +151,7 @@ export default class ReactWMJSMap extends Component {
             wmjsBaseLayers.splice(l, 1);
             this.adaguc.webMapJS.setBaseLayers(wmjsBaseLayers);
             wmjsBaseLayers = this.adaguc.webMapJS.getBaseLayers();
-            this.checkNewProps(props);
+            this.checkNewProps(prevProps, props);
             return;
           }
         }
@@ -169,7 +178,7 @@ export default class ReactWMJSMap extends Component {
                 /* Base layer */
                 let obj = this.getWMJSLayerFromReactLayer(wmjsBaseLayers, child, adagucWMJSBaseLayerIndex);
                 if (obj.layerArrayMutated) {
-                  this.checkNewProps(props);
+                  this.checkNewProps(prevProps, props);
                   return;
                 }
                 let wmjsLayer = obj.layer;
@@ -191,7 +200,7 @@ export default class ReactWMJSMap extends Component {
                 /* Standard layer */
                 let obj = this.getWMJSLayerFromReactLayer(wmjsLayers, child, adagucWMJSLayerIndex);
                 if (obj.layerArrayMutated) {
-                  this.checkNewProps(props);
+                  this.checkNewProps(prevProps, props);
                   return;
                 }
                 let wmjsLayer = obj.layer;
@@ -296,12 +305,12 @@ export default class ReactWMJSMap extends Component {
 
   componentWillReceiveProps (nextProps) {
     // console.log('shouldComponentUpdate', this.props);
-    this.checkNewProps(nextProps);
+    this.checkNewProps(this.props, nextProps);
   }
 
   componentDidMount () {
     this.checkAdaguc();
-    this.checkNewProps(this.props);
+    this.checkNewProps(null, this.props);
     window.addEventListener('resize', this._handleWindowResize);
     if (this.adaguc.initialized === false && this.props.webMapJSInitializedCallback && this.adaguc.webMapJS) {
       this.adaguc.initialized = true;
@@ -349,6 +358,11 @@ export default class ReactWMJSMap extends Component {
   }
 
   render () {
+    const controls = this.props.controls || {
+      buttonZoomOut: true,
+      buttonZoomHome: true,
+      buttonZoomIn: true
+    };
     return (<div className={'ReactWMJSMap'}
       style={{ height:'100%', width:'100%', border:'none', display:'block', overflow:'hidden' }} >
       <div ref='adaguccontainer' style={{
@@ -370,21 +384,22 @@ export default class ReactWMJSMap extends Component {
         </div> */}
         {/* ReactWMJSZoomPanel */}
         <div className={'ReactWMJSZoomPanel'} style={{ color: 'black' }}>
-          <Button onClick={() => {
+          { controls.buttonZoomOut && <Button onClick={() => {
             this.adaguc.webMapJS && this.adaguc.webMapJS.zoomOut();
-          }}><Icon name='minus' /></Button>
-          <Button onClick={() => {
+          }}><Icon name='minus' /></Button> }
+          { controls.buttonZoomHome && <Button onClick={() => {
             this.adaguc.webMapJS && this.adaguc.webMapJS.zoomToLayer(this.adaguc.webMapJS.getActiveLayer());
-          }}><Icon name='home' /></Button>
-          <Button onClick={() => {
+          }}><Icon name='home' /></Button> }
+          { controls.buttonZoomIn && <Button onClick={() => {
             this.adaguc.webMapJS && this.adaguc.webMapJS.zoomIn();
-          }}><Icon name='plus' /></Button>
+          }}><Icon name='plus' /></Button> }
 
         </div>
         <div className='ReactWMJSLayerProps'>
           <div>{this.props.children}</div>
           <div>{this.drawFeatures(this.state.featureLayers)}</div>
         </div>
+        { this.props.passiveMap && <div className='ReactWMJSLayerProps' onClick={this.props.onClick} style={{ width: '100%', height: '100%' }} /> }
       </div>
     </div>);
   }
@@ -398,5 +413,10 @@ ReactWMJSMap.propTypes = {
   srs: PropTypes.string,
   children: PropTypes.array,
   id: PropTypes.string.isRequired,
-  dispatch: PropTypes.func
+  dispatch: PropTypes.func,
+  controls: PropTypes.object,
+  showScalebar: PropTypes.bool,
+  showLegend: PropTypes.bool,
+  passiveMap: PropTypes.bool,
+  onClick: PropTypes.func
 };
