@@ -5,7 +5,7 @@ import { debounce } from 'throttle-debounce';
 import { WMJSMap, WMJSLayer, WMJSBBOX } from 'adaguc-webmapjs';
 import tileRenderSettings from './tilesettings.json';
 import ReactWMJSLayer from './ReactWMJSLayer.jsx';
-import { layerSetStyles, layerChangeStyle, layerSetDimensions, mapChangeDimension } from './ReactWMJSActions';
+import { layerSetStyles, layerChangeStyle, layerSetDimensions, mapChangeDimension, mapStopAnimation } from './ReactWMJSActions';
 import { registerWMJSLayer, getWMJSLayerById, registerWMJSMap } from './ReactWMJSTools.jsx';
 import { parseWMJSLayerAndDispatchActions } from './ReactWMJSParseLayer.jsx';
 import { webMapJSReducer, WEBMAPJS_REDUCERNAME } from './ReactWMJSReducer';
@@ -330,6 +330,8 @@ export default class ReactWMJSMap extends Component {
     if (this.props.webMapJSInitializedCallback && this.props.layers && this.props.layers.length > 0) {
       this.props.webMapJSInitializedCallback(this.adaguc.webMapJS, false);
     }
+    const dispatch = this.props.dispatch ? this.props.dispatch : () => { };
+    dispatch(mapStopAnimation({ mapPanelId: this.props.id }));
     this.adaguc.webMapJS.destroy();
   }
   resize () {
