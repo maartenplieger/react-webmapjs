@@ -118,9 +118,12 @@ export default class ReactWMJSMap extends Component {
       this.adaguc.webMapJS.displayScaleBarInMap(props.showLegend !== false);
     }
     if (!prevProps || prevProps.showScalebar !== props.showScalebar) {
-      this.adaguc.webMapJS.displayLegendInMap(props.showLegend !== false);
+      this.adaguc.webMapJS.displayLegendInMap(props.showScalebar !== false);
     }
 
+    if (!prevProps || prevProps.enableInlineGetFeatureInfo !== props.enableInlineGetFeatureInfo) {
+      this.adaguc.webMapJS.enableInlineGetFeatureInfo(props.enableInlineGetFeatureInfo !== false);
+    }
     /* Check children */
     if (props.children) {
       const { children } = props;
@@ -355,6 +358,10 @@ export default class ReactWMJSMap extends Component {
             isInDeleteMode={layer.isInDeleteMode}
             drawMode={layer.drawMode}
             webmapjs={this.adaguc.webMapJS}
+            hoverFeatureCallback={(id) => {
+            }}
+            updateGeojson={(geojson) => {
+            }}
           />
         </div>);
     });

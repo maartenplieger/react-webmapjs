@@ -32,7 +32,7 @@ import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import tilesettings from '../src/tilesettings';
-
+import { simplePolygonGeoJSON, simplePointsGeojson } from './geojsonExamples';
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
 const reducerManager = createReducerManager({ root: rootReducer });
@@ -295,7 +295,7 @@ storiesOf('Simple layer manager', module).add('Simple Layer manager and Time sli
       <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
         <SimpleLayerManager
           store={window.store}
-          layers={[ radarLayer, dwdRadarLayer ]}
+          layers={[ radarLayer ]}
           mapId={'mapid_1'}
           layerNameMappings={[
             { layer: dwdWarningLayer, title: 'DWD Warnings' },
@@ -372,6 +372,28 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
+  }).add('Drawing GeoJSON Polygons', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...overLayer} />
+          <ReactWMJSLayer geojson={simplePolygonGeoJSON} isInEditMode drawMode={'POLYGON'} />
+        </ReactWMJSMap>
+      </div>
+    );
+    return story;
+  }).add('Drawing GeoJSON Points', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...overLayer} />
+          <ReactWMJSLayer geojson={simplePointsGeojson} />
+        </ReactWMJSMap>
+      </div>
+    );
+    return story;
   }).add('Custom GetFeatureInfo', () => {
     class Map extends Component {
       constructor (props) {
@@ -419,6 +441,7 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap
               id={generateMapId()}
+              enableInlineGetFeatureInfo={false}
               webMapJSInitializedCallback={(webMapJS) => {
                 /* Disable the map popup getfeatureinfo window */
                 webMapJS.enableInlineGetFeatureInfo(false);
