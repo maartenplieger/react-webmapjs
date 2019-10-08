@@ -372,6 +372,75 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
+  }).add('Custom GetFeatureInfo', () => {
+    class Map extends Component {
+      constructor (props) {
+        console.log('constructing');
+        super(props);
+        this.mapMouseClicked = this.mapMouseClicked.bind(this);
+        this.state = {
+          gfiUrl: 'Click on the map to trigger a getfeatureinfo.',
+          gfiResult: null
+        };
+      }
+      /**
+       * This function is triggered when the map is clicked
+       * @param {*} webMapJS The WebMapJS instance
+       * @param {*} mouse The mouse object from the webMapJS, contains the following props:
+       * {
+       *  map: <the same webmapjs instance>,
+       *  x: <X pixel coordinate on the map>,
+       *  y, <Y pixel coodinate on the map>
+       *  shiftKeyPressed: Whether the shiftkey is pressed or not
+       * }
+       */
+      mapMouseClicked (webMapJS, mouse) {
+        console.log('mouseclicked', mouse);
+        /* Compose the getfeatureinfo URL for a layer based on the map's pixel coordinates, use json as format */
+        const gfiUrl = webMapJS.getWMSGetFeatureInfoRequestURL(
+          getWMJSLayerById(radarLayer.id),
+          mouse.x,
+          mouse.y,
+          'application/json');
+        this.setState({ gfiUrl: gfiUrl });
+
+        /* Start fetching the obtained getfeatureinfo url */
+        fetch(gfiUrl, {
+          method: 'GET',
+          mode: 'cors'
+        }).then(data => {
+          return data.json();
+        }).then(data => {
+          this.setState({ gfiResult: data });
+        });
+      }
+      render () {
+        return (<div>
+          <div style={{ height: '100vh' }}>
+            <ReactWMJSMap
+              id={generateMapId()}
+              webMapJSInitializedCallback={(webMapJS) => {
+                /* Disable the map popup getfeatureinfo window */
+                webMapJS.enableInlineGetFeatureInfo(false);
+                /* Add a listener which is triggered when you click on the map */
+                webMapJS.addListener('mouseclicked', (mouse) => {
+                  this.mapMouseClicked(webMapJS, mouse);
+                }, true);
+              }}>
+              <ReactWMJSLayer {...baseLayer} />
+              <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
+              <ReactWMJSLayer {...overLayer} />
+            </ReactWMJSMap>
+          </div>
+          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '80%', fontSize: '11px' }}>
+            <div>URL: <pre>{this.state.gfiUrl}</pre></div>
+            <div>GetFeatureInfo result: <pre>{JSON.stringify(this.state.gfiResult, null, 2)}</pre></div>
+          </div>
+        </div>
+        );
+      }
+    };
+    return (<Map />);
   })
   .add('Map with radar animation', () => {
     var currentLatestDate;
