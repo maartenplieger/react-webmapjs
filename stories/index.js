@@ -240,7 +240,7 @@ const timesliderdemoStory = {
             ]}
           />
         </div>
-        <div style={{ position:'absolute', left:'200px', bottom: '10px', zIndex: '10000', right:'200px' }}>
+        <div style={{ position:'absolute', left:'200px', bottom: '20px', zIndex: '10000', right:'200px' }}>
           <SimpleTimeSlider
             store={window.store}
             mapId={'mapid_1'}
@@ -305,7 +305,7 @@ storiesOf('Simple layer manager', module).add('Simple Layer manager and Time sli
           ]}
         />
       </div>
-      <div style={{ position:'absolute', left:'200px', bottom: '10px', zIndex: '10000', right:'200px' }}>
+      <div style={{ position:'absolute', left:'200px', bottom: '20px', zIndex: '10000', right:'200px' }}>
         <SimpleTimeSlider
           store={window.store}
           mapId={'mapid_1'}
