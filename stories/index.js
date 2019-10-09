@@ -124,6 +124,15 @@ const dwdObservationsWetterLayer = {
   // headers: [{ name: 'Authorization', value: 'Basic ...' }]
 };
 
+const dwdObservationsWetterLayerWithHeader = {
+  service: 'https://maps.dwd.de/geoserver/dwd/Wetter_Beobachtungen/ows?',
+  name: 'Wetter_Beobachtungen',
+  style: 'Wetter_Symbole',
+  format: 'image/png',
+  enabled: true,
+  id: generateLayerId(),
+  headers: [{ name: 'authorization', value: 'Basic aW50cmFuZXQtdXNlcjpDQnMjMTEh' }]
+};
 // this needs authentication to work
 const dwdObservationsWindLayer = {
   service: 'https://maps.dwd.de/geoserver/dwd/Wetter_Beobachtungen/ows?',
@@ -247,6 +256,7 @@ const timesliderdemoStory = {
             mapId={'mapid_1'}
             startValue={moment.utc().subtract(6, 'h').toISOString()}
             endValue={moment.utc().add(-30, 'm').toISOString()}
+            interval={300}
             layerNameMappings={[
               { layer: dwdWarningLayer, title: 'DWD Warnings' },
               { layer: radarLayer, title: 'KNMI precipitation radar' },
@@ -312,6 +322,7 @@ storiesOf('Simple layer manager', module).add('Simple Layer manager and Time sli
           mapId={'mapid_1'}
           startValue={moment.utc().subtract(6, 'h').toISOString()}
           endValue={moment.utc().add(-5, 'm').toISOString()}
+          interval={300}
           layerNameMappings={[
             { layer: dwdWarningLayer, title: 'DWD Warnings' },
             { layer: radarLayer, title: 'KNMI precipitation radar' },
@@ -323,6 +334,7 @@ storiesOf('Simple layer manager', module).add('Simple Layer manager and Time sli
       { // second timeslider element can be used
         /* <div style={{ position:'absolute', left:'10px', bottom: '150px', zIndex: '10000', width:'500px' }}>
         <SimpleTimeSlider
+          interval={300}
           store={window.store}
           mapId={'mapid_1'}
           startValue={moment.utc().subtract(6, 'h').toISOString()}
@@ -794,6 +806,9 @@ storiesOf('ReactWMJSMap with redux', module)
           <span><Label>User name:</Label><Input type='text' onChange={(e) => { this.setState({ username: e.currentTarget.value }); }} /></span>
           <span><Label>Password:</Label><Input type='password' onChange={(e) => { this.setState({ password: e.currentTarget.value }); }} /></span>
           <span><Button onClick={() => { this.submit(); }}>Submit</Button></span>
+          <span><Button onClick={() => {
+            store.dispatch(setLayers({ layers: [ dwdObservationsWetterLayerWithHeader ], mapPanelId: 'mapid_1' }));
+          }}>SetLayers </Button></span>
         </div>);
       }
     };

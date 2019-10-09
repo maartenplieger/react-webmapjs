@@ -18,13 +18,13 @@ class SimpleTimeSlider extends Component {
     this.toggleAnimation = this.toggleAnimation.bind(this);
   }
   toggleAnimation () {
-    const { dispatch, mapId, startValue, endValue } = this.props;
+    const { dispatch, mapId, startValue, endValue, interval } = this.props;
     if (this.props.isAnimating !== true) {
       dispatch(mapStartAnimation({
         mapPanelId: mapId,
         start: startValue,
         end: endValue,
-        interval: 300
+        interval: interval || 300
       }));
     } else {
       dispatch(mapStopAnimation({
@@ -88,6 +88,7 @@ SimpleTimeSlider.propTypes = {
   mapId: PropTypes.string,
   startValue: PropTypes.string,
   endValue: PropTypes.string,
+  interval: PropTypes.number, /* In seconds */
   layerNameMappings: PropTypes.array,
   dimensions: PropTypes.array,
   isAnimating: PropTypes.bool

@@ -252,6 +252,15 @@ export const webMapJSReducer = (state = initialState, action = { type:null }) =>
         console.error('WEBMAPJS_SET_LAYERS, no layers defined');
         return state;
       }
+      /* Check for duplicate id's */
+      const s = {};
+      for (let j = 0; j < layersWithIds.length; j++) {
+        if (s[layersWithIds[j].id]) {
+          console.error('WEBMAPJS_SET_LAYERS, no layers have dupicate id\'s [' + layersWithIds[j].id + ']');
+          return state;
+        }
+        s[layersWithIds[j].id] = true;
+      }
       return produce(state, draft => {
         const mapPanelIndexFromAction = getMapPanelIndexFromAction(action, draft.webmapjs.mapPanel); if (mapPanelIndexFromAction === null) { return state; }
         const mapPanel = draft.webmapjs.mapPanel[mapPanelIndexFromAction];
