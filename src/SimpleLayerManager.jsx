@@ -17,7 +17,6 @@ const addAction = obj => ({ type: REDUXREACTCOUNTERDEMO_ADD, payload: obj });
 
 /* Define the initial state */
 const initialState = {
-  value : 123
 };
 
 /* Reducer which adds its data into the store; the location inside the store is specified by the reducer name and the id from the action */
@@ -63,7 +62,7 @@ class SimpleLayerManager extends Component {
               return (
                 <div className='reactwebmapjs-simplelayermanager-layercontainer' key={key}>
                   <div>
-                    <input type='checkbox' defaultChecked={layer.enabled} onChange={() => { dispatch(layerChangeEnabled({ layerId: layer.id, mapPanelId: mapId, enabled: !layer.enabled })); }} />
+                    <input type='checkbox' checked={layer.enabled} onChange={() => { dispatch(layerChangeEnabled({ layerId: layer.id, mapPanelId: mapId, enabled: !layer.enabled })); }} />
                     <label className='reactwebmapjs-simplelayermanager-layerlabel'>{getLayerTitle(layerNameMappings, layer)}</label>
                   </div>
                   <div>
@@ -71,9 +70,8 @@ class SimpleLayerManager extends Component {
                       className={'horizontal-slider'}
                       thumbClassName={'horizontal-slider-track'}
                       trackClassName={'horizontal-slider-thumb'}
-                      min={0} max={1} step={0.1} defaultValue={parseFloat(!layer.opacity && layer.opacity !== 0 ? 1 : layer.opacity)}
+                      min={0} max={1} step={0.1} value={parseFloat(!layer.opacity && layer.opacity !== 0 ? 1 : layer.opacity)}
                       onChange={(v) => {
-                        this.setState({ opacity: v });
                         let opacity = parseFloat(v);
                         dispatch(layerChangeOpacity({ layerId: layer.id, mapPanelId: mapId, opacity: opacity }));
                       }} />

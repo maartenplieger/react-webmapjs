@@ -250,6 +250,19 @@ const timesliderdemoStory = {
             ]}
           />
         </div>
+        <div style={{ position:'absolute', right:'10px', top: '10px', zIndex: '10000' }}>
+          <SimpleLayerManager
+            store={window.store}
+            layers={[ radarLayer, dwdRadarLayer, msgCppLayer ]}
+            mapId={'mapid_1'}
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: radarLayer, title: 'KNMI precipitation radar' },
+              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+              { layer: dwdRadarLayer, title: 'DWD Radar' }
+            ]}
+          />
+        </div>
         <div style={{ position:'absolute', left:'200px', bottom: '20px', zIndex: '10000', right:'200px' }}>
           <SimpleTimeSlider
             store={window.store}
