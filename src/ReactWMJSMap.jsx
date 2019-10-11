@@ -120,10 +120,12 @@ export default class ReactWMJSMap extends Component {
     if (!props) { return; }
     /* Check map props */
     if (!prevProps || prevProps.showLegend !== props.showLegend) {
-      this.adaguc.webMapJS.displayScaleBarInMap(props.showLegend !== false);
+      console.log(props.showLegend !== false, props);
+      this.adaguc.webMapJS.displayLegendInMap(props.showLegend !== false);
     }
-    if (!prevProps || prevProps.showScalebar !== props.showScalebar) {
-      this.adaguc.webMapJS.displayLegendInMap(props.showScalebar !== false);
+    if (!prevProps || prevProps.showScaleBar !== props.showScaleBar) {
+      console.log(props.showScaleBar !== false, props);
+      this.adaguc.webMapJS.displayScaleBarInMap(props.showScaleBar !== false);
     }
 
     if (!prevProps || prevProps.enableInlineGetFeatureInfo !== props.enableInlineGetFeatureInfo) {
@@ -432,7 +434,7 @@ ReactWMJSMap.propTypes = {
   id: PropTypes.string.isRequired,
   dispatch: PropTypes.func,
   controls: PropTypes.object,
-  showScalebar: PropTypes.bool,
+  showScaleBar: PropTypes.bool,
   showLegend: PropTypes.bool,
   passiveMap: PropTypes.bool,
   onClick: PropTypes.func
