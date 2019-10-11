@@ -33,6 +33,8 @@ import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import tilesettings from '../src/tilesettings';
 import { simplePolygonGeoJSON, simplePointsGeojson } from './geojsonExamples';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { meteoModal } from '../styles/stories.css'
 
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -877,6 +879,89 @@ storiesOf('ReactWMJSMap with redux', module)
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ConnectedUserNamePasswordModal store={window.store} />
+        </div>
+      </Provider>
+    );
+    return story;
+  }).add('recharts meteogram', () => {
+    class rechartsMeteogramComponent extends Component {
+      constructor (props) {
+        super(props);
+        this.submit = this.submit.bind(this);
+        this.state = {
+          newPlace: 'DE BILT',
+          displayPlace: 'DE BILT',
+          data: [{ name: 'Page A', uv: 400, pv: 2400, amt: 2400 }, { name: 'Page B', uv: 500, pv: 2500, amt: 2500 }]
+        };
+        this.isOpen = true;
+        this.toggleModal = this.toggleModal.bind(this);
+        this.submit();
+      }
+      toggleModal () {
+        console.log('this should set the state to isOpen=false');
+        this.isOpen = false;
+        // this.setState({ isOpen: false });
+        this.setState({ username: false });
+      }
+      submit () {
+        console.log('loadMeteoData()');
+        var dwdGeoserverBaseurl = 'https://maps.dwd.de/geoserver/dwd/';
+        var place = '\'' + this.state.newPlace + '\'';
+        var cqlfilter = '&CQL_FILTER=NAME = ' + place;
+        var weatherUrl = dwdGeoserverBaseurl + 'wfs' + '?version=1.0.0&request=GetFeature&typeName=dwd%3AMOSMIX_L_Punktterminprognosen&maxFeatures=5000&outputFormat=text/javascript&format_options=callback:warnJson' + cqlfilter;
+
+        var jquery = window.jQuery || window.$ || global.$ || global.jQuery;
+        $.ajax({
+          jsonpCallback: 'warnJson',
+          type: 'GET',
+          url: weatherUrl,
+          dataType: 'jsonp',
+          success: (data) => {
+            var metData = [];
+            Object.keys(data.features).forEach((key) => {
+              metData.push(
+                {
+                  'date': data.features[key].properties.FORECAST_TIME,
+                  // 'ttt': (data.features[key].properties.TTT - 273.15).toFixed(2)
+                  'ttt': data.features[key].properties.TTT - 273.15
+                  // "rr1c": data.features[key].properties.RR1c,
+                  // "ff":  data.features[key].properties.FF
+                });
+            });
+            console.log('metData', metData);
+            this.setState({ data: metData });
+            this.setState({ displayPlace: this.state.newPlace });
+          }
+        });
+      }
+      render () {
+        return (
+          <Modal size='xl' isOpen={this.isOpen} toggle={this.toggleModal}>
+            <ModalHeader toggle={this.toggleModal}>
+              Meteogram for {this.state.displayPlace}
+            </ModalHeader>
+            <ModalBody className={'meteoModal'}>
+              <LineChart width={900} height={300} data={this.state.data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <Line type='monotone' dataKey='ttt' stroke='#8884d8' />
+                <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
+                <XAxis dataKey='date' />
+                <YAxis />
+                <Tooltip />
+              </LineChart>
+              <span><Button onClick={() => { this.submit(); }}>Get forecast</Button></span>
+              <span><Input type='text' defaultValue='Query other location' onChange={(e) => { this.setState({ newPlace: e.currentTarget.value }); }} /></span>
+            </ModalBody>
+          </Modal>);
+      }
+    };
+    rechartsMeteogramComponent.propTypes = {
+      // dispatch: PropTypes.func
+    };
+    const ConnectedRechartsMeteogramModal = connect(mapStateToProps)(rechartsMeteogramComponent);
+    const story = (
+      <Provider store={window.store} >
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <ConnectedRechartsMeteogramModal store={window.store} />
         </div>
       </Provider>
     );
