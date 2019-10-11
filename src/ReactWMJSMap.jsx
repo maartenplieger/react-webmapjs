@@ -94,13 +94,18 @@ export default class ReactWMJSMap extends Component {
 
     this.adaguc.webMapJS.addListener('ondimchange', () => {
       // console.log('ondimchange' + this.adaguc.webMapJS.getDimension('time').currentValue);
-      dispatch(mapChangeDimension({
-        mapPanelId: this.props.id,
-        dimension: {
-          name: 'time',
-          currentValue: this.adaguc.webMapJS.getDimension('time').currentValue
+      if (this.adaguc && this.adaguc.webMapJS) {
+        const timeDimension = this.adaguc.webMapJS.getDimension('time');
+        if (timeDimension) {
+          dispatch(mapChangeDimension({
+            mapPanelId: this.props.id,
+            dimension: {
+              name: 'time',
+              currentValue: timeDimension.currentValue
+            }
+          }));
         }
-      }));
+      }
     }, true);
 
     this.resize();
