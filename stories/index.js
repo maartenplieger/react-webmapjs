@@ -871,6 +871,7 @@ storiesOf('ReactWMJSMap with redux', module)
         };
         this.isOpen = true;
         this.toggleModal = this.toggleModal.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
       }
       toggleModal () {
         console.log('this should set the state to isOpen=false');
@@ -934,6 +935,11 @@ storiesOf('ReactWMJSMap with redux', module)
         // this.setState({ isOpen: false });
         this.setState({ username: false });
       }
+      handleKeyPress(target) {
+        if(target.charCode==13){
+          this.submit();    
+        } 
+      }
       submit () {
         console.log('loadMeteoData()');
         var dwdGeoserverBaseurl = 'https://maps.dwd.de/geoserver/dwd/';
@@ -977,6 +983,14 @@ storiesOf('ReactWMJSMap with redux', module)
             console.log('metData', metData);
             this.setState({ data: metData });
             this.setState({ displayPlace: this.state.newPlace });
+            if ( metData.length === 0 ) {
+              this.setState({ displayPlace: 'No results for ' + this.state.newPlace });
+              console.log('no results found');
+            }
+          },
+          error: (data) => {
+            console.log('getMeteoData failed');
+            this.setState({ displayPlace: 'ERROR (request failed, geoserver login is required)' });
           }
         });
       }
@@ -991,7 +1005,7 @@ storiesOf('ReactWMJSMap with redux', module)
                 <LineChart data={this.state.data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                   <Line type='monotone' dataKey='ttt' stroke='#8884d8' dot={false} isAnimationActive={false}/>
                   <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
-                  <XAxis dataKey='date' dy={10} tickFormatter = {(unixTime) => moment(unixTime).format('DD. HH')}/>
+                  <XAxis dataKey='date' dy={10} tickFormatter = {(unixTime) => moment(unixTime).format('DD. HH[h]')}/>
                   {/* <YAxis label='Temperature 2m' angle={-90} /> */}
                   <YAxis />
                   <Tooltip formatter={(value) => value.toFixed(2)}/>
@@ -999,7 +1013,7 @@ storiesOf('ReactWMJSMap with redux', module)
               </ResponsiveContainer>
             </ModalBody>
             <ModalFooter>
-            <span><Input type='text' placeholder='Query other location' onChange={(e) => { this.setState({ newPlace: e.currentTarget.value.toUpperCase() }); }} /></span>
+            <span><Input type='text' placeholder='Query other location' onKeyPress={(e) => { this.handleKeyPress(e); }} onChange={(e) => { this.setState({ newPlace: e.currentTarget.value.toUpperCase() }); }} /></span>
             <span><Button onClick={() => { this.submit(); }}>Get forecast</Button></span>
             </ModalFooter>
           </Modal>);
