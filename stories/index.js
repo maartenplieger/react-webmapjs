@@ -32,8 +32,9 @@ import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import tilesettings from '../src/tilesettings';
-import { simplePolygonGeoJSON, simplePointsGeojson } from './geojsonExamples';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { simplePolygonGeoJSON, simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON } from './geojsonExamples';
+
 import { meteoModal } from '../styles/stories.css'
 
 // Initialize the store.
@@ -409,7 +410,37 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
-  }).add('Custom GetFeatureInfo as JSON', () => {
+  }).add('Drawing FlightRoute via GeoJSON Points', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...overLayer} />
+          <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
+        </ReactWMJSMap>
+      </div>
+    );
+    return story;
+  })
+  
+  
+  
+  .add('Drawing FlightRoute via GeoJSON LineString', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...overLayer} />
+          <ReactWMJSLayer geojson={simpleFlightRouteLineStringGeoJSON} />
+        </ReactWMJSMap>
+      </div>
+    );
+    return story;
+  })
+  
+  
+  
+  .add('Custom GetFeatureInfo as JSON', () => {
     class Map extends Component {
       constructor (props) {
         console.log('constructing');
