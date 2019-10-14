@@ -34,6 +34,8 @@ import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import tilesettings from '../src/tilesettings';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePolygonGeoJSON, simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON } from './geojsonExamples';
+import { simplify } from '@turf/turf';
+import { fetchJsonp } from 'fetch-jsonp';
 
 import { meteoModal } from '../styles/stories.css'
 
@@ -440,26 +442,55 @@ storiesOf('ReactWMJSMap', module)
         this.state = {
           gaforUrl: 'https://maps.dwd.de/geoserver/dwd/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=dwd%3AGAFOR&maxFeatures=550&outputFormat=text/javascript&format_options=callback:gaforJsonp&CQL_FILTER=LBZ_NAME = \'West\'',
           gaforResult: null,
+          gaforResultSimplified: null,
           points: 0,
-          features: 0
+          features: 0,
+          pointsSimple: 0,
+          featuresSimple: 0
         };
       }
       componentDidMount () {
         console.log('getting GAFOR');
+
+        // TODO switch to fetch instead of jquery
+
+        // console.log('via fetch-jsonp');
+        // fetchJsonp(this.state.gaforUrl, {
+        //   jsonpCallback: 'gaforJsonp',
+        // })
+        // .then(function(response) {
+        //   return response.json()
+        // }).then(function(json) {
+        //   console.log('parsed json', json)
+        // }).catch(function(ex) {
+        //   console.log('parsing failed', ex)
+        // });
+
         $.ajax({
           jsonpCallback: 'gaforJsonp',
           type: 'GET',
           url: this.state.gaforUrl,
           dataType: 'jsonp',
           success: (data) => {
-            this.setState({ gaforResult: data });
-            console.log('gaforData', data);
+
             var points = 0;
             Object.keys(data.features).forEach((key) => {
               points += data.features[key].geometry.coordinates[0].length;
             });
             console.log( points + ' points in ' + data.features.length + ' features in total' );
-            this.setState({ points: points, features: data.features.length});
+
+            // try to simplify the polyongs
+            var options = {tolerance: 0.01, highQuality: true};
+            var gaforResultSimplified = simplify(data, options);
+
+            var pointsSimple = 0;
+            Object.keys(gaforResultSimplified.features).forEach((key) => {
+              pointsSimple += gaforResultSimplified.features[key].geometry.coordinates[0].length;
+            });
+            console.log( pointsSimple + ' points in ' + gaforResultSimplified.features.length + ' features in total' );
+
+            this.setState({ gaforResult: data, points: points, features: data.features.length});
+            this.setState({ gaforResultSimplified: gaforResultSimplified, pointsSimple: pointsSimple, featuresSimple: gaforResultSimplified.features.length });
           }
         });
       }
@@ -468,12 +499,13 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false}  bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
-              <ReactWMJSLayer geojson={this.state.gaforResult} />
+              <ReactWMJSLayer geojson={this.state.gaforResultSimplified} />
             </ReactWMJSMap>
           </div>
           <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
             <div>WFS JSONP URL: <pre>{this.state.gaforUrl}</pre></div>
             <div>WFS returned {this.state.points} points in {this.state.features} features</div>
+            <div>WFS simplified {this.state.pointsSimple} points in {this.state.featuresSimple} features</div>
           </div>
         </div>
         );
