@@ -421,11 +421,7 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
-  })
-  
-  
-  
-  .add('Drawing FlightRoute via GeoJSON LineString', () => {
+  }).add('Drawing FlightRoute via GeoJSON LineString', () => {
     const story = (
       <div style={{ height: '100vh' }}>
         <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
@@ -436,11 +432,103 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
-  })
-  
-  
-  
-  .add('Custom GetFeatureInfo as JSON', () => {
+  }).add('GAFOR-Polygons via WFS', () => {
+    class Map extends Component {
+      constructor (props) {
+        console.log('constructing');
+        super(props);
+        this.state = {
+          gaforUrl: 'https://maps.dwd.de/geoserver/dwd/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=dwd%3AGAFOR&maxFeatures=550&outputFormat=text/javascript&format_options=callback:gaforJsonp&CQL_FILTER=LBZ_NAME = \'West\'',
+          gaforResult: null,
+          points: 0,
+          features: 0
+        };
+      }
+      componentDidMount () {
+        console.log('getting GAFOR');
+        $.ajax({
+          jsonpCallback: 'gaforJsonp',
+          type: 'GET',
+          url: this.state.gaforUrl,
+          dataType: 'jsonp',
+          success: (data) => {
+            this.setState({ gaforResult: data });
+            console.log('gaforData', data);
+            var points = 0;
+            Object.keys(data.features).forEach((key) => {
+              points += data.features[key].geometry.coordinates[0].length;
+            });
+            console.log( points + ' points in ' + data.features.length + ' features in total' );
+            this.setState({ points: points, features: data.features.length});
+          }
+        });
+      }
+      render () {
+        return (<div>
+          <div style={{ height: '100vh' }}>
+            <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false}  bbox={[-2000000, 4000000, 3000000, 10000000]}>
+              <ReactWMJSLayer {...overLayer} />
+              <ReactWMJSLayer geojson={this.state.gaforResult} />
+            </ReactWMJSMap>
+          </div>
+          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
+            <div>WFS JSONP URL: <pre>{this.state.gaforUrl}</pre></div>
+            <div>WFS returned {this.state.points} points in {this.state.features} features</div>
+          </div>
+        </div>
+        );
+      }
+    };
+    return (<Map />);
+  }).add('Warning-Polygons via WFS', () => {
+    class Map extends Component {
+      constructor (props) {
+        console.log('constructing');
+        super(props);
+        this.state = {
+          warnUrl: 'https://maps.dwd.de/geoserver/dwd/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=dwd%3AWarnungen_Gemeinden_vereinigt&maxFeatures=9999&outputFormat=text/javascript&format_options=callback:warnJsonp',
+          warnResult: null,
+          points: 0,
+          features: 0
+        };
+      }
+      componentDidMount () {
+        console.log('getting Warnings');
+        $.ajax({
+          jsonpCallback: 'warnJsonp',
+          type: 'GET',
+          url: this.state.warnUrl,
+          dataType: 'jsonp',
+          success: (data) => {
+            this.setState({ warnResult: data });
+            console.log('gaforData', data);   
+            var points = 0;
+            Object.keys(data.features).forEach((key) => {
+              points += data.features[key].geometry.coordinates[0].length;
+            });
+            console.log( points + ' points in ' + data.features.length + ' features in total' );
+            this.setState({ points: points, features: data.features.length});
+          }
+        });
+      }
+      render () {
+        return (<div>
+          <div style={{ height: '100vh' }}>
+            <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false}  bbox={[-2000000, 4000000, 3000000, 10000000]}>
+              <ReactWMJSLayer {...overLayer} />
+              <ReactWMJSLayer geojson={this.state.warnResult} />
+            </ReactWMJSMap>
+          </div>
+          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
+            <div>WFS JSONP URL: <pre>{this.state.warnUrl}</pre></div>
+            <div>WFS result ({this.state.points} points in {this.state.features} features): <pre>{JSON.stringify(this.state.warnResult, null, 2)}</pre></div>
+          </div>
+          </div>
+        );
+      }
+    };
+    return (<Map />);
+  }).add('Custom GetFeatureInfo as JSON', () => {
     class Map extends Component {
       constructor (props) {
         console.log('constructing');
