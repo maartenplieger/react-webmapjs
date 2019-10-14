@@ -22,7 +22,7 @@ import { SimpleLayerManager,
 import Provider from '../storyComponents/Provider';
 import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
-import { Modal, ModalBody, ModalHeader, Button, Input, Label, Container } from 'reactstrap';
+import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Input, Label, Container } from 'reactstrap';
 import '../storyComponents/storybook.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -33,7 +33,7 @@ import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import tilesettings from '../src/tilesettings';
 import { simplePolygonGeoJSON, simplePointsGeojson } from './geojsonExamples';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { meteoModal } from '../styles/stories.css'
 
 // Initialize the store.
@@ -908,11 +908,26 @@ storiesOf('ReactWMJSMap with redux', module)
         var dwdGeoserverBaseurl = 'https://maps.dwd.de/geoserver/dwd/';
         var place = '\'' + this.state.newPlace + '\'';
         var cqlfilter = '&CQL_FILTER=NAME = ' + place;
-        var weatherUrl = dwdGeoserverBaseurl + 'wfs' + '?version=1.0.0&request=GetFeature&typeName=dwd%3AMOSMIX_L_Punktterminprognosen&maxFeatures=5000&outputFormat=text/javascript&format_options=callback:warnJson' + cqlfilter;
+        // JSONP via text/javascript
+        // JSON via application/json
+        var type = '&outputFormat=text/javascript' 
+        var options = '&format_options=callback:weatherJsonp'
+        /* Start fetching the obtained getfeatureinfo url */
+        var weatherUrl = dwdGeoserverBaseurl + 'wfs' + '?version=1.0.0&request=GetFeature&typeName=dwd%3AMOSMIX_L_Punktterminprognosen&maxFeatures=5000' + cqlfilter + type + options;
+
+        // fetch(weatherUrl, {
+        //   method: 'GET',
+        //   mode: 'cors'
+        // }).then(data => {
+        //   // return data.json();
+        // }).then(data => {
+        //   console.log('fetch response: ', data);
+        // });
 
         var jquery = window.jQuery || window.$ || global.$ || global.jQuery;
+        // TODO switch to fetch for query
         $.ajax({
-          jsonpCallback: 'warnJson',
+          jsonpCallback: 'weatherJsonp',
           type: 'GET',
           url: weatherUrl,
           dataType: 'jsonp',
@@ -940,17 +955,22 @@ storiesOf('ReactWMJSMap with redux', module)
             <ModalHeader toggle={this.toggleModal}>
               Meteogram for {this.state.displayPlace}
             </ModalHeader>
-            <ModalBody className={'meteoModal'}>
-              <LineChart width={900} height={300} data={this.state.data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <Line type='monotone' dataKey='ttt' stroke='#8884d8' />
-                <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
-                <XAxis dataKey='date' />
-                <YAxis />
-                <Tooltip />
-              </LineChart>
-              <span><Button onClick={() => { this.submit(); }}>Get forecast</Button></span>
-              <span><Input type='text' defaultValue='Query other location' onChange={(e) => { this.setState({ newPlace: e.currentTarget.value }); }} /></span>
+            <ModalBody style={{height: '300px'}}>
+              <ResponsiveContainer height='100%' width='100%'>
+                <LineChart data={this.state.data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                  <Line type='monotone' dataKey='ttt' stroke='#8884d8' dot={false} isAnimationActive={false}/>
+                  <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
+                  <XAxis dataKey='date' dy={10} tickFormatter = {(unixTime) => moment(unixTime).format('DD. HH')}/>
+                  {/* <YAxis label='Temperature 2m' angle={-90} /> */}
+                  <YAxis />
+                  <Tooltip formatter={(value) => value.toFixed(2)}/>
+                </LineChart>
+              </ResponsiveContainer>
             </ModalBody>
+            <ModalFooter>
+            <span><Input type='text' placeholder='Query other location' onChange={(e) => { this.setState({ newPlace: e.currentTarget.value.toUpperCase() }); }} /></span>
+            <span><Button onClick={() => { this.submit(); }}>Get forecast</Button></span>
+            </ModalFooter>
           </Modal>);
       }
     };
