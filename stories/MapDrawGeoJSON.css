@@ -1,0 +1,36 @@
+  .MapDrawGeoJSONContainer {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    grid-template-rows: 150px 1fr;
+    grid-template-areas: "map controls"
+                         "map textarea";
+    width:100%;
+    height:100vh;
+  }
+
+  .MapDrawGeoJSONMapContainer {
+    grid-area: map;
+    width:100%;
+    height:100%;
+  }
+
+  .MapDrawGeoJSONTextAreaContainer {
+    grid-area: textarea;
+    width:100%;
+    height:100%;
+  }
+
+
+.MapDrawGeoJSONTextArea {
+  padding:0;
+  border:none;
+  width:100%;
+  height:100%;
+  font-size:10px;
+};
+
+.MapDrawGeoJSONControlsContainer{
+  grid-area: controls;
+  width:100%;
+  height:100%;
+}

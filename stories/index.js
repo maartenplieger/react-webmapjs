@@ -32,13 +32,15 @@ import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import tilesettings from '../src/tilesettings';
+import MapDrawGeoJSON from './MapDrawGeoJSON';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePolygonGeoJSON, simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON } from './geojsonExamples';
 import { simplify, pointsWithinPolygon, multiLineString, lineIntersect } from '@turf/turf';
 import { fetchJsonp } from 'fetch-jsonp';
-
 import { meteoModal } from '../styles/stories.css';
 
+import '../styles/stories.css';
+const $ = window.jQuery || window.$ || global.$ || global.jQuery;
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
 const reducerManager = createReducerManager({ root: rootReducer });
@@ -255,6 +257,19 @@ const timesliderdemoStory = {
             ]}
           />
         </div>
+        <div style={{ position:'absolute', right:'10px', top: '10px', zIndex: '10000' }}>
+          <SimpleLayerManager
+            store={window.store}
+            layers={[ radarLayer, dwdRadarLayer, msgCppLayer ]}
+            mapId={'mapid_1'}
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: radarLayer, title: 'KNMI precipitation radar' },
+              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+              { layer: dwdRadarLayer, title: 'DWD Radar' }
+            ]}
+          />
+        </div>
         <div style={{ position:'absolute', left:'200px', bottom: '20px', zIndex: '10000', right:'200px' }}>
           <SimpleTimeSlider
             store={window.store}
@@ -390,18 +405,14 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
-  }).add('Drawing GeoJSON Polygons', () => {
+  }).add('Drawing and editing GeoJSON', () => {
     const story = (
       <div style={{ height: '100vh' }}>
-        <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
-          <ReactWMJSLayer {...baseLayer} />
-          <ReactWMJSLayer {...overLayer} />
-          <ReactWMJSLayer geojson={simplePolygonGeoJSON} isInEditMode drawMode={'POLYGON'} />
-        </ReactWMJSMap>
+        <MapDrawGeoJSON />
       </div>
     );
     return story;
-  }).add('Drawing GeoJSON Points', () => {
+  }).add('Display GeoJSON Points', () => {
     const story = (
       <div style={{ height: '100vh' }}>
         <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
@@ -1234,7 +1245,6 @@ storiesOf('ReactWMJSMap with redux', module)
         //   console.log('fetch response: ', data);
         // });
 
-        var jquery = window.jQuery || window.$ || global.$ || global.jQuery;
         // TODO switch to fetch for query
         $.ajax({
           jsonpCallback: 'weatherJsonp',
@@ -1286,7 +1296,13 @@ storiesOf('ReactWMJSMap with redux', module)
               </ResponsiveContainer>
             </ModalBody>
             <ModalFooter>
-              <span><Input type='text' placeholder='Query other location' onKeyPress={(e) => { this.handleKeyPress(e); }} onChange={(e) => { this.setState({ newPlace: e.currentTarget.value.toUpperCase() }); }} /></span>
+              <span>
+                <Input
+                  type='text'
+                  placeholder='Query other location'
+                  onKeyPress={(e) => { this.handleKeyPress(e); }}
+                  onChange={(e) => { this.setState({ newPlace: e.currentTarget.value.toUpperCase() }); }} />
+              </span>
               <span><Button onClick={() => { this.submit(); }}>Get forecast</Button></span>
             </ModalFooter>
           </Modal>);
