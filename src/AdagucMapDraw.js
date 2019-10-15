@@ -2,6 +2,21 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Enum from 'es6-enum';
 import cloneDeep from 'lodash.clonedeep';
+let Proj4js = window.proj4;
+// Cache for for storing and reusing Proj4 instances
+var projectorCache = {};
+
+// Ensure that you have a Proj4 object, pulling from the cache if necessary
+var getProj4 = (projection) => {
+  if (projection instanceof Proj4js.Proj) {
+    return projection;
+  } else if (projection in projectorCache) {
+    return projectorCache[projection];
+  } else {
+    projectorCache[projection] = new Proj4js.Proj(projection);
+    return projectorCache[projection];
+  }
+};
 
 export const emptyGeoJSON = {
   'type': 'FeatureCollection',
@@ -158,12 +173,20 @@ export default class AdagucMapDraw extends PureComponent {
 
   getPixelCoordFromGeoCoord (featureCoords) {
     const { webmapjs } = this.props;
-
+    const { width, height } = webmapjs.getSize();
+    const bbox = webmapjs.getBBOX();
+    const proj = webmapjs.getProj4();
     const XYCoords = [];
+
+    var from = getProj4(proj.lonlat);
+    var to = getProj4(proj.crs);
+
     for (let j = 0; j < featureCoords.length; j++) {
       if (featureCoords[j].length < 2) continue;
       let coordinates = { x: featureCoords[j][0], y: featureCoords[j][1] };
-      const { x, y } = webmapjs.getPixelCoordFromLatLong(coordinates);
+      coordinates = proj.proj4.transform(from, to, coordinates);
+      const x = (width * (coordinates.x - bbox.left)) / (bbox.right - bbox.left);
+      const y = (height * (coordinates.y - bbox.top)) / (bbox.bottom - bbox.top);
       XYCoords.push({ x: x, y: y });
     }
     return XYCoords;
