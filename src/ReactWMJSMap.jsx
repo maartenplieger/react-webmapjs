@@ -120,11 +120,9 @@ export default class ReactWMJSMap extends Component {
     if (!props) { return; }
     /* Check map props */
     if (!prevProps || prevProps.showLegend !== props.showLegend) {
-      console.log(props.showLegend !== false, props);
       this.adaguc.webMapJS.displayLegendInMap(props.showLegend !== false);
     }
     if (!prevProps || prevProps.showScaleBar !== props.showScaleBar) {
-      console.log(props.showScaleBar !== false, props);
       this.adaguc.webMapJS.displayScaleBarInMap(props.showScaleBar !== false);
     }
 
@@ -368,9 +366,15 @@ export default class ReactWMJSMap extends Component {
             drawMode={layer.drawMode}
             webmapjs={this.adaguc.webMapJS}
             hoverFeatureCallback={(id) => {
+              if (layer.hoverFeatureCallback) layer.hoverFeatureCallback(id);
             }}
             updateGeojson={(geojson) => {
+              if (layer.updateGeojson) layer.updateGeojson(geojson);
             }}
+            exitDrawModeCallback={() => {
+              if (layer.exitDrawModeCallback) layer.exitDrawModeCallback();
+            }}
+            featureNrToEdit={parseInt(layer.featureNrToEdit || 0)}
           />
         </div>);
     });
