@@ -100,7 +100,10 @@ export const simpleFlightRoutePointsGeoJSON = {
   'features': [
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
@@ -111,7 +114,10 @@ export const simpleFlightRoutePointsGeoJSON = {
     },
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
@@ -122,7 +128,10 @@ export const simpleFlightRoutePointsGeoJSON = {
     },
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
@@ -133,7 +142,10 @@ export const simpleFlightRoutePointsGeoJSON = {
     },
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
@@ -144,7 +156,10 @@ export const simpleFlightRoutePointsGeoJSON = {
     },
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
@@ -155,7 +170,10 @@ export const simpleFlightRoutePointsGeoJSON = {
     },
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
@@ -166,7 +184,10 @@ export const simpleFlightRoutePointsGeoJSON = {
     },
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
@@ -177,7 +198,10 @@ export const simpleFlightRoutePointsGeoJSON = {
     },
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
@@ -188,7 +212,10 @@ export const simpleFlightRoutePointsGeoJSON = {
     },
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'fill': 'red',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Point',
         'coordinates': [
