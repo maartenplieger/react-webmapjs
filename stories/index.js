@@ -659,7 +659,7 @@ storiesOf('ReactWMJSMap', module)
       }
     };
     return (<Map />);
-  }).add('Gafor along route', () => {
+  }).add('GAFOR along route via WFS CQL', () => {
     class Map extends Component {
       constructor (props) {
         super(props);
@@ -673,16 +673,23 @@ storiesOf('ReactWMJSMap', module)
         console.log('getting GAFOR');
         this.getWFSdata();
       }
-      getWFSdata () {
+      getWFSdata (cqlexpression = '') {
         $.ajax({
           jsonpCallback: 'gaforJsonp',
           type: 'GET',
-          url: this.state.gaforUrl + this.state.cqlfilter,
+          url: this.state.gaforUrl + cqlexpression,
           dataType: 'jsonp',
           success: (data) => {
-            this.setState({ gaforResult:  simplify(data, { tolerance: 0.05, highQuality: false }) });
+            this.setState({ gaforResult: simplify(data, { tolerance: 0.05, highQuality: false }), cqlfilter: cqlexpression });
           }
         });
+      }
+      applyCqlFilter () {
+        console.log('applying cql filter');
+        // TODO: optionally create linestring from points
+        var linestring = 'LINESTRING(53.630389+9.988228,%2052.460214+9.683522,%2050.033306+8.570456,%2048.689878+9.221964,%2049.4987+11.078008,%2048.353783+11.786086,%2049.142+12.0818,%2050.979811+10.958106,%2052.362247+13.500672)';
+        var cqlfilter = '&cql_filter=INTERSECTS(AREA_POLYGON_GEOGRAPHY%2C+' + linestring + ')';
+        this.getWFSdata(cqlfilter);
       }
       render () {
         console.log('rendering');
@@ -690,7 +697,7 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
-              <ReactWMJSLayer {...dwdGaforLayer} />
+              <ReactWMJSLayer {...dwdGaforLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
               <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
               <ReactWMJSLayer geojson={this.state.gaforResult} />
             </ReactWMJSMap>
@@ -698,12 +705,7 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '60%', fontSize: '11px' }}>
             <div>WFS JSONP URL: <pre>{this.state.gaforUrl}</pre></div>
             <div>CQL expression: <pre>{this.state.cqlfilter}</pre></div>
-            <div><Button onClick={() => {
-              console.log('CQL button clicked');
-              // this.setState({ gaforResult: null });
-              this.setState({ cqlfilter: '&cql_filter=INTERSECTS(AREA_POLYGON_GEOGRAPHY%2C+LINESTRING(53.630389+9.988228,%2052.460214+9.683522,%2050.033306+8.570456,%2048.689878+9.221964,%2049.4987+11.078008,%2048.353783+11.786086,%2049.142+12.0818,%2050.979811+10.958106,%2052.362247+13.500672))' });
-              this.getWFSdata();
-            }}>Query GAFOR along line (push twice)</Button></div>
+            <div><Button onClick={() => { this.applyCqlFilter(); }}>Query GAFOR along line</Button></div>
           </div>
         </div>
         );
