@@ -32,7 +32,7 @@ export default class SimpleDropDown extends React.Component {
     if (!list || !list.length) return (<div>Should provide a list.</div>);
     const selectedAsObj = this.getSelected(selected, list, title);
     return (
-      <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+      <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} style={{ display: 'inline' }}>
         <DropdownToggle caret>
           { selectedAsObj ? (selectedAsObj.value + '') : 'Key is not available ... (' + JSON.stringify(selected) + ')' }
         </DropdownToggle>

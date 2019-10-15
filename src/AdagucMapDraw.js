@@ -49,7 +49,11 @@ export const lineString = {
   'features': [
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'stroke' : '#66F',
+        'stroke-width' : 5,
+        'stroke-opacity': '1'
+      },
       'geometry': {
         'type': 'LineString',
         'coordinates': [
@@ -342,15 +346,15 @@ export default class AdagucMapDraw extends PureComponent {
     const feature = this.geojson.features[featureIndex];
     if (!feature || !feature.geometry) return;
     if (feature.geometry.type !== 'LineString') return;
-    let polyProps = feature.properties;
-    if (!polyProps) polyProps = this.defaultPolyProps;
+    let lineProps = feature.properties;
+    if (!lineProps) lineProps = this.defaultLineStringProps;
 
     /* Draw polygons and calculate center of poly */
     const middle = { x: 0, y: 0, nr: 0 };
 
-    ctx.strokeStyle = polyProps.stroke || this.defaultLineStringProps.stroke;
-    ctx.lineWidth = polyProps['stroke-width'] || this.defaultLineStringProps['stroke-width'];
-    ctx.fillStyle = polyProps.fill || this.defaultPolyProps.fill;
+    ctx.strokeStyle = lineProps.stroke || this.defaultLineStringProps.stroke;
+    ctx.lineWidth = lineProps['stroke-width'] || this.defaultLineStringProps['stroke-width'];
+    ctx.fillStyle = lineProps.fill || this.defaultLineStringProps.fill;
     // ctx.beginPath();
 
     const startCoord = XYCoords[0];
@@ -368,12 +372,12 @@ export default class AdagucMapDraw extends PureComponent {
     }
     // ctx.closePath();
 
-    ctx.globalAlpha = polyProps['fill-opacity'] || this.defaultPolyProps['fill-opacity'];
-    if (polyProps['fill-opacity'] === 0) {
+    ctx.globalAlpha = lineProps['fill-opacity'] || this.defaultLineStringProps['fill-opacity'];
+    if (lineProps['fill-opacity'] === 0) {
       ctx.globalAlpha = 0;
     }
     // ctx.fill();
-    ctx.globalAlpha = polyProps['stroke-opacity'] || this.defaultPolyProps['stroke-opacity'];
+    ctx.globalAlpha = lineProps['stroke-opacity'] || this.defaultLineStringProps['stroke-opacity'];
     ctx.stroke();
     // let test = ctx.isPointInPath(this.mouseX, this.mouseY);
     // if (test) {
@@ -1436,7 +1440,6 @@ export default class AdagucMapDraw extends PureComponent {
     const { webmapjs } = this.props;
 
     /* When in addpolygon mode, finish the polygon */
-    
     if (this.myEditMode === this.EDITMODE.ADD_FEATURE) {
       this.myEditMode = this.EDITMODE.EMPTY;
       if (this.drawMode === this.DRAWMODE.POLYGON || this.drawMode === this.DRAWMODE.BOX) {

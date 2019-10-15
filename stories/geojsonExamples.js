@@ -3,7 +3,13 @@ export const simplePolygonGeoJSON = {
   'features': [
     {
       'type': 'Feature',
-      'properties': {},
+      'properties': {
+        'stroke': '#8F8',
+        'stroke-width': 4,
+        'stroke-opacity': 1,
+        'fill': '#33ccFF',
+        'fill-opacity': 0.5
+      },
       'geometry': {
         'type': 'Polygon',
         'coordinates': [

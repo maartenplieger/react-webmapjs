@@ -401,14 +401,14 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
-  }).add('Drawing GeoJSON Polygons', () => {
+  }).add('Drawing and editing GeoJSON', () => {
     const story = (
       <div style={{ height: '100vh' }}>
         <MapDrawGeoJSON />
       </div>
     );
     return story;
-  }).add('Drawing GeoJSON Points', () => {
+  }).add('Display GeoJSON Points', () => {
     const story = (
       <div style={{ height: '100vh' }}>
         <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
