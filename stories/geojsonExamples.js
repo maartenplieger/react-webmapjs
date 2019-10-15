@@ -95,6 +95,111 @@ export const simplePointsGeojson = {
   ]
 };
 
+export const simpleFlightRoutePointsGeoJSON = {
+  'type': 'FeatureCollection',
+  'features': [
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          9.988228,
+          53.630389
+        ]
+      }
+    },
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          9.683522,
+          52.460214
+        ]
+      }
+    },
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          8.570456,
+          50.033306
+        ]
+      }
+    },
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          9.221964,
+          48.689878
+        ]
+      }
+    },
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          11.078008,
+          49.4987
+        ]
+      }
+    },
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          11.786086,
+          48.353783
+        ]
+      }
+    },
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          12.0818,
+          49.142
+        ]
+      }
+    },
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          10.958106,
+          50.979811
+        ]
+      }
+    },
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'Point',
+        'coordinates': [
+          13.500672,
+          52.362247
+        ]
+      }
+    }
+  ]
+};
+
 export const simpleLineStringGeoJSON = {
   'type': 'FeatureCollection',
   'features': [
@@ -179,6 +284,57 @@ export const simpleBoxGeoJSON = {
               3.6764699246101573,
               60.0554711506609
             ]
+          ]
+        ]
+      }
+    }
+  ]
+};
+
+export const simpleFlightRouteLineStringGeoJSON = {
+  'type': 'FeatureCollection',
+  'features': [
+    {
+      'type': 'Feature',
+      'properties': {},
+      'geometry': {
+        'type': 'LineString',
+        'coordinates': [
+          [
+            9.988228,
+            53.630389
+          ],
+          [
+            9.683522,
+            52.460214
+          ],
+          [
+            8.570456,
+            50.033306
+          ],
+          [
+            9.221964,
+            48.689878
+          ],
+          [
+            11.078008,
+            49.4987
+          ],
+          [
+            11.786086,
+            48.353783
+          ],
+          [
+            12.0818,
+            49.142
+          ],
+          [
+            10.958106,
+            50.979811
+          ],
+          [
+            13.500672,
+            52.362247
           ]
         ]
       }

@@ -22,7 +22,7 @@ import { SimpleLayerManager,
 import Provider from '../storyComponents/Provider';
 import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
 import { mount } from 'enzyme';
-import { Modal, ModalBody, ModalHeader, Button, Input, Label, Container } from 'reactstrap';
+import { Modal, ModalBody, ModalHeader, ModalFooter, Button, Input, Label, Container } from 'reactstrap';
 import '../storyComponents/storybook.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -32,11 +32,12 @@ import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import tilesettings from '../src/tilesettings';
-import { simplePointsGeojson } from './geojsonExamples';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
-import '../styles/stories.css';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
-
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON } from './geojsonExamples';
+import { simplify } from '@turf/turf';
+import '../styles/stories.css';
+const $ = window.jQuery || window.$ || global.$ || global.jQuery;
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
 const reducerManager = createReducerManager({ root: rootReducer });
@@ -419,6 +420,155 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;
+  }).add('Drawing FlightRoute via GeoJSON Points', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...overLayer} />
+          <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
+        </ReactWMJSMap>
+      </div>
+    );
+    return story;
+  }).add('Drawing FlightRoute via GeoJSON LineString', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
+          <ReactWMJSLayer {...baseLayer} />
+          <ReactWMJSLayer {...overLayer} />
+          <ReactWMJSLayer geojson={simpleFlightRouteLineStringGeoJSON} />
+        </ReactWMJSMap>
+      </div>
+    );
+    return story;
+  }).add('GAFOR-Polygons via WFS', () => {
+    class Map extends Component {
+      constructor (props) {
+        console.log('constructing');
+        super(props);
+        this.state = {
+          gaforUrl: 'https://maps.dwd.de/geoserver/dwd/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=dwd%3AGAFOR&maxFeatures=550&' +
+          'outputFormat=text/javascript&format_options=callback:gaforJsonp&CQL_FILTER=LBZ_NAME = \'West\'',
+          gaforResult: null,
+          gaforResultSimplified: null,
+          points: 0,
+          features: 0,
+          pointsSimple: 0,
+          featuresSimple: 0
+        };
+      }
+      componentDidMount () {
+        console.log('getting GAFOR');
+
+        // TODO switch to fetch instead of jquery
+
+        // console.log('via fetch-jsonp');
+        // fetchJsonp(this.state.gaforUrl, {
+        //   jsonpCallback: 'gaforJsonp',
+        // })
+        // .then(function(response) {
+        //   return response.json()
+        // }).then(function(json) {
+        //   console.log('parsed json', json)
+        // }).catch(function(ex) {
+        //   console.log('parsing failed', ex)
+        // });
+
+        $.ajax({
+          jsonpCallback: 'gaforJsonp',
+          type: 'GET',
+          url: this.state.gaforUrl,
+          dataType: 'jsonp',
+          success: (data) => {
+            var points = 0;
+            Object.keys(data.features).forEach((key) => {
+              points += data.features[key].geometry.coordinates[0].length;
+            });
+            console.log(points + ' points in ' + data.features.length + ' features in total');
+
+            // try to simplify the polyongs
+            var options = { tolerance: 0.01, highQuality: true };
+            var gaforResultSimplified = simplify(data, options);
+
+            var pointsSimple = 0;
+            Object.keys(gaforResultSimplified.features).forEach((key) => {
+              pointsSimple += gaforResultSimplified.features[key].geometry.coordinates[0].length;
+            });
+            console.log(pointsSimple + ' points in ' + gaforResultSimplified.features.length + ' features in total');
+
+            this.setState({ gaforResult: data, points: points, features: data.features.length });
+            this.setState({ gaforResultSimplified: gaforResultSimplified, pointsSimple: pointsSimple, featuresSimple: gaforResultSimplified.features.length });
+          }
+        });
+      }
+      render () {
+        return (<div>
+          <div style={{ height: '100vh' }}>
+            <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
+              <ReactWMJSLayer {...overLayer} />
+              <ReactWMJSLayer geojson={this.state.gaforResultSimplified} />
+            </ReactWMJSMap>
+          </div>
+          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
+            <div>WFS JSONP URL: <pre>{this.state.gaforUrl}</pre></div>
+            <div>WFS returned {this.state.points} points in {this.state.features} features</div>
+            <div>WFS simplified {this.state.pointsSimple} points in {this.state.featuresSimple} features</div>
+          </div>
+        </div>
+        );
+      }
+    };
+    return (<Map />);
+  }).add('Warning-Polygons via WFS', () => {
+    class Map extends Component {
+      constructor (props) {
+        console.log('constructing');
+        super(props);
+        this.state = {
+          warnUrl: 'https://maps.dwd.de/geoserver/dwd/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=dwd%3AWarnungen_Gemeinden_vereinigt&' +
+          'maxFeatures=9999&outputFormat=text/javascript&format_options=callback:warnJsonp',
+          warnResult: null,
+          points: 0,
+          features: 0
+        };
+      }
+      componentDidMount () {
+        console.log('getting Warnings');
+        $.ajax({
+          jsonpCallback: 'warnJsonp',
+          type: 'GET',
+          url: this.state.warnUrl,
+          dataType: 'jsonp',
+          success: (data) => {
+            this.setState({ warnResult: data });
+            console.log('gaforData', data);
+            var points = 0;
+            Object.keys(data.features).forEach((key) => {
+              points += data.features[key].geometry.coordinates[0].length;
+            });
+            console.log(points + ' points in ' + data.features.length + ' features in total');
+            this.setState({ points: points, features: data.features.length });
+          }
+        });
+      }
+      render () {
+        return (<div>
+          <div style={{ height: '100vh' }}>
+            <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
+              <ReactWMJSLayer {...overLayer} />
+              <ReactWMJSLayer geojson={this.state.warnResult} />
+            </ReactWMJSMap>
+          </div>
+          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
+            <div>WFS JSONP URL: <pre>{this.state.warnUrl}</pre></div>
+            <div>WFS result ({this.state.points} points in {this.state.features} features): <pre>{JSON.stringify(this.state.warnResult, null, 2)}</pre></div>
+          </div>
+        </div>
+        );
+      }
+    };
+    return (<Map />);
   }).add('Custom GetFeatureInfo as JSON', () => {
     class Map extends Component {
       constructor (props) {
@@ -850,6 +1000,7 @@ storiesOf('ReactWMJSMap with redux', module)
         };
         this.isOpen = true;
         this.toggleModal = this.toggleModal.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
       }
       toggleModal () {
         console.log('this should set the state to isOpen=false');
@@ -913,17 +1064,35 @@ storiesOf('ReactWMJSMap with redux', module)
         // this.setState({ isOpen: false });
         this.setState({ username: false });
       }
+      handleKeyPress (target) {
+        if (target.charCode === 13) {
+          this.submit();
+        }
+      }
       submit () {
         console.log('loadMeteoData()');
         var dwdGeoserverBaseurl = 'https://maps.dwd.de/geoserver/dwd/';
         var place = '\'' + this.state.newPlace + '\'';
         var cqlfilter = '&CQL_FILTER=NAME = ' + place;
-        var weatherUrl = dwdGeoserverBaseurl + 'wfs' + '?version=1.0.0&request=GetFeature&typeName=dwd%3AMOSMIX_L_Punktterminprognosen&' +
-        'maxFeatures=5000&outputFormat=text/javascript&format_options=callback:warnJson' + cqlfilter;
+        // JSONP via text/javascript
+        // JSON via application/json
+        var type = '&outputFormat=text/javascript';
+        var options = '&format_options=callback:weatherJsonp';
+        /* Start fetching the obtained getfeatureinfo url */
+        var weatherUrl = dwdGeoserverBaseurl + 'wfs' + '?version=1.0.0&request=GetFeature&typeName=dwd%3AMOSMIX_L_Punktterminprognosen&maxFeatures=5000' + cqlfilter + type + options;
 
-        var $ = window.jQuery || window.$ || global.$ || global.jQuery;
+        // fetch(weatherUrl, {
+        //   method: 'GET',
+        //   mode: 'cors'
+        // }).then(data => {
+        //   // return data.json();
+        // }).then(data => {
+        //   console.log('fetch response: ', data);
+        // });
+
+        // TODO switch to fetch for query
         $.ajax({
-          jsonpCallback: 'warnJson',
+          jsonpCallback: 'weatherJsonp',
           type: 'GET',
           url: weatherUrl,
           dataType: 'jsonp',
@@ -942,6 +1111,14 @@ storiesOf('ReactWMJSMap with redux', module)
             console.log('metData', metData);
             this.setState({ data: metData });
             this.setState({ displayPlace: this.state.newPlace });
+            if (metData.length === 0) {
+              this.setState({ displayPlace: 'No results for ' + this.state.newPlace });
+              console.log('no results found');
+            }
+          },
+          error: (data) => {
+            console.log('getMeteoData failed');
+            this.setState({ displayPlace: 'ERROR (request failed, geoserver login is required)' });
           }
         });
       }
@@ -951,17 +1128,28 @@ storiesOf('ReactWMJSMap with redux', module)
             <ModalHeader toggle={this.toggleModal}>
               Meteogram for {this.state.displayPlace}
             </ModalHeader>
-            <ModalBody className={'meteoModal'}>
-              <LineChart width={900} height={300} data={this.state.data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <Line type='monotone' dataKey='ttt' stroke='#8884d8' />
-                <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
-                <XAxis dataKey='date' />
-                <YAxis />
-                <Tooltip />
-              </LineChart>
-              <span><Button onClick={() => { this.submit(); }}>Get forecast</Button></span>
-              <span><Input type='text' defaultValue='Query other location' onChange={(e) => { this.setState({ newPlace: e.currentTarget.value }); }} /></span>
+            <ModalBody style={{ height: '300px' }}>
+              <ResponsiveContainer height='100%' width='100%'>
+                <LineChart data={this.state.data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                  <Line type='monotone' dataKey='ttt' stroke='#8884d8' dot={false} isAnimationActive={false} />
+                  <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
+                  <XAxis dataKey='date' dy={10} tickFormatter={(unixTime) => moment(unixTime).format('DD. HH[h]')} />
+                  {/* <YAxis label='Temperature 2m' angle={-90} /> */}
+                  <YAxis />
+                  <Tooltip formatter={(value) => value.toFixed(2)} />
+                </LineChart>
+              </ResponsiveContainer>
             </ModalBody>
+            <ModalFooter>
+              <span>
+                <Input
+                  type='text'
+                  placeholder='Query other location'
+                  onKeyPress={(e) => { this.handleKeyPress(e); }}
+                  onChange={(e) => { this.setState({ newPlace: e.currentTarget.value.toUpperCase() }); }} />
+              </span>
+              <span><Button onClick={() => { this.submit(); }}>Get forecast</Button></span>
+            </ModalFooter>
           </Modal>);
       }
     };
