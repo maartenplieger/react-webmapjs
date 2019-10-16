@@ -26,8 +26,16 @@ const dwdGaforLayer = {
   id: generateLayerId()
 };
 
+const dwdFGGWSAirportsLayer = {
+  service: 'https://maps.dwd.de/geoserver/dwd/FG_GWS_Airports/ows?',
+  name: 'FG_GWS_Airports',
+  format: 'image/png',
+  enabled: true,
+  id: generateLayerId()
+};
+
 const baseLayer = {
-  name:'WorldMap_Light_Grey_Canvas',
+  name:'OpenStreetMap_Service',
   type: 'twms',
   baseLayer: true,
   enabled:true,
@@ -62,7 +70,7 @@ export default class drawPolyStory extends Component {
       return;
     }
     /* Split the line in smaller segments for projection from lat/lon to mercator artifacts */
-    const linePointsFeatures = lineChunk(this.state.geojson.features[0], 10);
+    const linePointsFeatures = lineChunk(this.state.geojson.features[0], 50);
     /* Merge the features back into one */
     const linePoints = linePointsFeatures.features.map(lineSegment => { return lineSegment.geometry.coordinates[0]; });
     linePoints.push(linePointsFeatures.features[linePointsFeatures.features.length - 1].geometry.coordinates[1]);
@@ -175,6 +183,7 @@ export default class drawPolyStory extends Component {
           >
             <ReactWMJSLayer {...baseLayer} />
             <ReactWMJSLayer {...dwdGaforLayer} />
+            {/* <ReactWMJSLayer {...dwdFGGWSAirportsLayer} /> */}
             <ReactWMJSLayer
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
