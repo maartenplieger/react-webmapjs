@@ -41,6 +41,7 @@ import { simplify, pointsWithinPolygon, multiLineString, lineIntersect } from '@
 // import { fetchJsonp } from 'fetch-jsonp';
 
 import '../styles/stories.css';
+import produce from 'immer';
 const $ = window.jQuery || window.$ || global.$ || global.jQuery;
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -698,7 +699,34 @@ storiesOf('ReactWMJSMap', module)
           url: this.state.gaforUrl + cqlexpression,
           dataType: 'jsonp',
           success: (data) => {
-            this.setState({ gaforResult: simplify(data, { tolerance: 0.05, highQuality: false }), cqlfilter: cqlexpression });
+            const gaforResulta = simplify(data, { tolerance: 0.025, highQuality: false });
+            const colorMap = {
+              '0': '#000',
+              '1': '#3F3',
+              '2': '#6F6',
+              '3': '#9F9',
+              '4': '#AFA',
+              '5': '#CFC'
+            };
+            const gaforResult = produce(gaforResulta, draft => {
+              draft.features = draft.features.filter(feature => feature.geometry.type === 'Polygon');
+              draft.features.forEach((feature) => {
+                if (!feature.properties) feature.properties = {};
+                feature.properties.stroke = '#333';
+                feature.properties['stroke-width'] = 0.5;
+                feature.properties.fill = '#444';
+                if (feature.properties.GAFOR_CODE_ID) {
+                  const { GAFOR_CODE_ID } = feature.properties;
+                  if (colorMap[GAFOR_CODE_ID]) {
+                    feature.properties.fill = colorMap[GAFOR_CODE_ID];
+                  }
+                }
+              });
+            });
+            this.setState({
+              gaforResult: gaforResult,
+              cqlfilter: cqlexpression
+            });
           }
         });
       }
@@ -715,8 +743,8 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
-              <ReactWMJSLayer {...dwdGaforLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
-              <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
+              {/* <ReactWMJSLayer {...dwdGaforLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
+              <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} /> */}
               <ReactWMJSLayer geojson={this.state.gaforResult} />
             </ReactWMJSMap>
           </div>
@@ -736,7 +764,7 @@ storiesOf('ReactWMJSMap', module)
         console.log('constructing');
         super(props);
         this.state = {
-          warnUrl: 'https://maps.dwd.de/geoserver/dwd/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=dwd%3AWarnungen_Landkreise&maxFeatures=50&outputFormat=text/javascript&format_options=callback:warnJsonp',
+          warnUrl: 'https://maps.dwd.de/geoserver/dwd/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=dwd%3AWarnungen_Landkreise&maxFeatures=99999&outputFormat=text/javascript&format_options=callback:warnJsonp',
           warnResult: null,
           warnResultSimplified: null,
           points: 0,
@@ -764,14 +792,26 @@ storiesOf('ReactWMJSMap', module)
             var options = { tolerance: 0.01, highQuality: true };
             var warnResultSimplified = simplify(data, options);
 
-            var pointsSimplified = 0;
-            Object.keys(warnResultSimplified.features).forEach((key) => {
-              pointsSimplified += warnResultSimplified.features[key].geometry.coordinates[0].length;
+            const warnResultSimplifiedWithStyle = produce(warnResultSimplified, draft => {
+              draft.features = draft.features.filter(feature => feature.geometry.type === 'Polygon');
+              draft.features.forEach((feature) => {
+                if (!feature.properties) feature.properties = {};
+                feature.properties.stroke = '#333';
+                feature.properties['stroke-width'] = 0.5;
+                feature.properties.fill = '#444';
+                if (feature.properties.EC_AREA_COLOR) {
+                  /* Change decimal colorcode to hex colorcode (255 255 0) => #FFFF00 */
+                  const { EC_AREA_COLOR } = feature.properties;
+                  const colorValues = EC_AREA_COLOR.split(' ');
+                  feature.properties.fill = '#' + ('00' + parseInt(colorValues[0]).toString(16)).substr(-2) +
+                                                ('00' + parseInt(colorValues[1]).toString(16)).substr(-2) +
+                                                ('00' + parseInt(colorValues[2]).toString(16)).substr(-2);
+                }
+              });
             });
-            console.log(pointsSimplified + ' points in ' + warnResultSimplified.features.length + ' features in total');
 
-            this.setState({ warnResult: data, points: points, features: data.features.length });
-            this.setState({ warnResultSimplified: warnResultSimplified, pointsSimplified: pointsSimplified, featuresSimplified: warnResultSimplified.features.length });
+            this.setState({ points: points, features: data.features.length });
+            this.setState({ warnResultSimplified: warnResultSimplifiedWithStyle, featuresSimplified: warnResultSimplified.features.length });
           }
         });
       }
@@ -780,6 +820,7 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
+              <ReactWMJSLayer {...baseLayer} />
               <ReactWMJSLayer geojson={this.state.warnResultSimplified} />
             </ReactWMJSMap>
           </div>

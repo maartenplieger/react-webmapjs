@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import produce from 'immer';
 import { WEBMAPJS_REDUCERNAME, webMapJSReducer } from '@adaguc/react-webmapjs';
 import CanvasComponent from './CanvasComponent';
 import WMJSImageStore from './WMJSImageStore';
 import moment from 'moment';
+
+var globalImageStore = new WMJSImageStore(200);
 
 /* Constants */
 const REDUXREACTCOUNTERDEMO_INIT = 'COUNTERDEMO_INIT';
@@ -64,7 +65,7 @@ class ExperimentDemo extends Component {
     this.enableRenderLoop = false;
   }
   componentDidMount () {
-    this.imageStore = new WMJSImageStore(200);
+    this.imageStore = globalImageStore;
     this.layerBBOX = [-372313.33428993146, 6238567.56175899, 1647876.5299392117, 7560535.12268313];
     const url = 'https://geoservices.knmi.nl/cgi-bin/RADNL_OPER_R___25PCPRR_L3.cgi?SERVICE=WMS&&SERVICE=WMS&' +
       'VERSION=1.3.0&REQUEST=GetMap&LAYERS=RADNL_OPER_R___25PCPRR_L3_COLOR&WIDTH=1085&HEIGHT=710&CRS=EPSG%3A3857&BBOX=' +
@@ -153,8 +154,8 @@ class ExperimentDemo extends Component {
       ctx.restore();
     }
 
-    this.timer += .2;
-    if (this.timer + 1> this.image.length) {
+    this.timer += 0.2;
+    if (this.timer + 1 > this.image.length) {
       this.timer = 0;
     }
 
@@ -188,12 +189,6 @@ const mapStateToProps = state => {
     value: ReduxReactCounterDemoState.value,
     mylayers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].layers
   };
-};
-
-ExperimentDemo.propTypes = {
-  dispatch: PropTypes.func,
-  value: PropTypes.number,
-  mylayers: PropTypes.array
 };
 
 export default connect(mapStateToProps)(ExperimentDemo);
