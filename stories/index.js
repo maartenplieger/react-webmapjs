@@ -35,6 +35,7 @@ import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import ExperimentDemo from '../src/Experiment/ExperimentDemo';
 import tilesettings from '../src/tilesettings';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
+import GeoRouteWarningDemo from './GeoRouteWarningDemo';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON } from './geojsonExamples';
 import { simplify, pointsWithinPolygon, multiLineString, lineIntersect } from '@turf/turf';
@@ -678,6 +679,13 @@ storiesOf('ReactWMJSMap', module)
       }
     };
     return (<Map />);
+  }).add('GeoRouteWarningDemo', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <GeoRouteWarningDemo />
+      </div>
+    );
+    return story;    
   }).add('GAFOR along route via WFS CQL', () => {
     class Map extends Component {
       constructor (props) {

@@ -146,7 +146,7 @@ export default class ReactWMJSMap extends Component {
 
         /* Detect all ReactLayers connected to WMJSLayers, remove WMJSLayer if there is no ReactLayer */
         for (let l = 0; l < wmjsLayers.length; l++) {
-          if (myChilds.filter(c => c.props.id === wmjsLayers[l].ReactWMJSLayerId).length === 0) {
+          if (myChilds.filter(c => c && c.props && c.props.id === wmjsLayers[l].ReactWMJSLayerId).length === 0) {
             /* This will call the remove property of the WMJSLayer, which will adjust the layers array of WebMapJS */
             wmjsLayers[l].remove();
             this.checkNewProps(prevProps, props);
