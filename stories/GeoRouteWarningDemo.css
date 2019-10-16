@@ -1,0 +1,51 @@
+  .MapDrawGeoJSONContainer {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 1fr;
+    grid-template-areas: "map warninginfo";
+    width:100%;
+    height:100vh;
+    /* border: 1px solid blue; */
+  }
+
+  .MapDrawGeoJSONMapContainer {
+    grid-area: map;
+    width:100%;
+    height:inherit;
+    /* border: 1px solid red; */
+  }
+
+  .MapDrawGeoJSONTextAreaContainer {
+    grid-area: textarea;
+    width:100%;
+    height:100%;
+  }
+
+
+.MapDrawGeoJSONTextArea {
+  padding:0;
+  border:none;
+  width:100%;
+  height:100%;
+  font-size:10px;
+}
+
+.MapDrawGeoJSONControlsContainer {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+}
+
+.MapDrawGeoJSONWarningInfoContainer {
+  grid-area: warninginfo;
+  width:100%;
+  height:100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 6px;
+}
+
+.MapDrawGeoJSONWarningInfoCard .row {
+  padding-top: 10px;
+}

@@ -374,12 +374,10 @@ export default class AdagucMapDraw extends PureComponent {
 
     /* Draw polygons and calculate center of poly */
     const middle = { x: 0, y: 0, nr: 0 };
-
+    ctx.beginPath();
     ctx.strokeStyle = lineProps.stroke || this.defaultLineStringProps.stroke;
     ctx.lineWidth = lineProps['stroke-width'] || this.defaultLineStringProps['stroke-width'];
     ctx.fillStyle = lineProps.fill || this.defaultLineStringProps.fill;
-    // ctx.beginPath();
-
     const startCoord = XYCoords[0];
     ctx.moveTo(startCoord.x, startCoord.y);
     middle.x += startCoord.x;
@@ -393,7 +391,6 @@ export default class AdagucMapDraw extends PureComponent {
         middle.y += coord.y;
       }
     }
-    // ctx.closePath();
 
     ctx.globalAlpha = lineProps['fill-opacity'] || this.defaultLineStringProps['fill-opacity'];
     if (lineProps['fill-opacity'] === 0) {
@@ -415,9 +412,9 @@ export default class AdagucMapDraw extends PureComponent {
         this.selectedEdge !== this.EDGE.NONE &&
         this.props.featureNrToEdit === featureIndex) {
       /* Higlight selected edge of a LineString, previousely detected by mouseover event */
+      ctx.beginPath();
       ctx.strokeStyle = '#FF0';
       ctx.lineWidth = 5;
-      ctx.beginPath();
       ctx.moveTo(XYCoords[this.selectedEdge].x, XYCoords[this.selectedEdge].y);
       ctx.lineTo(
         XYCoords[(this.selectedEdge + 1) % XYCoords.length].x,
@@ -426,7 +423,6 @@ export default class AdagucMapDraw extends PureComponent {
     }
 
     middle.nr = XYCoords.length - 1;
-
     return middle;
   }
 
@@ -441,11 +437,10 @@ export default class AdagucMapDraw extends PureComponent {
     /* Draw polygons and calculate center of poly */
     const middle = { x: 0, y: 0, nr: 0 };
 
+    ctx.beginPath();
     ctx.strokeStyle = polyProps.stroke || this.defaultPolyProps.stroke;
     ctx.lineWidth = polyProps['stroke-width'] || this.defaultPolyProps['stroke-width'];
     ctx.fillStyle = polyProps.fill || this.defaultPolyProps.fill;
-    ctx.beginPath();
-
     const startCoord = XYCoords[0];
     ctx.moveTo(startCoord.x, startCoord.y);
     middle.x += startCoord.x;
@@ -1491,6 +1486,11 @@ export default class AdagucMapDraw extends PureComponent {
             coordinates.pop();
           }
         }
+      }
+      if (this.myDrawMode === this.DRAWMODE.LINESTRING) {
+        let feature = this.geojson.features[this.props.featureNrToEdit];
+        let featureCoords = feature.geometry.coordinates;
+        featureCoords.pop();
       }
       this.featureHasChanged('cancelEdit');
       webmapjs.draw('AdagucMapDraw::cancelEdit');

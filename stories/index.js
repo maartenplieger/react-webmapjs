@@ -685,7 +685,7 @@ storiesOf('ReactWMJSMap', module)
         <GeoRouteWarningDemo />
       </div>
     );
-    return story;    
+    return story;
   }).add('GAFOR along route via WFS CQL', () => {
     class Map extends Component {
       constructor (props) {

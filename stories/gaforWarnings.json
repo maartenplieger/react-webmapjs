@@ -1,0 +1,1569 @@
+{
+  "type": "FeatureCollection",
+  "totalFeatures": 18,
+  "numberMatched": 18,
+  "numberReturned": 18,
+  "timeStamp": "2019-10-16T12:44:25.677Z",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::4326"
+    }
+  },
+  "bbox": [
+    52.0441,
+    6.5,
+    54,
+    14.6379
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "id": "GAFOR.fid-403dc5ac_16dd495db3c_-56c4",
+      "geometry_name": "AREA_POLYGON_GEOGRAPHY",
+      "properties": {
+        "CO": 4,
+        "COUNTRY": "DE",
+        "AREA_ID": "01",
+        "FORECAST_INTERVAL_ID": 1,
+        "GAFOR_CODE_ID": 3,
+        "REFERENCE_RUN_ID": 1,
+        "WEATHER_SPATIAL_COVERAGE_ID": 1,
+        "WMO_WEATHER_ID": 19,
+        "AREA_IDENTIFIER": "01",
+        "AREA_NAME": "Ostfriesland",
+        "LBZ_ID": 5,
+        "ALTITUDE": "200 FT AMSL",
+        "LABELING_POINT_GEOGRAPHY": {
+          "type": "Point",
+          "coordinates": [
+            7.7504,
+            53.6959
+          ]
+        },
+        "GAFOR_CODE_IDENTIFIER": 3,
+        "GAFOR_CODE_SHORT": "D1",
+        "GAFOR_CODE_GERMAN_TRANS": "schwierig",
+        "CLOUDS_LOWER_LIMIT_ID": 5,
+        "VISIBILITY_ID": 3,
+        "CLOUDS_ID": 5,
+        "CLOUDS_LOWER_LIMIT": "Wolkenuntergrenze 1.000 ft bis < 2.000 ft über Bezugshöhe",
+        "VISIBILITY_IDENTIFIER": 3,
+        "VISIBILITY": "Sicht >= 8 km und",
+        "REF_RUN": 1,
+        "REFERENCE_RUN": "2019-10-16T10:55:00Z",
+        "STATUS": null,
+        "COR": "STD",
+        "TYPE": null,
+        "FORECAST_INTERVAL_IDENTIFIER": 1,
+        "REF_RUN_ID": 1,
+        "START_VALID_DATE": "2019-10-16T12:00:00Z",
+        "END_VALID_DATE": "2019-10-16T14:00:00Z",
+        "WEATHERSPATIALCOVERAGEID1": 1,
+        "WEATHER_SPATIAL_COVERAGE_SHORT": "ISOL",
+        "GERMAN_TRANS_1": "vereinzelt",
+        "GERMAN_TRANS_2": "flächenhaftes Auftreten im GAFOR-Gebiet von weniger als 50%",
+        "WMO_WEATHER_IDENTIFIER": 19,
+        "WMO_WEATHER_CODE": "RA",
+        "GERMAN_TRANS": "Regen",
+        "LBZ_IDENTIFIER": 5,
+        "LBZ_NAME": "Nord",
+        "bbox": [
+          6.5,
+          53.244,
+          9.1238,
+          54
+        ],
+        "stroke": "#88F",
+        "stroke-width": 5,
+        "fill": "#FFF",
+        "fill-opacity": 0.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              7,
+              54
+            ],
+            [
+              6.5,
+              54
+            ],
+            [
+              6.5,
+              53.6667
+            ],
+            [
+              6.5833,
+              53.6333
+            ],
+            [
+              6.6833,
+              53.5167
+            ],
+            [
+              6.8833,
+              53.45
+            ],
+            [
+              6.9833,
+              53.3167
+            ],
+            [
+              7.2,
+              53.3167
+            ],
+            [
+              7.1917,
+              53.3
+            ],
+            [
+              7.2072,
+              53.2483
+            ],
+            [
+              7.2266,
+              53.2588
+            ],
+            [
+              7.2428,
+              53.3145
+            ],
+            [
+              7.1864,
+              53.3419
+            ],
+            [
+              7.1717,
+              53.3781
+            ],
+            [
+              7.3252,
+              53.473
+            ],
+            [
+              7.8408,
+              53.4503
+            ],
+            [
+              7.9365,
+              53.3885
+            ],
+            [
+              8.0669,
+              53.3837
+            ],
+            [
+              8.1217,
+              53.3983
+            ],
+            [
+              8.2607,
+              53.376
+            ],
+            [
+              8.3271,
+              53.3983
+            ],
+            [
+              8.8207,
+              53.4338
+            ],
+            [
+              8.9461,
+              53.4283
+            ],
+            [
+              8.9982,
+              53.4425
+            ],
+            [
+              9.0274,
+              53.4715
+            ],
+            [
+              9.074,
+              53.5538
+            ],
+            [
+              9.0819,
+              53.6115
+            ],
+            [
+              9.1211,
+              53.6546
+            ],
+            [
+              9.122,
+              53.7058
+            ],
+            [
+              9.0363,
+              53.7982
+            ],
+            [
+              9.0179,
+              53.8417
+            ],
+            [
+              8.7924,
+              53.8333
+            ],
+            [
+              8.685,
+              53.8851
+            ],
+            [
+              8,
+              54
+            ],
+            [
+              7,
+              54
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GAFOR.fid-403dc5ac_16dd495db3c_-56c1",
+      "geometry_name": "AREA_POLYGON_GEOGRAPHY",
+      "properties": {
+        "CO": 4,
+        "COUNTRY": "DE",
+        "AREA_ID": "06",
+        "FORECAST_INTERVAL_ID": 1,
+        "GAFOR_CODE_ID": 3,
+        "REFERENCE_RUN_ID": 1,
+        "WEATHER_SPATIAL_COVERAGE_ID": 1,
+        "WMO_WEATHER_ID": 19,
+        "AREA_IDENTIFIER": "06",
+        "AREA_NAME": "Lüneburger Heide",
+        "LBZ_ID": 5,
+        "ALTITUDE": "400 FT AMSL",
+        "LABELING_POINT_GEOGRAPHY": {
+          "type": "Point",
+          "coordinates": [
+            10.2729,
+            52.9674
+          ]
+        },
+        "GAFOR_CODE_IDENTIFIER": 3,
+        "GAFOR_CODE_SHORT": "D1",
+        "GAFOR_CODE_GERMAN_TRANS": "schwierig",
+        "CLOUDS_LOWER_LIMIT_ID": 5,
+        "VISIBILITY_ID": 3,
+        "CLOUDS_ID": 5,
+        "CLOUDS_LOWER_LIMIT": "Wolkenuntergrenze 1.000 ft bis < 2.000 ft über Bezugshöhe",
+        "VISIBILITY_IDENTIFIER": 3,
+        "VISIBILITY": "Sicht >= 8 km und",
+        "REF_RUN": 1,
+        "REFERENCE_RUN": "2019-10-16T10:55:00Z",
+        "STATUS": null,
+        "COR": "STD",
+        "TYPE": null,
+        "FORECAST_INTERVAL_IDENTIFIER": 1,
+        "REF_RUN_ID": 1,
+        "START_VALID_DATE": "2019-10-16T12:00:00Z",
+        "END_VALID_DATE": "2019-10-16T14:00:00Z",
+        "WEATHERSPATIALCOVERAGEID1": 1,
+        "WEATHER_SPATIAL_COVERAGE_SHORT": "ISOL",
+        "GERMAN_TRANS_1": "vereinzelt",
+        "GERMAN_TRANS_2": "flächenhaftes Auftreten im GAFOR-Gebiet von weniger als 50%",
+        "WMO_WEATHER_IDENTIFIER": 19,
+        "WMO_WEATHER_CODE": "RA",
+        "GERMAN_TRANS": "Regen",
+        "LBZ_IDENTIFIER": 5,
+        "LBZ_NAME": "Nord",
+        "bbox": [
+          9.2232,
+          52.4337,
+          11.1893,
+          53.5148
+        ],
+        "stroke": "#88F",
+        "stroke-width": 5,
+        "fill": "#FFF",
+        "fill-opacity": 0.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              10.0051,
+              53.4715
+            ],
+            [
+              9.9654,
+              53.4795
+            ],
+            [
+              9.9382,
+              53.5109
+            ],
+            [
+              9.7958,
+              53.4617
+            ],
+            [
+              9.6019,
+              53.3575
+            ],
+            [
+              9.398,
+              53.1029
+            ],
+            [
+              9.2756,
+              53.0132
+            ],
+            [
+              9.2264,
+              52.9132
+            ],
+            [
+              9.277,
+              52.9022
+            ],
+            [
+              9.3048,
+              52.8444
+            ],
+            [
+              9.337,
+              52.8393
+            ],
+            [
+              9.3312,
+              52.8167
+            ],
+            [
+              9.3587,
+              52.8052
+            ],
+            [
+              9.3458,
+              52.8017
+            ],
+            [
+              9.3559,
+              52.7933
+            ],
+            [
+              9.454,
+              52.765
+            ],
+            [
+              9.4673,
+              52.7762
+            ],
+            [
+              9.4736,
+              52.7585
+            ],
+            [
+              9.535,
+              52.7811
+            ],
+            [
+              9.5916,
+              52.7523
+            ],
+            [
+              9.5975,
+              52.7212
+            ],
+            [
+              9.6645,
+              52.6835
+            ],
+            [
+              9.8048,
+              52.6647
+            ],
+            [
+              9.8514,
+              52.6882
+            ],
+            [
+              9.9281,
+              52.6723
+            ],
+            [
+              9.9427,
+              52.654
+            ],
+            [
+              10.0412,
+              52.6247
+            ],
+            [
+              10.1029,
+              52.621
+            ],
+            [
+              10.1355,
+              52.5882
+            ],
+            [
+              10.2823,
+              52.5686
+            ],
+            [
+              10.3347,
+              52.5298
+            ],
+            [
+              10.4317,
+              52.5037
+            ],
+            [
+              10.4641,
+              52.48
+            ],
+            [
+              10.5108,
+              52.472
+            ],
+            [
+              10.6092,
+              52.4961
+            ],
+            [
+              10.635,
+              52.4804
+            ],
+            [
+              10.6256,
+              52.4749
+            ],
+            [
+              10.8313,
+              52.4348
+            ],
+            [
+              10.9185,
+              52.4599
+            ],
+            [
+              10.9724,
+              52.436
+            ],
+            [
+              11.0052,
+              52.4635
+            ],
+            [
+              11.0207,
+              52.4819
+            ],
+            [
+              11.0112,
+              52.5326
+            ],
+            [
+              11.0273,
+              52.5967
+            ],
+            [
+              11.088,
+              52.6504
+            ],
+            [
+              11.0794,
+              52.6793
+            ],
+            [
+              11.0984,
+              52.7513
+            ],
+            [
+              11.1305,
+              52.7803
+            ],
+            [
+              11.188,
+              52.7994
+            ],
+            [
+              11.1588,
+              52.8421
+            ],
+            [
+              11.1567,
+              52.9011
+            ],
+            [
+              11.1228,
+              52.9247
+            ],
+            [
+              11.156,
+              52.9562
+            ],
+            [
+              11.1506,
+              52.9901
+            ],
+            [
+              11.1159,
+              53.0297
+            ],
+            [
+              11.1198,
+              53.0632
+            ],
+            [
+              11.1039,
+              53.0927
+            ],
+            [
+              11.0594,
+              53.1191
+            ],
+            [
+              11.045,
+              53.1551
+            ],
+            [
+              10.9195,
+              53.2243
+            ],
+            [
+              10.8201,
+              53.257
+            ],
+            [
+              10.7994,
+              53.2842
+            ],
+            [
+              10.7411,
+              53.2957
+            ],
+            [
+              10.7292,
+              53.3052
+            ],
+            [
+              10.7326,
+              53.3501
+            ],
+            [
+              10.708,
+              53.3669
+            ],
+            [
+              10.58,
+              53.3574
+            ],
+            [
+              10.3081,
+              53.4316
+            ],
+            [
+              10.2308,
+              53.3928
+            ],
+            [
+              10.1723,
+              53.3952
+            ],
+            [
+              10.0415,
+              53.4689
+            ],
+            [
+              10.0051,
+              53.4715
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GAFOR.fid-403dc5ac_16dd495db3c_-56bd",
+      "geometry_name": "AREA_POLYGON_GEOGRAPHY",
+      "properties": {
+        "CO": 4,
+        "COUNTRY": "DE",
+        "AREA_ID": "05",
+        "FORECAST_INTERVAL_ID": 1,
+        "GAFOR_CODE_ID": 3,
+        "REFERENCE_RUN_ID": 1,
+        "WEATHER_SPATIAL_COVERAGE_ID": 4,
+        "WMO_WEATHER_ID": 25,
+        "AREA_IDENTIFIER": "05",
+        "AREA_NAME": "Nordwestliches Niedersachsen",
+        "LBZ_ID": 5,
+        "ALTITUDE": "200 FT AMSL",
+        "LABELING_POINT_GEOGRAPHY": {
+          "type": "Point",
+          "coordinates": [
+            8.4889,
+            53.2506
+          ]
+        },
+        "GAFOR_CODE_IDENTIFIER": 3,
+        "GAFOR_CODE_SHORT": "D1",
+        "GAFOR_CODE_GERMAN_TRANS": "schwierig",
+        "CLOUDS_LOWER_LIMIT_ID": 5,
+        "VISIBILITY_ID": 3,
+        "CLOUDS_ID": 5,
+        "CLOUDS_LOWER_LIMIT": "Wolkenuntergrenze 1.000 ft bis < 2.000 ft über Bezugshöhe",
+        "VISIBILITY_IDENTIFIER": 3,
+        "VISIBILITY": "Sicht >= 8 km und",
+        "REF_RUN": 1,
+        "REFERENCE_RUN": "2019-10-16T10:55:00Z",
+        "STATUS": null,
+        "COR": "STD",
+        "TYPE": null,
+        "FORECAST_INTERVAL_IDENTIFIER": 1,
+        "REF_RUN_ID": 1,
+        "START_VALID_DATE": "2019-10-16T12:00:00Z",
+        "END_VALID_DATE": "2019-10-16T14:00:00Z",
+        "WEATHERSPATIALCOVERAGEID1": 4,
+        "WEATHER_SPATIAL_COVERAGE_SHORT": "-",
+        "GERMAN_TRANS_1": "-",
+        "GERMAN_TRANS_2": "-",
+        "WMO_WEATHER_IDENTIFIER": 25,
+        "WMO_WEATHER_CODE": "-",
+        "GERMAN_TRANS": "-",
+        "LBZ_IDENTIFIER": 5,
+        "LBZ_NAME": "Nord",
+        "bbox": [
+          7.1695,
+          52.8871,
+          9.938,
+          53.8644
+        ],
+        "stroke": "#88F",
+        "stroke-width": 5,
+        "fill": "#FFF",
+        "fill-opacity": 0.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              9.1835,
+              53.8636
+            ],
+            [
+              9.0192,
+              53.8419
+            ],
+            [
+              9.0363,
+              53.7982
+            ],
+            [
+              9.122,
+              53.7058
+            ],
+            [
+              9.1225,
+              53.658
+            ],
+            [
+              9.0824,
+              53.6129
+            ],
+            [
+              9.0761,
+              53.5589
+            ],
+            [
+              9.0305,
+              53.4739
+            ],
+            [
+              8.9982,
+              53.4425
+            ],
+            [
+              8.9574,
+              53.4303
+            ],
+            [
+              8.2959,
+              53.3961
+            ],
+            [
+              8.2649,
+              53.377
+            ],
+            [
+              8.1256,
+              53.3973
+            ],
+            [
+              8.0646,
+              53.3836
+            ],
+            [
+              7.9349,
+              53.3887
+            ],
+            [
+              7.867,
+              53.4223
+            ],
+            [
+              7.8478,
+              53.4478
+            ],
+            [
+              7.3973,
+              53.4764
+            ],
+            [
+              7.2925,
+              53.4611
+            ],
+            [
+              7.1704,
+              53.3755
+            ],
+            [
+              7.1851,
+              53.3453
+            ],
+            [
+              7.2443,
+              53.3188
+            ],
+            [
+              7.2113,
+              53.2456
+            ],
+            [
+              7.2119,
+              53.188
+            ],
+            [
+              7.2277,
+              53.1815
+            ],
+            [
+              7.2016,
+              53.1735
+            ],
+            [
+              7.1819,
+              53.1403
+            ],
+            [
+              7.2026,
+              53.113
+            ],
+            [
+              7.2123,
+              53.0125
+            ],
+            [
+              7.1811,
+              52.9409
+            ],
+            [
+              7.5349,
+              52.9116
+            ],
+            [
+              8.1752,
+              52.9507
+            ],
+            [
+              8.381,
+              52.9354
+            ],
+            [
+              8.4437,
+              52.8999
+            ],
+            [
+              8.599,
+              52.9097
+            ],
+            [
+              8.6224,
+              52.8871
+            ],
+            [
+              8.7015,
+              52.8888
+            ],
+            [
+              8.8242,
+              52.9255
+            ],
+            [
+              9.2187,
+              52.9187
+            ],
+            [
+              9.275,
+              53.0123
+            ],
+            [
+              9.398,
+              53.1029
+            ],
+            [
+              9.6019,
+              53.3575
+            ],
+            [
+              9.7958,
+              53.4617
+            ],
+            [
+              9.938,
+              53.5148
+            ],
+            [
+              9.8426,
+              53.5159
+            ],
+            [
+              9.7657,
+              53.5468
+            ],
+            [
+              9.6854,
+              53.5484
+            ],
+            [
+              9.5876,
+              53.5874
+            ],
+            [
+              9.5411,
+              53.6138
+            ],
+            [
+              9.493,
+              53.6791
+            ],
+            [
+              9.4023,
+              53.7393
+            ],
+            [
+              9.3137,
+              53.8352
+            ],
+            [
+              9.2652,
+              53.859
+            ],
+            [
+              9.1835,
+              53.8636
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GAFOR.fid-403dc5ac_16dd495db3c_-56bb",
+      "geometry_name": "AREA_POLYGON_GEOGRAPHY",
+      "properties": {
+        "CO": 4,
+        "COUNTRY": "DE",
+        "AREA_ID": "15",
+        "FORECAST_INTERVAL_ID": 1,
+        "GAFOR_CODE_ID": 6,
+        "REFERENCE_RUN_ID": 1,
+        "WEATHER_SPATIAL_COVERAGE_ID": 1,
+        "WMO_WEATHER_ID": 19,
+        "AREA_IDENTIFIER": "15",
+        "AREA_NAME": "Altmark",
+        "LBZ_ID": 3,
+        "ALTITUDE": "400 FT AMSL",
+        "LABELING_POINT_GEOGRAPHY": {
+          "type": "Point",
+          "coordinates": [
+            11.6701,
+            52.6672
+          ]
+        },
+        "GAFOR_CODE_IDENTIFIER": 6,
+        "GAFOR_CODE_SHORT": "M2",
+        "GAFOR_CODE_GERMAN_TRANS": "kritisch",
+        "CLOUDS_LOWER_LIMIT_ID": 3,
+        "VISIBILITY_ID": 3,
+        "CLOUDS_ID": 3,
+        "CLOUDS_LOWER_LIMIT": "Wolkenuntergrenze 500 bis 1.000 ft über Bezugshöhe",
+        "VISIBILITY_IDENTIFIER": 3,
+        "VISIBILITY": "Sicht >= 8 km und",
+        "REF_RUN": 1,
+        "REFERENCE_RUN": "2019-10-16T10:55:00Z",
+        "STATUS": null,
+        "COR": "STD",
+        "TYPE": null,
+        "FORECAST_INTERVAL_IDENTIFIER": 1,
+        "REF_RUN_ID": 1,
+        "START_VALID_DATE": "2019-10-16T12:00:00Z",
+        "END_VALID_DATE": "2019-10-16T14:00:00Z",
+        "WEATHERSPATIALCOVERAGEID1": 1,
+        "WEATHER_SPATIAL_COVERAGE_SHORT": "ISOL",
+        "GERMAN_TRANS_1": "vereinzelt",
+        "GERMAN_TRANS_2": "flächenhaftes Auftreten im GAFOR-Gebiet von weniger als 50%",
+        "WMO_WEATHER_IDENTIFIER": 19,
+        "WMO_WEATHER_CODE": "RA",
+        "GERMAN_TRANS": "Regen",
+        "LBZ_IDENTIFIER": 3,
+        "LBZ_NAME": "Ost",
+        "bbox": [
+          10.9724,
+          52.2289,
+          12.4516,
+          53.1671
+        ],
+        "stroke": "#88F",
+        "stroke-width": 5,
+        "fill": "#FFF",
+        "fill-opacity": 0.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              11.1798,
+              53.1434
+            ],
+            [
+              11.1519,
+              53.1658
+            ],
+            [
+              11.0933,
+              53.136
+            ],
+            [
+              11.0502,
+              53.1545
+            ],
+            [
+              11.0627,
+              53.1179
+            ],
+            [
+              11.1112,
+              53.0812
+            ],
+            [
+              11.1104,
+              53.0326
+            ],
+            [
+              11.1515,
+              52.9873
+            ],
+            [
+              11.1544,
+              52.9537
+            ],
+            [
+              11.1244,
+              52.9204
+            ],
+            [
+              11.154,
+              52.9072
+            ],
+            [
+              11.1554,
+              52.8486
+            ],
+            [
+              11.1892,
+              52.8023
+            ],
+            [
+              11.0988,
+              52.7522
+            ],
+            [
+              11.0776,
+              52.6807
+            ],
+            [
+              11.0906,
+              52.6536
+            ],
+            [
+              11.0331,
+              52.6035
+            ],
+            [
+              11.0109,
+              52.5263
+            ],
+            [
+              11.0222,
+              52.4872
+            ],
+            [
+              10.9724,
+              52.436
+            ],
+            [
+              11.0729,
+              52.4569
+            ],
+            [
+              11.1411,
+              52.4285
+            ],
+            [
+              11.2563,
+              52.4169
+            ],
+            [
+              11.4062,
+              52.2791
+            ],
+            [
+              11.5755,
+              52.2307
+            ],
+            [
+              11.6786,
+              52.2292
+            ],
+            [
+              11.7271,
+              52.2525
+            ],
+            [
+              11.765,
+              52.3057
+            ],
+            [
+              12.0921,
+              52.308
+            ],
+            [
+              12.15,
+              52.4088
+            ],
+            [
+              12.3327,
+              52.5319
+            ],
+            [
+              12.3297,
+              52.6379
+            ],
+            [
+              12.3722,
+              52.7061
+            ],
+            [
+              12.3353,
+              52.7482
+            ],
+            [
+              12.3611,
+              52.755
+            ],
+            [
+              12.3991,
+              52.8229
+            ],
+            [
+              12.4486,
+              52.8466
+            ],
+            [
+              12.4336,
+              52.865
+            ],
+            [
+              12.3436,
+              52.8937
+            ],
+            [
+              12.1237,
+              52.8948
+            ],
+            [
+              11.8593,
+              52.9879
+            ],
+            [
+              11.7785,
+              52.9931
+            ],
+            [
+              11.6944,
+              52.9757
+            ],
+            [
+              11.6682,
+              53.0076
+            ],
+            [
+              11.6261,
+              53.0092
+            ],
+            [
+              11.6294,
+              53.0404
+            ],
+            [
+              11.5065,
+              53.0464
+            ],
+            [
+              11.4409,
+              53.0773
+            ],
+            [
+              11.3477,
+              53.0532
+            ],
+            [
+              11.2736,
+              53.0945
+            ],
+            [
+              11.2464,
+              53.1341
+            ],
+            [
+              11.1798,
+              53.1434
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GAFOR.fid-403dc5ac_16dd495db3c_-56ba",
+      "geometry_name": "AREA_POLYGON_GEOGRAPHY",
+      "properties": {
+        "CO": 4,
+        "COUNTRY": "DE",
+        "AREA_ID": "17",
+        "FORECAST_INTERVAL_ID": 1,
+        "GAFOR_CODE_ID": 6,
+        "REFERENCE_RUN_ID": 1,
+        "WEATHER_SPATIAL_COVERAGE_ID": 1,
+        "WMO_WEATHER_ID": 19,
+        "AREA_IDENTIFIER": "17",
+        "AREA_NAME": "Havelland",
+        "LBZ_ID": 3,
+        "ALTITUDE": "300 FT AMSL",
+        "LABELING_POINT_GEOGRAPHY": {
+          "type": "Point",
+          "coordinates": [
+            12.8934,
+            52.45
+          ]
+        },
+        "GAFOR_CODE_IDENTIFIER": 6,
+        "GAFOR_CODE_SHORT": "M2",
+        "GAFOR_CODE_GERMAN_TRANS": "kritisch",
+        "CLOUDS_LOWER_LIMIT_ID": 3,
+        "VISIBILITY_ID": 3,
+        "CLOUDS_ID": 3,
+        "CLOUDS_LOWER_LIMIT": "Wolkenuntergrenze 500 bis 1.000 ft über Bezugshöhe",
+        "VISIBILITY_IDENTIFIER": 3,
+        "VISIBILITY": "Sicht >= 8 km und",
+        "REF_RUN": 1,
+        "REFERENCE_RUN": "2019-10-16T10:55:00Z",
+        "STATUS": null,
+        "COR": "STD",
+        "TYPE": null,
+        "FORECAST_INTERVAL_IDENTIFIER": 1,
+        "REF_RUN_ID": 1,
+        "START_VALID_DATE": "2019-10-16T12:00:00Z",
+        "END_VALID_DATE": "2019-10-16T14:00:00Z",
+        "WEATHERSPATIALCOVERAGEID1": 1,
+        "WEATHER_SPATIAL_COVERAGE_SHORT": "ISOL",
+        "GERMAN_TRANS_1": "vereinzelt",
+        "GERMAN_TRANS_2": "flächenhaftes Auftreten im GAFOR-Gebiet von weniger als 50%",
+        "WMO_WEATHER_IDENTIFIER": 19,
+        "WMO_WEATHER_CODE": "RA",
+        "GERMAN_TRANS": "Regen",
+        "LBZ_IDENTIFIER": 3,
+        "LBZ_NAME": "Ost",
+        "bbox": [
+          12.0921,
+          52.0441,
+          13.5625,
+          52.8535
+        ],
+        "stroke": "#88F",
+        "stroke-width": 5,
+        "fill": "#FFF",
+        "fill-opacity": 0.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              12.4665,
+              52.8471
+            ],
+            [
+              12.4516,
+              52.8535
+            ],
+            [
+              12.401,
+              52.8235
+            ],
+            [
+              12.3703,
+              52.7915
+            ],
+            [
+              12.3621,
+              52.7563
+            ],
+            [
+              12.3353,
+              52.7482
+            ],
+            [
+              12.3703,
+              52.7117
+            ],
+            [
+              12.3295,
+              52.6408
+            ],
+            [
+              12.3306,
+              52.5325
+            ],
+            [
+              12.15,
+              52.4088
+            ],
+            [
+              12.0921,
+              52.308
+            ],
+            [
+              12.2712,
+              52.2702
+            ],
+            [
+              12.4771,
+              52.2776
+            ],
+            [
+              12.5763,
+              52.2413
+            ],
+            [
+              12.6313,
+              52.1829
+            ],
+            [
+              12.7539,
+              52.177
+            ],
+            [
+              12.8078,
+              52.122
+            ],
+            [
+              12.8628,
+              52.0928
+            ],
+            [
+              13.3404,
+              52.0441
+            ],
+            [
+              13.5048,
+              52.0566
+            ],
+            [
+              13.476,
+              52.1513
+            ],
+            [
+              13.4414,
+              52.2049
+            ],
+            [
+              13.4131,
+              52.3471
+            ],
+            [
+              13.5476,
+              52.409
+            ],
+            [
+              13.5625,
+              52.4307
+            ],
+            [
+              13.5494,
+              52.4861
+            ],
+            [
+              13.5262,
+              52.5529
+            ],
+            [
+              13.4562,
+              52.6085
+            ],
+            [
+              13.3885,
+              52.6532
+            ],
+            [
+              13.2888,
+              52.6841
+            ],
+            [
+              13.2594,
+              52.7435
+            ],
+            [
+              13.2805,
+              52.7835
+            ],
+            [
+              13.1478,
+              52.7895
+            ],
+            [
+              13.0484,
+              52.7758
+            ],
+            [
+              12.9659,
+              52.8012
+            ],
+            [
+              12.861,
+              52.7879
+            ],
+            [
+              12.7971,
+              52.8225
+            ],
+            [
+              12.6622,
+              52.817
+            ],
+            [
+              12.4665,
+              52.8471
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GAFOR.fid-403dc5ac_16dd495db3c_-56b9",
+      "geometry_name": "AREA_POLYGON_GEOGRAPHY",
+      "properties": {
+        "CO": 4,
+        "COUNTRY": "DE",
+        "AREA_ID": "18",
+        "FORECAST_INTERVAL_ID": 1,
+        "GAFOR_CODE_ID": 7,
+        "REFERENCE_RUN_ID": 1,
+        "WEATHER_SPATIAL_COVERAGE_ID": 1,
+        "WMO_WEATHER_ID": 19,
+        "AREA_IDENTIFIER": "18",
+        "AREA_NAME": "Barnim und Oderbruch",
+        "LBZ_ID": 3,
+        "ALTITUDE": "400 FT AMSL",
+        "LABELING_POINT_GEOGRAPHY": {
+          "type": "Point",
+          "coordinates": [
+            13.9748,
+            52.5981
+          ]
+        },
+        "GAFOR_CODE_IDENTIFIER": 7,
+        "GAFOR_CODE_SHORT": "M5",
+        "GAFOR_CODE_GERMAN_TRANS": "kritisch",
+        "CLOUDS_LOWER_LIMIT_ID": 3,
+        "VISIBILITY_ID": 4,
+        "CLOUDS_ID": 3,
+        "CLOUDS_LOWER_LIMIT": "Wolkenuntergrenze 500 bis 1.000 ft über Bezugshöhe",
+        "VISIBILITY_IDENTIFIER": 4,
+        "VISIBILITY": "Sicht 5 bis < 8 km und",
+        "REF_RUN": 1,
+        "REFERENCE_RUN": "2019-10-16T10:55:00Z",
+        "STATUS": null,
+        "COR": "STD",
+        "TYPE": null,
+        "FORECAST_INTERVAL_IDENTIFIER": 1,
+        "REF_RUN_ID": 1,
+        "START_VALID_DATE": "2019-10-16T12:00:00Z",
+        "END_VALID_DATE": "2019-10-16T14:00:00Z",
+        "WEATHERSPATIALCOVERAGEID1": 1,
+        "WEATHER_SPATIAL_COVERAGE_SHORT": "ISOL",
+        "GERMAN_TRANS_1": "vereinzelt",
+        "GERMAN_TRANS_2": "flächenhaftes Auftreten im GAFOR-Gebiet von weniger als 50%",
+        "WMO_WEATHER_IDENTIFIER": 19,
+        "WMO_WEATHER_CODE": "RA",
+        "GERMAN_TRANS": "Regen",
+        "LBZ_IDENTIFIER": 3,
+        "LBZ_NAME": "Ost",
+        "bbox": [
+          13.2594,
+          52.3135,
+          14.6379,
+          52.8821
+        ],
+        "stroke": "#88F",
+        "stroke-width": 5,
+        "fill": "#FFF",
+        "fill-opacity": 0.3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              14.1511,
+              52.8682
+            ],
+            [
+              14.1585,
+              52.8784
+            ],
+            [
+              13.9487,
+              52.8493
+            ],
+            [
+              13.6967,
+              52.862
+            ],
+            [
+              13.3943,
+              52.8404
+            ],
+            [
+              13.2868,
+              52.7923
+            ],
+            [
+              13.2604,
+              52.7462
+            ],
+            [
+              13.2919,
+              52.68
+            ],
+            [
+              13.3988,
+              52.6482
+            ],
+            [
+              13.5223,
+              52.5579
+            ],
+            [
+              13.5625,
+              52.4307
+            ],
+            [
+              13.6636,
+              52.3757
+            ],
+            [
+              13.7974,
+              52.3395
+            ],
+            [
+              14.0093,
+              52.367
+            ],
+            [
+              14.3009,
+              52.3231
+            ],
+            [
+              14.5777,
+              52.3155
+            ],
+            [
+              14.5596,
+              52.3287
+            ],
+            [
+              14.5366,
+              52.4021
+            ],
+            [
+              14.5475,
+              52.4323
+            ],
+            [
+              14.6337,
+              52.4915
+            ],
+            [
+              14.604,
+              52.5308
+            ],
+            [
+              14.6355,
+              52.5672
+            ],
+            [
+              14.6298,
+              52.5782
+            ],
+            [
+              14.5931,
+              52.6117
+            ],
+            [
+              14.4687,
+              52.6595
+            ],
+            [
+              14.3503,
+              52.7515
+            ],
+            [
+              14.2813,
+              52.7734
+            ],
+            [
+              14.2156,
+              52.8175
+            ],
+            [
+              14.1267,
+              52.8316
+            ],
+            [
+              14.1511,
+              52.8682
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

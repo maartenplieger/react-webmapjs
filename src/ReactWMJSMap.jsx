@@ -170,11 +170,9 @@ export default class ReactWMJSMap extends Component {
         for (let c = 0; c < myChilds.length; c++) {
           let child = myChilds[c];
           if (!child) {
-            console.warn('Encounterd empty child');
             continue;
           }
           if (!child.type) {
-            console.warn('Encounterd unknown child type');
             continue;
           }
           if (child.type) {
