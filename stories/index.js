@@ -37,7 +37,7 @@ import tilesettings from '../src/tilesettings';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
 import GeoRouteWarningDemo from './GeoRouteWarningDemo';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON } from './geojsonExamples';
+import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON, simpleSmallLineStringGeoJSON } from './geojsonExamples';
 import { simplify, pointsWithinPolygon, multiLineString, lineIntersect } from '@turf/turf';
 // import { fetchJsonp } from 'fetch-jsonp';
 
@@ -686,6 +686,64 @@ storiesOf('ReactWMJSMap', module)
       </div>
     );
     return story;    
+  }).add('Synops along route with buffer via WFS CQL', () => {
+    class Map extends Component {
+      constructor (props) {
+        super(props);
+        this.state = {
+          // dwd:MOSMIX_L_Punktterminprognosen can be used as well but will offer mulitple features per forecast point (timesteps), dwd:RBSN_T2m, Wetter_Beobachtungen
+          // could be further restricted via &propertyName=NAME&sortBy=NAME+A
+          wfsUrl: 'https://maps.dwd.de/geoserver/dwd/ows?request=GetFeature&service=WFS&version=1.0.0&typeName=dwd:RBSN_T2m&maxFeatures=999'+
+            '&outputFormat=text/javascript&format_options=callback:resultsJsonp',
+          gaforResult: null,
+          // cqlfilter:  ''
+        };
+      }
+      componentDidMount () {
+        console.log('getting Synop');
+        this.getWFSdata();
+      }
+      // helper function to round time
+      round (date, duration, method) {
+        return moment(Math[method]((+date) / (+duration)) * (+duration));
+      }     
+      getWFSdata () {
+        // limit query to one observation timepoint
+        let querytime = '2019-10-14T10:00:00.000Z';
+        // for Beobachtungen get timestamp 0-1 hours in the past rounded to 10 minutes, for RBSN use past day and round to hour
+        querytime = this.round(moment().add(-1, 'd'), moment.duration(1, 'hours'), 'ceil').toISOString();
+
+        // M_DATE for RBSN-layers, OBSERVATION_TIME for Beobachtungen
+        let cqlexpression = '&cql_filter=INTERSECTS(THE_GEOM,+BUFFER(LINESTRING(13.00565+53.6181,%208.732724+48.28535),%200.2))' +
+        'AND M_DATE = ' + querytime;
+        console.log('request url for synop with buffer', this.state.wfsUrl + cqlexpression);
+
+        $.ajax({
+          jsonpCallback: 'resultsJsonp',
+          type: 'GET',
+          url: this.state.wfsUrl + cqlexpression,
+          dataType: 'jsonp',
+          success: (data) => {
+            this.setState({ gaforResult: data });
+            console.log('resultsJsonp synop', data);
+          }
+        });
+      }
+      render () {
+        console.log('rendering');
+        return (<div>
+          <div style={{ height: '100vh' }}>
+            <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
+              <ReactWMJSLayer {...overLayer} />
+              <ReactWMJSLayer geojson={simpleSmallLineStringGeoJSON} />
+              <ReactWMJSLayer geojson={this.state.gaforResult} />
+            </ReactWMJSMap>
+          </div>
+        </div>
+        );
+      }
+    };
+    return (<Map />);
   }).add('GAFOR along route via WFS CQL', () => {
     class Map extends Component {
       constructor (props) {

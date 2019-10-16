@@ -95,6 +95,33 @@ export const simplePointsGeojson = {
   ]
 };
 
+export const simpleSmallLineStringGeoJSON = {
+  'type': 'FeatureCollection',
+  'features': [
+    {
+      'type': 'Feature',
+      'properties': {
+        'stroke': '#66F',
+        'stroke-width': 5,
+        'stroke-opacity': '1'
+      },
+      'geometry': {
+        'type': 'LineString',
+        'coordinates': [
+          [
+            13.005656257245073,
+            53.618161003652624
+          ],
+          [
+            8.73272402958337,
+            48.28535054578368
+          ]
+        ]
+      }
+    }
+  ]
+};
+
 export const simpleFlightRoutePointsGeoJSON = {
   'type': 'FeatureCollection',
   'features': [
