@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import { createStore } from 'redux';
 import { storiesOf, specs, describe, it } from '../.storybook/facade';
@@ -31,12 +32,13 @@ import PropTypes from 'prop-types';
 import ReactSlider from 'react-slider';
 import '../src/react-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
+import ExperimentDemo from '../src/Experiment/ExperimentDemo';
 import tilesettings from '../src/tilesettings';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON } from './geojsonExamples';
 import { simplify, pointsWithinPolygon, multiLineString, lineIntersect } from '@turf/turf';
-import { fetchJsonp } from 'fetch-jsonp';
+// import { fetchJsonp } from 'fetch-jsonp';
 
 import '../styles/stories.css';
 const $ = window.jQuery || window.$ || global.$ || global.jQuery;
@@ -305,6 +307,22 @@ const reduxReactCounterDemo = {
 
 storiesOf('React Redux example', module)
   .add(reduxReactCounterDemo.title, reduxReactCounterDemo.storyFn);
+
+const experimentDemo = {
+  title: 'experimentDemo',
+  storyFn: () => {
+    /* Just a button inside a component to connect it to redux */
+    const story = (
+      <Provider store={window.store} >
+        <ExperimentDemo />
+      </Provider>
+    );
+    return story;
+  }
+};
+
+storiesOf('Map experiment', module)
+  .add(experimentDemo.title, experimentDemo.storyFn);
 
 /* assemble stories from prebuilt elements */
 
