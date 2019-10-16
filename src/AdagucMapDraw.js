@@ -1041,6 +1041,7 @@ export default class AdagucMapDraw extends PureComponent {
 
   /* istanbul ignore next */
   adagucMouseMove (event) {
+    if (event && event.rightButton === true) return;
     /* adagucMouseMove is an event callback function which is triggered when the mouse moves over the map
       This event is only triggered if the map is in hover state.
       E.g. when the map is dragging/panning, this event is not triggerd
@@ -1348,6 +1349,7 @@ export default class AdagucMapDraw extends PureComponent {
 
   /* istanbul ignore next */
   adagucMouseDown (event) {
+    if (event && event.rightButton === true) return;
     if (this.props.isInEditMode === false) {
       return;
     }
@@ -1427,7 +1429,8 @@ export default class AdagucMapDraw extends PureComponent {
   }
 
   /* istanbul ignore next */
-  adagucMouseUp () {
+  adagucMouseUp (event) {
+    if (event && event.rightButton === true) return;
     if (this.props.isInEditMode === false) {
       return;
     }

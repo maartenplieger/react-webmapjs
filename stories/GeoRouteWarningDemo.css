@@ -1,4 +1,4 @@
-  .MapDrawGeoJSONContainer {
+  .GeoRouteWarningContainer {
     display: grid;
     grid-template-columns: 60% 40%;
     grid-template-rows: 1fr;
@@ -8,21 +8,21 @@
     /* border: 1px solid blue; */
   }
 
-  .MapDrawGeoJSONMapContainer {
+  .GeoRouteWarningMapContainer {
     grid-area: map;
     width:100%;
     height:inherit;
     /* border: 1px solid red; */
   }
 
-  .MapDrawGeoJSONTextAreaContainer {
+  .GeoRouteWarningTextAreaContainer {
     grid-area: textarea;
     width:100%;
     height:100%;
   }
 
 
-.MapDrawGeoJSONTextArea {
+.GeoRouteWarningTextArea {
   padding:0;
   border:none;
   width:100%;
@@ -30,14 +30,14 @@
   font-size:10px;
 }
 
-.MapDrawGeoJSONControlsContainer {
+.GeoRouteWarningControlsContainer {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 1000;
 }
 
-.MapDrawGeoJSONWarningInfoContainer {
+.GeoRouteWarningWarningInfoContainer {
   grid-area: warninginfo;
   width:100%;
   height:100%;
@@ -46,6 +46,6 @@
   padding: 6px;
 }
 
-.MapDrawGeoJSONWarningInfoCard .row {
+.GeoRouteWarningWarningInfoCard .row {
   padding-top: 10px;
 }

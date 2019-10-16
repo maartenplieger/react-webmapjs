@@ -26,13 +26,13 @@ const dwdGaforLayer = {
   id: generateLayerId()
 };
 
-const dwdFGGWSAirportsLayer = {
-  service: 'https://maps.dwd.de/geoserver/dwd/FG_GWS_Airports/ows?',
-  name: 'FG_GWS_Airports',
-  format: 'image/png',
-  enabled: true,
-  id: generateLayerId()
-};
+// const dwdFGGWSAirportsLayer = {
+//   service: 'https://maps.dwd.de/geoserver/dwd/FG_GWS_Airports/ows?',
+//   name: 'FG_GWS_Airports',
+//   format: 'image/png',
+//   enabled: true,
+//   id: generateLayerId()
+// };
 
 const baseLayer = {
   name:'OpenStreetMap_Service',
@@ -123,7 +123,7 @@ export default class drawPolyStory extends Component {
     return (
       <div
         key={key}
-        className={'MapDrawGeoJSONWarningInfoCard'}
+        className={'GeoRouteWarningWarningInfoCard'}
         onMouseEnter={() => {
           this.setState({
             gaforAreaHover: key,
@@ -174,8 +174,8 @@ export default class drawPolyStory extends Component {
                       this.state.interSectionResult.features[0].properties.END_VALID_DATE;
 
     return (<div>
-      <div className={'MapDrawGeoJSONContainer'}>
-        <div className={'MapDrawGeoJSONMapContainer'}>
+      <div className={'GeoRouteWarningContainer'}>
+        <div className={'GeoRouteWarningMapContainer'}>
           <ReactWMJSMap id={generateMapId()} bbox={[173136.68613876565, 5766932.466223009, 2236959.1831579944, 7659674.940463012]} enableInlineGetFeatureInfo={false}
             webMapJSInitializedCallback={(webMapJS) => {
               webMapJS.hideMapPin();
@@ -206,14 +206,14 @@ export default class drawPolyStory extends Component {
             />
           </ReactWMJSMap>
         </div>
-        <div className={'MapDrawGeoJSONControlsContainer'}>
+        <div className={'GeoRouteWarningControlsContainer'}>
           <Button onClick={() => {
             this.setState({ isInEditMode: !this.state.isInEditMode }, () => {
               this.triggerIntersection();
             });
-          }}>{this.state.isInEditMode ? 'Finish route' : 'Start drawing route'}</Button>
+          }}>{this.state.isInEditMode ? 'Finish route (esc)' : 'Start drawing route'}</Button>
         </div>
-        <div className={'MapDrawGeoJSONWarningInfoContainer'}>
+        <div className={'GeoRouteWarningWarningInfoContainer'}>
           <div style={{ marginLeft: '10px' }}>
             <h4>GAFOR for flightroute</h4>
             <Row><Col xs={2}>from:</Col><Col xs={10}>{ startDate }</Col></Row>
@@ -229,8 +229,8 @@ export default class drawPolyStory extends Component {
             })
           }
         </div>
-        <div className={'MapDrawGeoJSONTextAreaContainer'}>
-          <textarea className={'MapDrawGeoJSONTextArea'}
+        <div className={'GeoRouteWarningTextAreaContainer'}>
+          <textarea className={'GeoRouteWarningTextArea'}
             style={{ border: this.state.valid === false ? '5px solid red' : '5px solid lightgreen' }}
             onChange={(e) => {
               this.setState({ geojsonText: e.target.value });
