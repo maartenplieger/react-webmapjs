@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import produce from 'immer';
 import { WEBMAPJS_REDUCERNAME, webMapJSReducer, setLayers, layerChangeEnabled, getWMJSLayerById, layerChangeOpacity } from './index';
 import './SimpleLayerManager.css';
-import ReactSlider from 'react-slider';
-import '../src/react-slider.css';
+import ReactBootstrapSlider from 'react-bootstrap-slider';
+import 'bootstrap-slider/dist/css/bootstrap-slider.css';
 
 /* Constants */
 const REDUXREACTCOUNTERDEMO_ADD = 'COUNTERDEMO_ADD';
@@ -66,13 +66,11 @@ class SimpleLayerManager extends Component {
                     <label className='reactwebmapjs-simplelayermanager-layerlabel'>{getLayerTitle(layerNameMappings, layer)}</label>
                   </div>
                   <div>
-                    <ReactSlider
-                      className={'horizontal-slider'}
-                      thumbClassName={'horizontal-slider-track'}
-                      trackClassName={'horizontal-slider-thumb'}
-                      min={0} max={1} step={0.1} value={parseFloat(!layer.opacity && layer.opacity !== 0 ? 1 : layer.opacity)}
-                      onChange={(v) => {
-                        let opacity = parseFloat(v);
+                    <ReactBootstrapSlider
+                      min={0} max={1} step={0.1}
+                      value={parseFloat(!layer.opacity && layer.opacity !== 0 ? 1 : layer.opacity)}
+                      change={(event) => {
+                        let opacity = parseFloat(event.target.value);
                         dispatch(layerChangeOpacity({ layerId: layer.id, mapPanelId: mapId, opacity: opacity }));
                       }} />
                   </div>
@@ -100,7 +98,6 @@ const mapStateToProps = state => {
 
 SimpleLayerManager.propTypes = {
   dispatch: PropTypes.func,
-  value: PropTypes.number,
   webmapjslayers: PropTypes.array,
   layers: PropTypes.array,
   layerNameMappings: PropTypes.array,

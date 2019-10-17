@@ -29,8 +29,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import ReactSlider from 'react-slider';
-import '../src/react-slider.css';
+import ReactBootstrapSlider from 'react-bootstrap-slider';
+import 'bootstrap-slider/dist/css/bootstrap-slider.css';
 import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import ExperimentDemo from '../src/Experiment/ExperimentDemo';
 import tilesettings from '../src/tilesettings';
@@ -1186,14 +1186,11 @@ storiesOf('ReactWMJSMap with redux', module)
         console.log('Render: layerOpacity from redux state ' + layerOpacity);
         if (!layerOpacity && layerOpacity !== 0) layerOpacity = 1.0;
         return (<div style={{ border: '1px solid black', width:'200px', padding: '20px', backgroundColor: 'white' }}>
-          <ReactSlider
-            className={'horizontal-slider'}
-            thumbClassName={'horizontal-slider-track'}
-            trackClassName={'horizontal-slider-thumb'}
-            min={0} max={1} step={0.1} defaultValue={parseFloat(this.state.opacity)}
-            onChange={(v) => {
-              this.setState({ opacity: v });
-              let opacity = parseFloat(v);
+          <ReactBootstrapSlider
+            min={0} max={1} step={0.1} value={parseFloat(this.state.opacity)}
+            change={(event) => {
+              this.setState({ opacity: event.target.value });
+              let opacity = parseFloat(event.target.value);
               store.dispatch(layerChangeOpacity({ layerId: radarLayer.id, mapPanelId: 'mapid_1', opacity: opacity }));
             }} /><span>Current opacity: {layerOpacity}</span>
         </div>);
@@ -1226,14 +1223,11 @@ storiesOf('ReactWMJSMap with redux', module)
         const unixStart = moment(startValue).utc().unix();
         const unixEnd = moment(endValue).utc().unix();
         return (<div style={{ border: '1px solid black', padding: '20px', width:'800px', backgroundColor: 'white' }}>
-          <ReactSlider
-            className={'horizontal-slider'}
-            thumbClassName={'horizontal-slider-track'}
-            trackClassName={'horizontal-slider-thumb'}
+          <ReactBootstrapSlider
             min={unixStart} max={unixEnd} step={300}
-            defaultValue={parseFloat(unixStart)}
-            onChange={(v) => {
-              const timeValue = timeDimension.getClosestValue(moment.unix(v).toISOString());
+            value={moment(timeDimension && timeDimension.currentValue).utc().unix()}
+            change={(event) => {
+              const timeValue = timeDimension.getClosestValue(moment.unix(event.target.value).toISOString());
               store.dispatch(mapChangeDimension({
                 mapPanelId: 'mapid_1',
                 dimension: {

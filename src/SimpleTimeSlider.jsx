@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { WEBMAPJS_REDUCERNAME, webMapJSReducer, mapChangeDimension } from './index';
 import './SimpleTimeSlider.css';
-import ReactSlider from 'react-slider';
-import '../src/react-slider.css';
+import ReactBootstrapSlider from 'react-bootstrap-slider';
+import 'bootstrap-slider/dist/css/bootstrap-slider.css';
 import moment from 'moment';
 import { Row, Col, Button } from 'reactstrap';
 import { getLayerTitle } from './SimpleLayerManager.jsx';
@@ -45,27 +45,26 @@ class SimpleTimeSlider extends Component {
     return (<div className={'reactwebmapjs-simpletimeslider'}>
       <Row>
         <Col xs='11'>
-          <ReactSlider
-            className={'horizontal-slider reactwebmapjs-simpletimeslidercomponent'}
-            thumbClassName={'horizontal-slider-track'}
-            trackClassName={'horizontal-slider-thumb'}
-            min={unixStart} max={unixEnd} step={1}
-            value={timeSliderValue}
-            onChange={(v) => {
-              if (this.props.isAnimating === true) {
-                dispatch(mapStopAnimation({
-                  mapPanelId: mapId
-                }));
-                getWMJSMapById(mapId).draw();
-              }
-              dispatch(mapChangeDimension({
-                mapPanelId: mapId,
-                dimension: {
-                  name: 'time',
-                  currentValue: moment.unix(v).toISOString()
+          <div style={{ width:'100%' }}>
+            <ReactBootstrapSlider
+              min={unixStart} max={unixEnd} step={1}
+              value={timeSliderValue}
+              change={(event) => {
+                if (this.props.isAnimating === true) {
+                  dispatch(mapStopAnimation({
+                    mapPanelId: mapId
+                  }));
+                  getWMJSMapById(mapId).draw();
                 }
-              }));
-            }} />
+                dispatch(mapChangeDimension({
+                  mapPanelId: mapId,
+                  dimension: {
+                    name: 'time',
+                    currentValue: moment.unix(event.target.value).toISOString()
+                  }
+                }));
+              }} />
+          </div>
         </Col>
         <Col xs='1'>
           <Button onClick={() => { this.toggleAnimation(); }}><Icon name={this.props.isAnimating ? 'pause' : 'play'} /></Button>
