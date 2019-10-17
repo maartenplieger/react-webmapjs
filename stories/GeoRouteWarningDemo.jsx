@@ -42,7 +42,7 @@ const dwdGaforLayer = {
 // };
 
 const baseLayer = {
-  name:'OpenStreetMap_Service',
+  name:'arcGisCanvas',
   type: 'twms',
   baseLayer: true,
   enabled:true,
@@ -59,6 +59,7 @@ class GeoRouteWarningDemo extends Component {
       isInEditMode: false,
       geojson: lineString,
       drawMode: 'LINESTRING',
+      hoveredIntersection: null,
       interSectionResult: null// gaforWarnings
     };
   }
@@ -105,7 +106,6 @@ class GeoRouteWarningDemo extends Component {
     }).then(data => {
       return data.json();
     }).then(interSectedData => {
-      console.log(interSectedData);
       const interSectedDataSimple = simplify(interSectedData, { tolerance: 0.01, highQuality: false });
       const gaforResult = produce(interSectedDataSimple, draft => {
         draft.features = draft.features.filter(feature =>
@@ -114,10 +114,10 @@ class GeoRouteWarningDemo extends Component {
         );
         draft.features.forEach((feature) => {
           if (!feature.properties) feature.properties = {};
-          feature.properties.stroke = '#88F';
-          feature.properties['stroke-width'] = 3;
+          feature.properties.stroke = 'green';
+          feature.properties['stroke-width'] = 2;
           feature.properties.fill = '#FFF';
-          feature.properties['fill-opacity'] = 0.3;
+          feature.properties['fill-opacity'] = 0.0;
         });
       });
       // console.log('Simpliefied: ', JSON.stringify(gaforResult, null, 2));
@@ -133,19 +133,32 @@ class GeoRouteWarningDemo extends Component {
 
   hightlightWarning (_key) {
     let key = _key;
-    if (key && key < 0) key = 0;
+    // if (key && key < 0) key = 0;
     if (this.currentKey === key) return;
     this.currentKey = key;
     this.setState({
       gaforAreaHover: key,
       interSectionResult: produce(this.state.interSectionResult, draft => {
         draft.features.forEach(feature => {
-          feature.properties.fill = '#FFF';
-          feature.properties['fill-opacity'] = 0.3;
+          feature.properties['fill-opacity'] = 0.0;
         });
-        if (key !== null) {
-          draft.features[key].properties['fill-opacity'] = 0.6;
-          draft.features[key].properties.fill = '#00F';
+        if (key !== null && key >= 0) {
+          draft.features[key].properties['fill-opacity'] = 0.0;
+        }
+      }),
+      hoveredIntersection: produce(this.state.interSectionResult, draft => {
+        if (draft) {
+          if (draft.features && key >= 0) {
+            draft.features = draft.features.filter((feature, index) => index === key);
+            if (draft.features.length > 0) {
+              draft.features[0].properties['fill-opacity'] = 0.0;
+              draft.features[0].properties.fill = '#F00';
+              draft.features[0].properties.stroke = '#00F';
+              draft.features[0].properties['stroke-width'] = 4;
+            }
+          } else {
+            draft.features.length = 0;
+          }
         }
       })
     });
@@ -199,7 +212,7 @@ class GeoRouteWarningDemo extends Component {
             {/* The redux layers */}
             { this.props.layers.map((layer, i) => { return <ReactWMJSLayer key={i} {...layer} />; }) }
             {/* <ReactWMJSLayer {...dwdFGGWSAirportsLayer} /> */}
-            {/* The geojson layer */}
+            {/* The flightroute geojson layer */}
             <ReactWMJSLayer
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
@@ -217,10 +230,16 @@ class GeoRouteWarningDemo extends Component {
               }}
               featureNrToEdit={this.state.currentFeatureNrToEdit}
             />
+            {/* This is the hoverd polygon to highlight */}
+            <ReactWMJSLayer
+              geojson={this.state.hoveredIntersection}
+            />
+            {/* The list with intersected polygons */}
             <ReactWMJSLayer
               geojson={this.state.interSectionResult}
               hoverFeatureCallback={(hoverInfo) => {
-                if (hoverInfo.polygonIndex >= 0) {
+                if (this.hoveredWarning !== hoverInfo.polygonIndex) {
+                  this.hoveredWarning = hoverInfo.polygonIndex;
                   this.hightlightWarning(hoverInfo.polygonIndex);
                 }
               }}
