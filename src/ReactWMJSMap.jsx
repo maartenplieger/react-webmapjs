@@ -363,8 +363,10 @@ export default class ReactWMJSMap extends Component {
             isInDeleteMode={layer.isInDeleteMode}
             drawMode={layer.drawMode}
             webmapjs={this.adaguc.webMapJS}
-            hoverFeatureCallback={(id) => {
-              if (layer.hoverFeatureCallback) layer.hoverFeatureCallback(id);
+            hoverFeatureCallback={(hoverInfo) => {
+              if (layer.hoverFeatureCallback) {
+                layer.hoverFeatureCallback(hoverInfo);
+              }
             }}
             updateGeojson={(geojson) => {
               if (layer.updateGeojson) layer.updateGeojson(geojson);

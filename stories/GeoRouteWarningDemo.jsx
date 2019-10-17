@@ -3,7 +3,11 @@ import {
   ReactWMJSLayer,
   ReactWMJSMap,
   generateMapId,
-  generateLayerId
+  generateLayerId,
+  SimpleLayerManager,
+  setLayers,
+  WEBMAPJS_REDUCERNAME,
+  webMapJSReducer
 } from '../src/index';
 import {
   Card, CardBody,
@@ -13,6 +17,9 @@ import { lineString } from '../src/AdagucMapDraw';
 import { lineChunk, simplify } from '@turf/turf';
 import './GeoRouteWarningDemo.css';
 import produce from 'immer';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 // import gaforWarnings from './gaforWarnings.json';
 
 const dwdWFSGeoServerURL = 'https://maps.dwd.de/geoserver/dwd/wfs?service=wfs&version=2.0.0&request=GetFeature&outputFormat=application/json&';
@@ -42,11 +49,12 @@ const baseLayer = {
   id: generateLayerId()
 };
 
-export default class drawPolyStory extends Component {
+class GeoRouteWarningDemo extends Component {
   constructor (props) {
     super(props);
     this.triggerIntersection = this.triggerIntersection.bind(this);
     this.renderGaforAreaForecast = this.renderGaforAreaForecast.bind(this);
+    this.hightlightWarning = this.hightlightWarning.bind(this);
     this.state = {
       isInEditMode: false,
       geojson: lineString,
@@ -119,34 +127,40 @@ export default class drawPolyStory extends Component {
     });
   }
 
+  componentDidMount () {
+    this.props.dispatch(setLayers({ layers: [dwdGaforLayer], mapPanelId: 'mapid_1' }));
+  }
+
+  hightlightWarning (_key) {
+    let key = _key;
+    if (key && key < 0) key = 0;
+    if (this.currentKey === key) return;
+    this.currentKey = key;
+    this.setState({
+      gaforAreaHover: key,
+      interSectionResult: produce(this.state.interSectionResult, draft => {
+        draft.features.forEach(feature => {
+          feature.properties.fill = '#FFF';
+          feature.properties['fill-opacity'] = 0.3;
+        });
+        if (key !== null) {
+          draft.features[key].properties['fill-opacity'] = 0.6;
+          draft.features[key].properties.fill = '#00F';
+        }
+      })
+    });
+  }
+
   renderGaforAreaForecast (p, key) {
     return (
       <div
         key={key}
         className={'GeoRouteWarningWarningInfoCard'}
         onMouseEnter={() => {
-          this.setState({
-            gaforAreaHover: key,
-            interSectionResult: produce(this.state.interSectionResult, draft => {
-              draft.features.forEach(feature => {
-                feature.properties.fill = '#FFF';
-                feature.properties['fill-opacity'] = 0.3;
-              });
-              draft.features[key].properties['fill-opacity'] = 0.6;
-              draft.features[key].properties.fill = '#00F';
-            })
-          });
+          this.hightlightWarning(key);
         }}
         onMouseLeave={() => {
-          this.setState({
-            gaforAreaHover: null,
-            interSectionResult: produce(this.state.interSectionResult, draft => {
-              draft.features.forEach(feature => {
-                feature.properties.fill = '#FFF';
-                feature.properties['fill-opacity'] = 0.3;
-              });
-            })
-          });
+          this.hightlightWarning(null);
         }}
       >
         <Card style={{ backgroundColor: this.state.gaforAreaHover === key ? '#DDF' : '#FFF' }}>
@@ -182,8 +196,10 @@ export default class drawPolyStory extends Component {
             }}
           >
             <ReactWMJSLayer {...baseLayer} />
-            <ReactWMJSLayer {...dwdGaforLayer} />
+            {/* The redux layers */}
+            { this.props.layers.map((layer, i) => { return <ReactWMJSLayer key={i} {...layer} />; }) }
             {/* <ReactWMJSLayer {...dwdFGGWSAirportsLayer} /> */}
+            {/* The geojson layer */}
             <ReactWMJSLayer
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
@@ -203,9 +219,25 @@ export default class drawPolyStory extends Component {
             />
             <ReactWMJSLayer
               geojson={this.state.interSectionResult}
+              hoverFeatureCallback={(hoverInfo) => {
+                if (hoverInfo.polygonIndex >= 0) {
+                  this.hightlightWarning(hoverInfo.polygonIndex);
+                }
+              }}
             />
           </ReactWMJSMap>
         </div>
+        { /* The layermanager */ }
+        <div style={{ position:'absolute', left:'10px', top: '60px', zIndex: '10000' }}>
+          <SimpleLayerManager
+            store={window.store}
+            mapId={'mapid_1'}
+            layerNameMappings={[
+              { layer: dwdGaforLayer, title: 'DWD GAFOR' }
+            ]}
+          />
+        </div>
+        { /* The button to start drawing a line */ }
         <div className={'GeoRouteWarningControlsContainer'}>
           <Button onClick={() => {
             this.setState({ isInEditMode: !this.state.isInEditMode }, () => {
@@ -213,6 +245,7 @@ export default class drawPolyStory extends Component {
             });
           }}>{this.state.isInEditMode ? 'Finish route (esc)' : 'Start drawing route'}</Button>
         </div>
+        { /* The list with intersections */ }
         <div className={'GeoRouteWarningWarningInfoContainer'}>
           <div style={{ marginLeft: '10px' }}>
             <h4>GAFOR for flightroute</h4>
@@ -221,29 +254,25 @@ export default class drawPolyStory extends Component {
           </div>
           {
             this.state.interSectionResult && this.state.interSectionResult.features.map((feature, key) => {
-              /*
-              - AREA_ID, AREA_NAME, ALTITUDE, GAFOR_CODE_SHORT, CLOUD_LOWER_LIMIT,VISIBILITY, START_VALID_DATE, END_VALID_DATE
-              */
-              const p = feature.properties;
-              return this.renderGaforAreaForecast(p, key);
+              return this.renderGaforAreaForecast(feature.properties, key);
             })
           }
-        </div>
-        <div className={'GeoRouteWarningTextAreaContainer'}>
-          <textarea className={'GeoRouteWarningTextArea'}
-            style={{ border: this.state.valid === false ? '5px solid red' : '5px solid lightgreen' }}
-            onChange={(e) => {
-              this.setState({ geojsonText: e.target.value });
-              try {
-                this.setState({ geojson: JSON.parse(e.target.value), valid: true });
-              } catch (e) {
-                this.setState({ geojson: null, valid: false });
-              }
-            }}
-            value={this.state.geojsonText || JSON.stringify(this.state.geojson, null, 2)}
-          />
         </div>
       </div>
     </div>);
   }
 };
+
+GeoRouteWarningDemo.propTypes = {
+  dispatch: PropTypes.func,
+  layers: PropTypes.array
+};
+const mapStateToProps = state => {
+  /* Return initial state if not yet set */
+  const webMapJSState = state[WEBMAPJS_REDUCERNAME] ? state[WEBMAPJS_REDUCERNAME] : webMapJSReducer();
+  return {
+    layers: webMapJSState.webmapjs.mapPanel[webMapJSState.webmapjs.activeMapPanelIndex].layers
+  };
+};
+
+export default connect(mapStateToProps)(GeoRouteWarningDemo);

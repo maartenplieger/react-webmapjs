@@ -681,9 +681,11 @@ storiesOf('ReactWMJSMap', module)
     return (<Map />);
   }).add('GeoRouteWarningDemo', () => {
     const story = (
-      <div style={{ height: '100vh' }}>
-        <GeoRouteWarningDemo />
-      </div>
+      <Provider store={window.store} >
+        <div style={{ height: '100vh' }}>
+          <GeoRouteWarningDemo />
+        </div>
+      </Provider>
     );
     return story;
   }).add('Synops along route with buffer via WFS CQL', () => {

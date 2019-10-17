@@ -750,10 +750,10 @@ export default class AdagucMapDraw extends PureComponent {
       }
     }
 
-    if (this.props.isInEditMode === true &&
-      this.mouseOverPolygonFeatureIndex === this.props.featureNrToEdit &&
-      this.props.hoverFeatureCallback) {
-      this.props.hoverFeatureCallback(this.mouseOverPolygonFeatureIndex);
+    // if (this.props.isInEditMode === true &&
+    //   this.mouseOverPolygonFeatureIndex === this.props.featureNrToEdit &&
+    if (this.props.hoverFeatureCallback) {
+      this.props.hoverFeatureCallback({ polygonIndex: this.mouseOverPolygonFeatureIndex });
     }
 
     /* Draw labels */
