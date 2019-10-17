@@ -50,10 +50,11 @@ class SimpleTimeSlider extends Component {
               value={timeSliderValue}
               change={(value) => {
                 if (this.props.isAnimating === true) {
-                  dispatch(mapStopAnimation({
-                    mapPanelId: mapId
-                  }));
-                  getWMJSMapById(mapId).draw();
+                  // dispatch(mapStopAnimation({
+                  //   mapPanelId: mapId
+                  // }));
+                  // getWMJSMapById(mapId).draw();
+                  return;
                 }
                 dispatch(mapChangeDimension({
                   mapPanelId: mapId,

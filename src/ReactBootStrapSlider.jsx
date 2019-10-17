@@ -16,18 +16,32 @@ class ReactBootStrapSlider extends Component {
     this.onChange = this.onChange.bind(this);
   }
   onUpdate (update) {
+    const values = [this.props.value || 0];
     if (this.props.change) {
-      this.props.change(update);
+      if (update.length !== 1) {
+        console.error('Error', update, values);
+        return;
+      }
+      if (this.value !== update[0]) {
+        this.value = update[0];
+        // console.log(values, update);
+        this.props.change(update);
+      }
     }
   }
   onChange (values) {
-    console.log(values);
-    if (this.props.change) {
-      this.props.change(values);
-    }
+    this.onUpdate(values);
   }
+
+  shouldComponentUpdate (nextProps) {
+    const values = [nextProps.value || 0];
+    this.value = values[0];
+    return true;
+  }
+
   render () {
     const values = [this.props.value || 0];
+    this.value = values[0];
     // const update = [this.props.value || 0];
     const domain = [this.props.min || 0, this.props.max || 0];
     return (

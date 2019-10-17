@@ -185,7 +185,7 @@ export const webMapJSReducer = (state = initialState, action = { type:null }) =>
           const layerDimension = layer.getDimension(action.payload.dimension.name);
           if (layerDimension) {
             let layerIndex = getLayerIndexFromAction({ payload: { layerId: layer.id } }, mapPanel.layers);
-            const dimensions = mapPanel.layers[layerIndex].dimensions || [];
+            const dimensions = (mapPanel.layers[layerIndex] && mapPanel.layers[layerIndex].dimensions) || [];
             let dimensionIndex = getDimensionIndexFromAction(action, dimensions);
             if (dimensionIndex === null) {
               dimensions.push({
