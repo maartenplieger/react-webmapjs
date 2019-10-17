@@ -249,7 +249,7 @@ export default class ReactWMJSMap extends Component {
 
                   /* Set the haders of the ADAGUC WMJSLayer */
                   if (child.props.headers !== undefined && wmjsLayer.headers !== child.props.headers) {
-                    console.log('UPDATE_LAYER: setting headers to [' + child.props.headers + '] - ' + wmjsLayer.headers);
+                    console.log('UPDATE_LAYER: setting headers to [', child.props.headers);
                     wmjsLayer.headers = child.props.headers;
                     parseWMJSLayerAndDispatchActions(wmjsLayer, dispatch, this.props.id, xml2jsonrequestURL, true).then(() => {
                       if (child.props.onLayerReady) {

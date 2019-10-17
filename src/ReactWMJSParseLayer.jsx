@@ -58,7 +58,7 @@ export const parseWMJSLayerAndDispatchActions = (wmjsLayer, dispatch, mapPanelId
             }
             resolve();
           };
-          service.getLayerObjectsFlat(done);
+          service.getLayerObjectsFlat(done, () => {}, false, null, { headers: wmjsLayer.headers });
         }
       }
     }, forceRefresh, 'ReactWMJSParseLayer.jsx', xml2jsonrequestURL);
