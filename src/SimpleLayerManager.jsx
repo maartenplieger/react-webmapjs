@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import produce from 'immer';
 import { WEBMAPJS_REDUCERNAME, webMapJSReducer, setLayers, layerChangeEnabled, getWMJSLayerById, layerChangeOpacity } from './index';
 import './SimpleLayerManager.css';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
-import 'bootstrap-slider/dist/css/bootstrap-slider.css';
+import ReactBootstrapSlider from './ReactBootStrapSlider.jsx';
 
 /* Constants */
 const REDUXREACTCOUNTERDEMO_ADD = 'COUNTERDEMO_ADD';
@@ -69,8 +68,8 @@ class SimpleLayerManager extends Component {
                     <ReactBootstrapSlider
                       min={0} max={1} step={0.1}
                       value={parseFloat(!layer.opacity && layer.opacity !== 0 ? 1 : layer.opacity)}
-                      change={(event) => {
-                        let opacity = parseFloat(event.target.value);
+                      change={(value) => {
+                        let opacity = parseFloat(value);
                         dispatch(layerChangeOpacity({ layerId: layer.id, mapPanelId: mapId, opacity: opacity }));
                       }} />
                   </div>

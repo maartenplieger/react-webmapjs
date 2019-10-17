@@ -148,6 +148,7 @@ export const webMapJSReducer = (state = initialState, action = { type:null }) =>
         const mapPanelIndexFromAction = getMapPanelIndexFromAction(action, draft.webmapjs.mapPanel); if (mapPanelIndexFromAction === null) { return state; }
         const mapPanel = draft.webmapjs.mapPanel[mapPanelIndexFromAction];
         const wmjsMap = getWMJSMapById(action.payload.mapPanelId);
+        if (!wmjsMap || !mapPanel) return;
         const mapDimension = wmjsMap.getDimension(action.payload.dimension.name);
         if (!mapDimension) {
           console.warn('Map has no dimension with name ' + action.payload.dimension.name);

@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { WEBMAPJS_REDUCERNAME, webMapJSReducer, mapChangeDimension } from './index';
 import './SimpleTimeSlider.css';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
-import 'bootstrap-slider/dist/css/bootstrap-slider.css';
+import ReactBootstrapSlider from './ReactBootStrapSlider.jsx';
 import moment from 'moment';
 import { Row, Col, Button } from 'reactstrap';
 import { getLayerTitle } from './SimpleLayerManager.jsx';
@@ -49,7 +48,7 @@ class SimpleTimeSlider extends Component {
             <ReactBootstrapSlider
               min={unixStart} max={unixEnd} step={1}
               value={timeSliderValue}
-              change={(event) => {
+              change={(value) => {
                 if (this.props.isAnimating === true) {
                   dispatch(mapStopAnimation({
                     mapPanelId: mapId
@@ -60,7 +59,7 @@ class SimpleTimeSlider extends Component {
                   mapPanelId: mapId,
                   dimension: {
                     name: 'time',
-                    currentValue: moment.unix(event.target.value).toISOString()
+                    currentValue: moment.unix(value).toISOString()
                   }
                 }));
               }} />

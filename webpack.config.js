@@ -44,17 +44,17 @@ module.exports = {
             loader: 'sass-loader' // compiles Sass to CSS
           }
         ]
-      },{
+      }, {
         test: /\.jpe?g$|\.ico$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/,
-        loader: 'file-loader?name=[name].[ext]'  // <-- retain original file name
+        loader: 'file-loader?name=[name].[ext]' // <-- retain original file name
       },
       {
         test: /\.(ttf|eot|woff|woff2)$/,
         use: {
-          loader: "file-loader",
+          loader: 'file-loader',
           options: {
-            name: "fonts/[name].[ext]",
-          },
+            name: 'fonts/[name].[ext]'
+          }
         }
       }
     ]
