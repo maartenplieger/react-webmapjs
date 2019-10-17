@@ -688,7 +688,7 @@ storiesOf('ReactWMJSMap', module)
       </Provider>
     );
     return story;
-  }).add('Synops along route with buffer via WFS CQL', () => {
+  }).add('Synops along buffered route via WFS CQL', () => {
     class Map extends Component {
       constructor (props) {
         super(props);
@@ -697,8 +697,8 @@ storiesOf('ReactWMJSMap', module)
           // could be further restricted via &propertyName=NAME&sortBy=NAME+A
           wfsUrl: 'https://maps.dwd.de/geoserver/dwd/ows?request=GetFeature&service=WFS&version=1.0.0&typeName=dwd:RBSN_T2m&maxFeatures=999' +
             '&outputFormat=text/javascript&format_options=callback:resultsJsonp',
-          gaforResult: null
-          // cqlfilter:  ''
+          cqlfilter: '',
+          featureInfo: [{ name: 'Stationname', temp: 'Temperature [°C]' }]
         };
       }
       componentDidMount () {
@@ -716,9 +716,10 @@ storiesOf('ReactWMJSMap', module)
         querytime = this.round(moment().add(-1, 'd'), moment.duration(1, 'hours'), 'ceil').toISOString();
 
         // M_DATE for RBSN-layers, OBSERVATION_TIME for Beobachtungen
-        let cqlexpression = '&cql_filter=INTERSECTS(THE_GEOM,+BUFFER(LINESTRING(13.00565+53.6181,%208.732724+48.28535),%200.2))' +
-        'AND M_DATE = ' + querytime;
+        let cqlexpression = '&cql_filter=INTERSECTS(THE_GEOM, BUFFER(LINESTRING(13.00565 53.6181, 8.732724 48.28535), 0.2))' +
+        ' AND M_DATE = ' + querytime;
         console.log('request url for synop with buffer', this.state.wfsUrl + cqlexpression);
+        this.setState({ cqlfilter: cqlexpression });
 
         $.ajax({
           jsonpCallback: 'resultsJsonp',
@@ -728,6 +729,12 @@ storiesOf('ReactWMJSMap', module)
           success: (data) => {
             this.setState({ gaforResult: data });
             console.log('resultsJsonp synop', data);
+
+            let featureInfo = [];
+            Object.keys(data.features).forEach((key) => {
+              featureInfo.push({ name: data.features[key].properties.NAME, temp: data.features[key].properties.TEMPERATURE });
+            });
+            this.setState({ featureInfo: featureInfo });
           }
         });
       }
@@ -740,6 +747,12 @@ storiesOf('ReactWMJSMap', module)
               <ReactWMJSLayer geojson={simpleSmallLineStringGeoJSON} />
               <ReactWMJSLayer geojson={this.state.gaforResult} />
             </ReactWMJSMap>
+          </div>
+          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '33%', fontSize: '11px' }}>
+            <div><h5>Query features along buffered line using WFS and CQL</h5></div>
+            <div>WFS JSONP URL: <pre>{this.state.wfsUrl}</pre></div>
+            <div>CQL expression: <pre>{this.state.cqlfilter}</pre></div>
+            <div><pre>{JSON.stringify(this.state.featureInfo, null, 2)}</pre></div>
           </div>
         </div>
         );
@@ -811,8 +824,8 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
-              {/* <ReactWMJSLayer {...dwdGaforLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
-              <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} /> */}
+              {/* <ReactWMJSLayer {...dwdGaforLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} /> */}
+              <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
               <ReactWMJSLayer geojson={this.state.gaforResult} />
             </ReactWMJSMap>
           </div>
