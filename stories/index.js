@@ -34,6 +34,7 @@ import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import ExperimentDemo from '../src/Experiment/ExperimentDemo';
 import tilesettings from '../src/tilesettings';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
+import ECADDataAvailability from './ECADDataAvailability';
 import GeoRouteWarningDemo from './GeoRouteWarningDemo';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON, simpleSmallLineStringGeoJSON } from './geojsonExamples';
@@ -383,6 +384,16 @@ storiesOf('Simple layer manager', module).add('Simple Layer manager and Time sli
   );
   return story;
 });
+
+storiesOf('ECAD', module)
+  .add('ECADDataAvailability', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ECADDataAvailability />
+      </div>
+    );
+    return story;
+  });
 
 storiesOf('ReactWMJSMap', module)
   .add('Map with radar data', () => {

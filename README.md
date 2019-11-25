@@ -1,5 +1,25 @@
 # react-webmapjs
 
+# Install environment
+
+To run and develop react-webmapjs you need npm. The easiest way to install npm is via nvm. Please visit https://nvm.sh/ and follow the instructions. When nvm is installed, please do the following command:
+
+```
+nvm install 8
+```
+
+After that you need to install its dependencies, do inside the react-webmapjs folder:
+```
+npm install
+```
+
+To start the storybook do:
+```
+npm run storybook
+```
+
+
+
 # Usage
 To also use the styling, one should import the stylesheet from the dist folder:
 ```
