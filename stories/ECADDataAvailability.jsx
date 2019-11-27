@@ -10,7 +10,7 @@ import SimpleDropDown from '../src/SimpleDropDown';
 import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
 import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
 import './ECADDataAvailability.css';
-import { debounce } from "debounce";
+import { debounce } from 'debounce';
 
 import moment from 'moment';
 
@@ -40,13 +40,17 @@ export default class ECADDataAvailibility extends Component {
     super(props);
     this.changeElement = this.changeElement.bind(this);
     this.fetchDataAvailability = this.fetchDataAvailability.bind(this);
+    this.fetchFirstLastDay = this.fetchFirstLastDay.bind(this);
+    this.fetchAllElements = this.fetchAllElements.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
     this.state = {
       selectedElement: elementList[0].key,
       geojson: null,
       startYear: 1900,
-      endYear: moment.utc().year()
+      endYear: moment.utc().year(),
+      domainYearStart: 1900,
+      domainYearEnd: moment.utc().year()
     };
   }
 
@@ -55,6 +59,39 @@ export default class ECADDataAvailibility extends Component {
       selectedElement: selected.key
     }, () => {
       this.fetchDataAvailability();
+    });
+  }
+
+  fetchAllElements () {
+    const ecadallelementsURL = 'http://localhost:8080/allelements';
+    fetch(ecadallelementsURL, {
+      method: 'GET',
+      mode: 'cors'
+    }).then(data => {
+      return data.json();
+    }).then(json => {
+      console.log(json);
+      const elementList = {
+        key: json.element,
+        value: json.ele_name
+      };
+      this.setState({ elementList });
+    });
+  }
+
+  fetchFirstLastDay () {
+    const ecadfirstlastURL = 'http://localhost:8080/firstlastday?element=' +
+      this.state.selectedElement;
+    fetch(ecadfirstlastURL, {
+      method: 'GET',
+      mode: 'cors'
+    }).then(data => {
+      return data.json();
+    }).then(json => {
+      this.setState({
+        domainYearStart:parseInt(json[0].first.substring(0, 4)),
+        domainYearEnd:parseInt(json[0].last.substring(0, 4))
+      });
     });
   }
 
@@ -120,10 +157,12 @@ export default class ECADDataAvailibility extends Component {
   onChange (values) {
     this.onUpdate(values);
   }
+  componentDidMount () {
+    this.fetchAllElements();
+    this.fetchFirstLastDay();
+  }
   render () {
-    const currentYear = moment.utc().year();
-
-    const domain = [1900, currentYear];
+    const domain = [this.state.domainYearStart, this.state.domainYearEnd];
     const values = [this.state.startYear, this.state.endYear];
     return (<div>
       <div className={'ECADDataAvailabilityContainer'}>
@@ -213,36 +252,6 @@ export default class ECADDataAvailibility extends Component {
 
             </Col>
           </Row>
-          {/* <Row>
-            <Col xs='10'>
-              <ReactBootstrapSlider
-                min={1900} max={currentYear} step={1}
-                value={this.state.startYear}
-                change={(value) => {
-                  this.setState({ startYear: value[0] }, () => {
-                    this.fetchDataAvailability();
-                  });
-                }} />
-            </Col>
-            <Col xs='2'>
-              {this.state.startYear}
-            </Col>
-          </Row>
-          <Row>
-            <Col xs='10'>
-              <ReactBootstrapSlider
-                min={1900} max={currentYear} step={1}
-                value={this.state.endYear}
-                change={(value) => {
-                  this.setState({ endYear: value[0] }, () => {
-                    this.fetchDataAvailability();
-                  });
-                }} />
-            </Col>
-            <Col xs='2'>
-              {this.state.endYear}
-            </Col>
-          </Row> */}
           <Row>
             <Col xs='12'>Found {this.state.geojson ? this.state.geojson.features.length : '0'} stations between {this.state.startYear} and {this.state.endYear}</Col>
           </Row>
