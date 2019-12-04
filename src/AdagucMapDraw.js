@@ -278,15 +278,28 @@ export default class AdagucMapDraw extends PureComponent {
     }
   }
 
-  drawPoint (ctx, _coord, selected, middle, isInEditMode, featureProperties) {
+  drawPoint (ctx, _coord, selected, middle, isInEditMode, feature, featureIndex) {
+    const { properties: featureProperties } = feature;
     if (featureProperties && featureProperties.imageURL) {
       this.drawIcon(ctx, _coord, featureProperties);
     }
 
     const drawStyledMarker = featureProperties ? featureProperties.stroke || featureProperties['stroke-width'] || featureProperties.fill : null;
-    const drawMarkerByDefault = !featureProperties || !featureProperties.imageURL;
+    const drawMarkerByDefault = !featureProperties || !featureProperties.imageURL || !featureProperties.drawFunction;
 
-    if (drawStyledMarker || drawMarkerByDefault) {
+    if (featureProperties.drawFunction) {
+      featureProperties.drawFunction({
+        context: ctx,
+        featureIndex: featureIndex,
+        coord: _coord,
+        selected: selected,
+        middle: middle,
+        isInEditMode: isInEditMode,
+        feature: feature,
+        mouseX: this.mouseX,
+        mouseY: this.mouseY
+      });
+    } else if (drawStyledMarker || drawMarkerByDefault) {
       this.drawMarker(ctx, _coord, selected, middle, isInEditMode, featureProperties);
     }
   }
@@ -589,7 +602,8 @@ export default class AdagucMapDraw extends PureComponent {
             this.mouseIsOverVertexNr === j && this.props.featureNrToEdit === featureIndex,
             false,
             this.props.isInEditMode && this.props.featureNrToEdit === featureIndex,
-            feature.properties);
+            feature,
+            featureIndex);
         }
       }
 
@@ -603,7 +617,9 @@ export default class AdagucMapDraw extends PureComponent {
           this.drawPoint(ctx, XYCoords[j],
             this.mouseIsOverVertexNr === j && this.props.featureNrToEdit === featureIndex,
             false,
-            this.props.isInEditMode && this.props.featureNrToEdit === featureIndex);
+            this.props.isInEditMode && this.props.featureNrToEdit === featureIndex,
+            feature,
+            featureIndex);
         }
       }
 
@@ -753,7 +769,12 @@ export default class AdagucMapDraw extends PureComponent {
     // if (this.props.isInEditMode === true &&
     //   this.mouseOverPolygonFeatureIndex === this.props.featureNrToEdit &&
     if (this.props.hoverFeatureCallback) {
-      this.props.hoverFeatureCallback({ polygonIndex: this.mouseOverPolygonFeatureIndex });
+      this.props.hoverFeatureCallback({
+        polygonIndex: this.mouseOverPolygonFeatureIndex,
+        featureIndex: this.mouseOverPolygonFeatureIndex,
+        mouseX: this.mouseX,
+        mouseY: this.mouseY
+      });
     }
 
     /* Draw labels */

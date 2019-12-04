@@ -35,6 +35,8 @@ import ExperimentDemo from '../src/Experiment/ExperimentDemo';
 import tilesettings from '../src/tilesettings';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
 import ECADDataAvailability from './ECADDataAvailability';
+import ECADSeriesLength from './ECADSeriesLength';
+import ECADHomogeneity from './ECADHomogeneity';
 import GeoRouteWarningDemo from './GeoRouteWarningDemo';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON, simpleSmallLineStringGeoJSON } from './geojsonExamples';
@@ -393,7 +395,25 @@ storiesOf('ECAD', module)
       </div>
     );
     return story;
-  });
+  })
+  .add('ECADSeriesLength', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ECADSeriesLength />
+      </div>
+    );
+    return story;
+  })
+  .add('ECADHomogeneity', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ECADHomogeneity />
+      </div>
+    );
+    return story;
+  })
+
+;
 
 storiesOf('ReactWMJSMap', module)
   .add('Map with radar data', () => {
