@@ -105,8 +105,8 @@ export default class ECADDataAvailibility extends Component {
       return data.json();
     }).then(json => {
       this.setState({
-        domainYearStart:parseInt(json[0].first.substring(0, 4)),
-        domainYearEnd:parseInt(json[0].last.substring(0, 4))
+        domainYearStart: parseInt(json[0].first.substring(0, 4)),
+        domainYearEnd: parseInt(json[0].last.substring(0, 4))
       });
     });
   }
@@ -219,8 +219,8 @@ export default class ECADDataAvailibility extends Component {
               onChange={(selected) => { this.changeElement(selected); }}
             />
           </Row>
-         <Row>
-            <Col xs='12' style={{ height:'60px', paddingTop:'20px' }}>
+          <Row>
+            <Col xs='12' style={{ height: '60px', paddingTop: '20px' }}>
               <Slider
                 mode={1}
                 step={1}

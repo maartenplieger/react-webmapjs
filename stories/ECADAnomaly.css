@@ -1,0 +1,37 @@
+.ECADAnomalyContainer {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  grid-template-rows: 150px 1fr;
+  grid-template-areas: "map controls"
+                       "map textarea";
+  width:100%;
+  height:100vh;
+}
+
+.ECADAnomalyMapContainer {
+  grid-area: map;
+  width:100%;
+  height:100%;
+}
+
+.ECADAnomalyTextAreaContainer {
+  grid-area: textarea;
+  width:100%;
+  height:100%;
+}
+
+
+.ECADAnomalyTextArea {
+padding:0;
+border:none;
+width:100%;
+height:100%;
+font-size:10px;
+}
+
+.ECADAnomalyControlsContainer {
+grid-area: controls;
+width:100%;
+height:100%;
+padding:20px;
+}

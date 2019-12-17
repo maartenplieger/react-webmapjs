@@ -37,6 +37,10 @@ import MapDrawGeoJSON from './MapDrawGeoJSON';
 import ECADDataAvailability from './ECADDataAvailability';
 import ECADSeriesLength from './ECADSeriesLength';
 import ECADHomogeneity from './ECADHomogeneity';
+import ECADIndices from './ECADIndices';
+import ECADTrends from './ECADTrends';
+import ECADAnomaly from './ECADAnomaly';
+import ECADClimatology from './ECADClimatology';
 import GeoRouteWarningDemo from './GeoRouteWarningDemo';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON, simpleSmallLineStringGeoJSON } from './geojsonExamples';
@@ -408,6 +412,38 @@ storiesOf('ECAD', module)
     const story = (
       <div style={{ height: '100vh' }}>
         <ECADHomogeneity />
+      </div>
+    );
+    return story;
+  })
+  .add('ECADIndices', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ECADIndices />
+      </div>
+    );
+    return story;
+  })
+  .add('ECADTrends', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ECADTrends />
+      </div>
+    );
+    return story;
+  })
+  .add('ECADClimatology', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ECADClimatology />
+      </div>
+    );
+    return story;
+  })
+  .add('ECADAnomaly', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ECADAnomaly />
       </div>
     );
     return story;

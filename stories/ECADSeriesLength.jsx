@@ -5,20 +5,20 @@ import {
   generateMapId,
   generateLayerId
 } from '../src/index';
-import { Row, Col } from 'reactstrap';
+import { Row } from 'reactstrap';
 import SimpleDropDown from '../src/SimpleDropDown';
-import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
-import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
+// import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
+// import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
 import './ECADSeriesLength.css';
-import { debounce } from 'debounce';
+// import { debounce } from 'debounce';
 
-import moment from 'moment';
+// import moment from 'moment';
 
-const sliderStyle = {
-  position: 'relative',
-  width: '100%',
-  touchAction: 'none'
-};
+// const sliderStyle = {
+//   position: 'relative',
+//   width: '100%',
+//   touchAction: 'none'
+// };
 
 const baseLayer = {
   name: 'arcGisSat',
@@ -53,7 +53,7 @@ export default class ECADSeriesLength extends Component {
       selectedBlendname: blendList[0].value,
       selectedElement: elementList[0].key,
       selectedElementname: elementList[0].value,
-      geojson: null,
+      geojson: null
     };
   }
 
@@ -120,7 +120,7 @@ export default class ECADSeriesLength extends Component {
       };
       seriesLengthJSON.forEach(dataPoint => {
         const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon);
-        if (dataPoint.length<50) feature.properties.fill = '#FF0000'; else feature.properties.fill = '#00FF00';
+        if (dataPoint.length < 50) feature.properties.fill = '#FF0000'; else feature.properties.fill = '#00FF00';
         pointGeoJson.features.push(feature);
       });
       this.setState({ geojson: pointGeoJson });
@@ -128,7 +128,7 @@ export default class ECADSeriesLength extends Component {
   }
 
   onUpdate (update) {
-      this.fetchSeriesLength();
+    this.fetchSeriesLength();
   }
   onChange (values) {
     this.onUpdate(values);
