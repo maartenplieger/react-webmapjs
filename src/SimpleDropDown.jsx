@@ -51,5 +51,5 @@ SimpleDropDown.propTypes = {
   selected: PropTypes.string,
   title: PropTypes.string,
   list: PropTypes.array,
-  onChange: PropTypes.function
+  onChange: PropTypes.any
 };

@@ -14,6 +14,7 @@ import './ECADHomogeneity.css';
 // import { debounce } from 'debounce';
 import { ECADDrawFunctionSolidCircle, distance, getPixelCoordFromGeoCoord } from './ECADDrawFunctions';
 import produce from 'immer';
+import ECADStationInfoComponent from './ECADStationInfoComponent';
 
 // import moment from 'moment';
 
@@ -63,6 +64,7 @@ export default class ECADHomogeneity extends Component {
       selectedElementname: elementList[0].value,
       selectedPeriod: periodList[5].key,
       geojson: null,
+      selectedPoint: null,
       hoveredFeatureIndex: null
     };
   }
@@ -150,7 +152,6 @@ export default class ECADHomogeneity extends Component {
 
   handleClickedPoint (featureIndex) {
     if (!this.state.geojson.features[featureIndex]) {
-      console.log('Featureindex not found', featureIndex);
       return;
     }
     if (!this.previousHoverProps) {
@@ -161,17 +162,15 @@ export default class ECADHomogeneity extends Component {
     }
     this.setState(produce(this.state, draft => {
       draft.hoveredFeatureIndex = featureIndex;
-      draft.geojson.features[featureIndex].properties.fill = '#000';
-      if (this.previousHoverProps) {
-        if (this.previousHoverProps.featureIndex !== featureIndex) {
-          draft.geojson.features[this.previousHoverProps.featureIndex].properties.fill = this.previousHoverProps.fill;
-          this.previousHoverProps = {
-            featureIndex: featureIndex,
-            fill: this.state.geojson.features[featureIndex].properties.fill
-          };
-        }
-      }
-    }));
+      // draft.geojson.features[featureIndex].properties.fill = '#000';
+      draft.selectedPoint = {
+        type: 'FeatureCollection',
+        features: [draft.geojson.features[featureIndex]]
+      };
+      draft.selectedPoint.features[0].properties.fill = '#00F';
+    }), () => {
+      console.log(JSON.stringify(this.state.selectedPoint, null, 2));
+    });
     //   this.fetchStationInfoForId();
   }
 
@@ -271,6 +270,7 @@ export default class ECADHomogeneity extends Component {
             }}
           >
             <ReactWMJSLayer {...baseLayer} />
+            <ReactWMJSLayer geojson={this.state.selectedPoint} />
             <ReactWMJSLayer
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
@@ -284,6 +284,7 @@ export default class ECADHomogeneity extends Component {
               exitDrawModeCallback={() => { this.setState({ isInEditMode: false }); }}
               featureNrToEdit={this.state.currentFeatureNrToEdit}
             />
+            <ReactWMJSLayer geojson={this.state.selectedPoint} />
           </ReactWMJSMap>
         </div>
         <div className={'ECADHomogeneityControlsContainer'}>
@@ -303,6 +304,7 @@ export default class ECADHomogeneity extends Component {
           </Row>
           <Row>
             <Col>
+              <ECADStationInfoComponent stationId={this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.id} />
               {this.state.hoveredFeatureIndex}<hr />
               {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.name}
               {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.index}

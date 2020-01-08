@@ -41,6 +41,7 @@ import ECADIndices from './ECADIndices';
 import ECADTrends from './ECADTrends';
 import ECADAnomaly from './ECADAnomaly';
 import ECADClimatology from './ECADClimatology';
+import ECADStationInfoComponent from './ECADStationInfoComponent';
 import GeoRouteWarningDemo from './GeoRouteWarningDemo';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON, simpleSmallLineStringGeoJSON } from './geojsonExamples';
@@ -444,6 +445,13 @@ storiesOf('ECAD', module)
     const story = (
       <div style={{ height: '100vh' }}>
         <ECADAnomaly />
+      </div>
+    );
+    return story;
+  }).add('ECADStationInfoComponent', () => {
+    const story = (
+      <div style={{ height: '100vh' }}>
+        <ECADStationInfoComponent stationId={162} />
       </div>
     );
     return story;
