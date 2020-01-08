@@ -46,3 +46,23 @@ export const getPixelCoordFromGeoCoord = (featureCoords, webmapjs) => {
   }
   return XYCoords;
 };
+
+export const fetchStationInfoForId = (stationid) => {
+  const stationinfoURL = 'http://eobsdata.knmi.nl:8080/stationinfo?' +
+      '&station_id=' +
+      stationid;
+    // const newFeature = (name, id) => {
+    //   return {
+    //     type: 'Feature',
+    //     properties: {
+    //       name: name,
+    //       id: id
+    //     }
+    //   };
+    // };
+  fetch(stationinfoURL, {
+    method: 'GET',
+    mode: 'cors'
+  });
+  console.log('testing');
+};

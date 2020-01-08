@@ -205,13 +205,13 @@ export default class ECADIndices extends Component {
       this.state.selectedYear +
       '&season=' +
       this.state.selectedSeason;
-    const newFeature = (name, lat, lon, id, ind_value, unit) => {
+    const newFeature = (name, lat, lon, id, indvalue, unit) => {
       return {
         type: 'Feature',
         properties: {
           name: name,
           id: id,
-          ind_value: ind_value,
+          indvalue: indvalue,
           unit: unit
         },
         geometry: {

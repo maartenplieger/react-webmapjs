@@ -11,7 +11,8 @@ import SimpleDropDown from '../src/SimpleDropDown';
 // import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
 import './ECADSeriesLength.css';
 // import { debounce } from 'debounce';
-
+import { ECADDrawFunctionSolidCircle, distance, getPixelCoordFromGeoCoord } from './ECADDrawFunctions';
+import produce from 'immer';
 // import moment from 'moment';
 
 // const sliderStyle = {
@@ -48,13 +49,46 @@ export default class ECADSeriesLength extends Component {
     this.fetchAllElements = this.fetchAllElements.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
+    this.handleClickedPoint = this.handleClickedPoint.bind(this);
     this.state = {
       selectedBlend: blendList[0].key,
       selectedBlendname: blendList[0].value,
       selectedElement: elementList[0].key,
       selectedElementname: elementList[0].value,
-      geojson: null
+      geojson: null,
+      hoveredFeatureIndex: null
     };
+  }
+
+  adagucMouseDown (event) {
+    const { geojson } = this.state;
+    if (!geojson || !this.webMapJS) return;
+    let smallestDistance = null;
+    let featureIndexWithSmallestDistance = null;
+    for (let featureIndex = 0; featureIndex < geojson.features.length; featureIndex++) {
+      const feature = geojson.features[featureIndex];
+      const featureType = feature.geometry.type;
+
+      if (featureType === 'Point') {
+        let featureCoords = feature.geometry.coordinates;
+        const XYCoords = getPixelCoordFromGeoCoord([featureCoords], this.webMapJS);
+        if (XYCoords.length === 0) {
+          continue;
+        }
+        for (let j = 0; j < XYCoords.length; j++) {
+          const d = distance({ x: event.mouseX, y: event.mouseY }, XYCoords[j]);
+          if (!smallestDistance || smallestDistance > d) {
+            smallestDistance = d;
+            featureIndexWithSmallestDistance = featureIndex;
+          }
+        }
+      }
+    }
+    if (featureIndexWithSmallestDistance !== null && smallestDistance < 8) {
+      console.log(featureIndexWithSmallestDistance, smallestDistance);
+      console.log(this.state.geojson.features[featureIndexWithSmallestDistance]);
+      this.handleClickedPoint(featureIndexWithSmallestDistance);
+    }
   }
 
   changeBlend (selected) {
@@ -70,6 +104,33 @@ export default class ECADSeriesLength extends Component {
     }, () => {
       this.fetchSeriesLength();
     });
+  }
+
+  handleClickedPoint (featureIndex) {
+    if (!this.state.geojson.features[featureIndex]) {
+      console.log('Featureindex not found', featureIndex);
+      return;
+    }
+    if (!this.previousHoverProps) {
+      this.previousHoverProps = {
+        featureIndex: featureIndex,
+        fill: this.state.geojson.features[featureIndex].properties.fill
+      };
+    }
+    this.setState(produce(this.state, draft => {
+      draft.hoveredFeatureIndex = featureIndex;
+      draft.geojson.features[featureIndex].properties.fill = '#000';
+      if (this.previousHoverProps) {
+        if (this.previousHoverProps.featureIndex !== featureIndex) {
+          draft.geojson.features[this.previousHoverProps.featureIndex].properties.fill = this.previousHoverProps.fill;
+          this.previousHoverProps = {
+            featureIndex: featureIndex,
+            fill: this.state.geojson.features[featureIndex].properties.fill
+          };
+        }
+      }
+    }));
+    //   this.fetchStationInfoForId();
   }
 
   fetchAllElements () {
@@ -120,6 +181,7 @@ export default class ECADSeriesLength extends Component {
       };
       seriesLengthJSON.forEach(dataPoint => {
         const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon);
+        feature.properties.drawFunction = ECADDrawFunctionSolidCircle;
         if (dataPoint.length < 50) feature.properties.fill = '#FF0000'; else feature.properties.fill = '#00FF00';
         pointGeoJson.features.push(feature);
       });
@@ -143,6 +205,8 @@ export default class ECADSeriesLength extends Component {
           <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}
             webMapJSInitializedCallback={(webMapJS) => {
               webMapJS.hideMapPin();
+              webMapJS.addListener('beforemousedown', this.adagucMouseDown, true);
+              this.webMapJS = webMapJS;
             }}
           >
             <ReactWMJSLayer {...baseLayer} />

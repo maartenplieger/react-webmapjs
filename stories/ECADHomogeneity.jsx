@@ -201,14 +201,14 @@ export default class ECADHomogeneity extends Component {
       this.state.selectedPeriod.substr(0, 4) +
       '&endperiod=' +
       this.state.selectedPeriod.substr(5, 4);
-    const newFeature = (name, lat, lon, id, index, snh_sigo) => {
+    const newFeature = (name, lat, lon, id, index, snhsigo) => {
       return {
         type: 'Feature',
         properties: {
           name: name,
           id: id,
           index: index,
-          snh_sigo: snh_sigo
+          snh_sigo: snhsigo
           // snh_year: snh_year,
           // bhr_sigo: bhr_sigo,
           // bhr_year: bhr_year,

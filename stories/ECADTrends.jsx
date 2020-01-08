@@ -38,8 +38,8 @@ const indexList = [
 ];
 
 const periodList = [
-    { key: '19511978', value: '1951-1978' },
-    { key: '19792018', value: '1979-2018' }
+  { key: '19511978', value: '1951-1978' },
+  { key: '19792018', value: '1979-2018' }
 ];
 
 const seasonList = [
