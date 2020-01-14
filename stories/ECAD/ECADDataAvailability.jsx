@@ -4,11 +4,11 @@ import {
   ReactWMJSMap,
   generateMapId,
   generateLayerId
-} from '../src/index';
+} from '../../src/index';
 import { Row, Col } from 'reactstrap';
-import SimpleDropDown from '../src/SimpleDropDown';
+import SimpleDropDown from '../../src/SimpleDropDown';
 import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
-import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
+import { SliderRail, Handle, Track, Tick } from '../../src/ReactBootStrapSliderComponents'; // example render components - source below
 import './ECADDataAvailability.css';
 import { debounce } from 'debounce';
 import { ECADDrawFunctionSolidCircle, distance, getPixelCoordFromGeoCoord } from './ECADDrawFunctions';
@@ -30,11 +30,11 @@ const baseLayer = {
   id: generateLayerId()
 };
 
-// const elementList = [
-//   { key: 'tn', value: 'Minimum temperature' },
-//   { key: 'rr', value: 'Precipitation' },
-//   { key: 'tx', value: 'Maximum temperature' }
-// ];
+const elementList = [
+  { key: 'tn', value: 'Minimum temperature' },
+  { key: 'rr', value: 'Precipitation' },
+  { key: 'tx', value: 'Maximum temperature' }
+];
 
 const blendList = [
   { key: 'false', value: 'Non-blended stations' },
@@ -56,9 +56,8 @@ export default class ECADDataAvailibility extends Component {
     this.state = {
       selectedBlend: blendList[0].key,
       selectedBlendname: blendList[0].value,
-      selectedElement: '',
-      selectedElementname: '',
-      elementList: [],
+      selectedElement: elementList[0].key,
+      selectedElementname: elementList[0].value,
       geojson: null,
       startYear: 1900,
       endYear: moment.utc().year(),
@@ -116,6 +115,7 @@ export default class ECADDataAvailibility extends Component {
 
   handleClickedPoint (featureIndex) {
     if (!this.state.geojson.features[featureIndex]) {
+      console.log('Featureindex not found', featureIndex);
       return;
     }
     if (!this.previousHoverProps) {
@@ -148,22 +148,12 @@ export default class ECADDataAvailibility extends Component {
     }).then(data => {
       return data.json();
     }).then(json => {
-      const elementList = [];
-      for (let j = 0; j < json.length; j++) {
-        elementList.push({
-          key: json[j].element,
-          value: json[j].ele_name
-        });
-      }
-
-      this.setState({ elementList: elementList }, () => {
-        let defaultElement = elementList[0];
-        const filteredElements = elementList.filter(element => element.key === 'tg');
-        if (filteredElements.length > 0) {
-          defaultElement = filteredElements[0];
-        }
-        this.changeElement(defaultElement);
-      });
+      console.log(json);
+      const elementList = {
+        key: json.element,
+        value: json.ele_name
+      };
+      this.setState({ elementList });
     });
   }
 
@@ -285,14 +275,14 @@ export default class ECADDataAvailibility extends Component {
             <SimpleDropDown
               selected={this.state.selectedBlend}
               list={blendList}
-              onChange={this.changeBlend}
+              onChange={(selected) => { this.changeBlend(selected); }}
             />
           </Row>
           <Row>
             <SimpleDropDown
               selected={this.state.selectedElement}
-              list={this.state.elementList}
-              onChange={this.changeElement}
+              list={elementList}
+              onChange={(selected) => { this.changeElement(selected); }}
             />
           </Row>
           <Row>
@@ -352,7 +342,8 @@ export default class ECADDataAvailibility extends Component {
             </Col>
           </Row>
           <Row>
-            <Col xs='12'>Found {this.state.geojson ? this.state.geojson.features.length : '0'} {this.state.selectedBlendname.toLowerCase()} stations for {this.state.selectedElementname.toLowerCase()} between {this.state.startYear} and {this.state.endYear}</Col>
+            <Col xs='12'>Found {this.state.geojson ? this.state.geojson.features.length : '0'}
+              {this.state.selectedBlendname.toLowerCase()} stations for {this.state.selectedElementname.toLowerCase()} between {this.state.startYear} and {this.state.endYear}</Col>
           </Row>
           <Row>
             <Col>

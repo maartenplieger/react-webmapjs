@@ -4,15 +4,17 @@ import {
   ReactWMJSMap,
   generateMapId,
   generateLayerId
-} from '../src/index';
-import { Row } from 'reactstrap';
-import SimpleDropDown from '../src/SimpleDropDown';
+  // setFeatureLayers
+} from '../../src/index';
+import { Row, Col } from 'reactstrap';
+import SimpleDropDown from '../../src/SimpleDropDown';
 // import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
 // import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
-import './ECADSeriesLength.css';
+import './ECADClimatology.css';
 // import { debounce } from 'debounce';
 import { ECADDrawFunctionSolidCircle, distance, getPixelCoordFromGeoCoord } from './ECADDrawFunctions';
 import produce from 'immer';
+
 // import moment from 'moment';
 
 // const sliderStyle = {
@@ -30,36 +32,49 @@ const baseLayer = {
   id: generateLayerId()
 };
 
-const elementList = [
-  { key: 'tn', value: 'Minimum temperature' },
-  { key: 'rr', value: 'Precipitation' },
-  { key: 'tx', value: 'Maximum temperature' }
+const indexList = [
+  { key: 'ID', value: 'Ice Days' },
+  { key: 'PRCPTOT', value: 'Total precipitation amount' }
 ];
 
-const blendList = [
-  { key: 'false', value: 'Non-blended stations' },
-  { key: 'true', value: 'Blended stations' }
+const climperiodList = [
+  { key: '19611990', value: '1961-1990' },
+  { key: '19812010', value: '1981-2010' }
 ];
 
-export default class ECADSeriesLength extends Component {
+const seasonList = [
+  { key: '0', value: 'Annual' },
+  { key: '1', value: 'Winter-half (ONDJFM)' },
+  { key: '2', value: 'Summer-half (AMJJAS)' },
+  { key: '3', value: 'DJF' },
+  { key: '4', value: 'MAM' },
+  { key: '5', value: 'JJA' },
+  { key: '6', value: 'SON' }
+];
+
+export default class ECADClimatology extends Component {
   constructor (props) {
     super(props);
-    this.changeElement = this.changeElement.bind(this);
-    this.changeBlend = this.changeBlend.bind(this);
-    this.fetchAllElements = this.fetchAllElements.bind(this);
+    this.changeIndex = this.changeIndex.bind(this);
+    this.changeClimPeriod = this.changeClimPeriod.bind(this);
+    this.changeSeason = this.changeSeason.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
+    this.adagucMouseDown = this.adagucMouseDown.bind(this);
+    // this.hoverCallback = this.hoverCallback.bind(this);
+    // this.handleHover = this.handleHover.bind(this);
+    // this.debouncedHover = this.debouncedHover.bind(this);
     this.handleClickedPoint = this.handleClickedPoint.bind(this);
     this.state = {
-      selectedBlend: blendList[0].key,
-      selectedBlendname: blendList[0].value,
-      selectedElement: elementList[0].key,
-      selectedElementname: elementList[0].value,
+      selectedIndex: indexList[0].key,
+      selectedIndexname: indexList[0].value,
+      selectedClimPeriod: climperiodList[0].key,
+      selectedSeason: seasonList[0].key,
+      selectedSeasonname: seasonList[0].value,
       geojson: null,
       hoveredFeatureIndex: null
     };
   }
-
   adagucMouseDown (event) {
     const { geojson } = this.state;
     if (!geojson || !this.webMapJS) return;
@@ -91,20 +106,49 @@ export default class ECADSeriesLength extends Component {
     }
   }
 
-  changeBlend (selected) {
+  changeIndex (selected) {
     this.setState({
-      selectedBlend: selected.key
+      selectedIndex: selected.key
     }, () => {
-      this.fetchSeriesLength();
+      this.fetchClimatology();
     });
   }
-  changeElement (selected) {
+
+  changeClimPeriod (selected) {
     this.setState({
-      selectedElement: selected.key
+      selectedClimPeriod: selected.key
     }, () => {
-      this.fetchSeriesLength();
+      this.fetchClimatology();
     });
   }
+
+  changeSeason (selected) {
+    this.setState({
+      selectedSeason: selected.key
+    }, () => {
+      this.fetchClimatology();
+    });
+  }
+
+  // fetchStationInfoForId () {
+  //   const stationinfoURL = 'http://birdexp07.knmi.nl/ecadbackend/stationinfo?' +
+  //     '&station_id=' +
+  //     this.state.geojson.features[this.state.hoveredFeatureIndex].properties;
+  //   // const newFeature = (name, id) => {
+  //   //   return {
+  //   //     type: 'Feature',
+  //   //     properties: {
+  //   //       name: name,
+  //   //       id: id
+  //   //     }
+  //   //   };
+  //   // };
+  //   fetch(stationinfoURL, {
+  //     method: 'GET',
+  //     mode: 'cors'
+  //   });
+  //   console.log('testing');
+  // }
 
   handleClickedPoint (featureIndex) {
     if (!this.state.geojson.features[featureIndex]) {
@@ -133,32 +177,40 @@ export default class ECADSeriesLength extends Component {
     //   this.fetchStationInfoForId();
   }
 
-  fetchAllElements () {
-    const ecadallelementsURL = 'http://eobsdata.knmi.nl:8080/allelements';
-    fetch(ecadallelementsURL, {
-      method: 'GET',
-      mode: 'cors'
-    }).then(data => {
-      return data.json();
-    }).then(json => {
-      console.log(json);
-      const elementList = {
-        key: json.element,
-        value: json.ele_name
-      };
-      this.setState({ elementList });
-    });
-  }
+  // debouncedHover (args) {
+  //   const { feature } = args;
+  //   if (!feature || !feature.properties || feature.properties.id === undefined) {
+  //     return;
+  //   }
+  //   debounce(() => {
+  //     const key = 'key_' + feature.properties.id;
+  //     if (this.debouncedHoverKey === key) {
+  //       return;
+  //     }
+  //     this.debouncedHoverKey = key;
+  //     this.handleHover(args);
+  //   }, 60)();
+  // }
 
-  fetchSeriesLength () {
-    const ecadURL = 'http://eobsdata.knmi.nl:8080/serieslength?element=' +
-      this.state.selectedElement +
-      '&blend=' + this.state.selectedBlend;
-    const newFeature = (name, lat, lon) => {
+  // hoverCallback (args) {
+  //   this.debouncedHover(args);
+  // }
+
+  fetchClimatology () {
+    const ecadURL = 'http://birdexp07.knmi.nl/ecadbackend/climatology?index=' +
+      this.state.selectedIndex +
+      '&climperiod=' +
+      this.state.selectedClimPeriod +
+      '&season=' +
+      this.state.selectedSeason;
+    const newFeature = (name, lat, lon, id, clim, unit) => {
       return {
         type: 'Feature',
         properties: {
-          text: name
+          name: name,
+          id: id,
+          clim: clim,
+          unit: unit
         },
         geometry: {
           type: 'Point',
@@ -174,15 +226,23 @@ export default class ECADSeriesLength extends Component {
       mode: 'cors'
     }).then(data => {
       return data.json();
-    }).then(seriesLengthJSON => {
+    }).then(ClimatologyJSON => {
       const pointGeoJson = {
         type: 'FeatureCollection',
         features: []
       };
-      seriesLengthJSON.forEach(dataPoint => {
-        const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon);
+      ClimatologyJSON.forEach(dataPoint => {
+        const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon, dataPoint.sta_id, dataPoint.clim, dataPoint.unit);
         feature.properties.drawFunction = ECADDrawFunctionSolidCircle;
-        if (dataPoint.length < 50) feature.properties.fill = '#FF0000'; else feature.properties.fill = '#00FF00';
+        if (dataPoint.ind_value < 10) {
+          feature.properties.fill = '#008000';
+        } else if (dataPoint.ind_value >= 10) {
+          feature.properties.fill = '#ffff00';
+        // } else if (dataPoint.homog === 2) {
+        //   feature.properties.fill = '#ee0000';
+        // } else {
+        //   feature.properties.fill = '#808080';
+        }
         pointGeoJson.features.push(feature);
       });
       this.setState({ geojson: pointGeoJson });
@@ -190,18 +250,15 @@ export default class ECADSeriesLength extends Component {
   }
 
   onUpdate (update) {
-    this.fetchSeriesLength();
+    this.fetchClimatology();
   }
   onChange (values) {
     this.onUpdate(values);
   }
-  componentDidMount () {
-    this.fetchAllElements();
-  }
   render () {
     return (<div>
-      <div className={'ECADSeriesLengthContainer'}>
-        <div className={'ECADSeriesLengthMapContainer'}>
+      <div className={'ECADClimatologyContainer'}>
+        <div className={'ECADClimatologyMapContainer'}>
           <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}
             webMapJSInitializedCallback={(webMapJS) => {
               webMapJS.hideMapPin();
@@ -211,6 +268,7 @@ export default class ECADSeriesLength extends Component {
           >
             <ReactWMJSLayer {...baseLayer} />
             <ReactWMJSLayer
+              id={generateLayerId()}
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
               drawMode={this.state.drawMode}
@@ -225,20 +283,37 @@ export default class ECADSeriesLength extends Component {
             />
           </ReactWMJSMap>
         </div>
-        <div className={'ECADSeriesLengthControlsContainer'}>
+        <div className={'ECADClimatologyControlsContainer'}>
           <Row>
             <SimpleDropDown
-              selected={this.state.selectedBlend}
-              list={blendList}
-              onChange={(selected) => { this.changeBlend(selected); }}
+              selected={this.state.selectedIndex}
+              list={indexList}
+              onChange={(selected) => { this.changeIndex(selected); }}
             />
           </Row>
           <Row>
             <SimpleDropDown
-              selected={this.state.selectedElement}
-              list={elementList}
-              onChange={(selected) => { this.changeElement(selected); }}
+              selected={this.state.selectedClimPeriod}
+              list={climperiodList}
+              onChange={(selected) => { this.changeClimPeriod(selected); }}
             />
+          </Row>
+          <Row>
+            <SimpleDropDown
+              selected={this.state.selectedSeason}
+              list={seasonList}
+              onChange={(selected) => { this.changeSeason(selected); }}
+            />
+          </Row>
+          <Row>
+            <Col>
+              {this.state.hoveredFeatureIndex}<hr />
+              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.name}
+              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.clim}
+              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.unit}
+              {this.state.hoveredFeatureIndex && this.state.selectedYear} {this.state.hoveredFeatureIndex &&
+              this.state.selectedSeasonname} {this.state.hoveredFeatureIndex && this.state.selectedIndexname}
+            </Col>
           </Row>
         </div>
       </div>

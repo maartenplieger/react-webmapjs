@@ -214,6 +214,7 @@ class GeoRouteWarningDemo extends Component {
             {/* <ReactWMJSLayer {...dwdFGGWSAirportsLayer} /> */}
             {/* The flightroute geojson layer */}
             <ReactWMJSLayer
+              id={generateLayerId()}
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
               drawMode={this.state.drawMode}
@@ -232,10 +233,12 @@ class GeoRouteWarningDemo extends Component {
             />
             {/* This is the hoverd polygon to highlight */}
             <ReactWMJSLayer
+              id={generateLayerId()}
               geojson={this.state.hoveredIntersection}
             />
             {/* The list with intersected polygons */}
             <ReactWMJSLayer
+              id={generateLayerId()}
               geojson={this.state.interSectionResult}
               hoverFeatureCallback={(hoverInfo) => {
                 if (this.hoveredWarning !== hoverInfo.polygonIndex) {

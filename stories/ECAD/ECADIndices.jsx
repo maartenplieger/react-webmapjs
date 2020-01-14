@@ -5,16 +5,15 @@ import {
   generateMapId,
   generateLayerId
   // setFeatureLayers
-} from '../src/index';
+} from '../../src/index';
 import { Row, Col } from 'reactstrap';
-import SimpleDropDown from '../src/SimpleDropDown';
+import SimpleDropDown from '../../src/SimpleDropDown';
 // import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
 // import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
-import './ECADHomogeneity.css';
+import './ECADIndices.css';
 // import { debounce } from 'debounce';
 import { ECADDrawFunctionSolidCircle, distance, getPixelCoordFromGeoCoord } from './ECADDrawFunctions';
 import produce from 'immer';
-import ECADStationInfoComponent from './ECADStationInfoComponent';
 
 // import moment from 'moment';
 
@@ -33,25 +32,34 @@ const baseLayer = {
   id: generateLayerId()
 };
 
-const elementList = [
-  { key: 'temp', value: 'Temperature' },
-  { key: 'prec', value: 'Precipitation' }
+const indexList = [
+  { key: 'ID', value: 'Ice Days' },
+  { key: 'PRCPTOT', value: 'Total precipitation amount' }
 ];
 
-const periodList = [
-  { key: '1901-1950', value: '1901-1950' },
-  { key: '1951-1978', value: '1951-2078' },
-  { key: '1851-2018', value: '1851-2018' },
-  { key: '1901-2018', value: '1901-2018' },
-  { key: '1951-2018', value: '1951-2018' },
-  { key: '1979-2018', value: '1979-2018' }
+const yearList = [
+  { key: '2015', value: '2015' },
+  { key: '2016', value: '2016' },
+  { key: '2017', value: '2017' },
+  { key: '2018', value: '2018' }
 ];
 
-export default class ECADHomogeneity extends Component {
+const seasonList = [
+  { key: '0', value: 'Annual' },
+  { key: '1', value: 'Winter-half (ONDJFM)' },
+  { key: '2', value: 'Summer-half (AMJJAS)' },
+  { key: '3', value: 'DJF' },
+  { key: '4', value: 'MAM' },
+  { key: '5', value: 'JJA' },
+  { key: '6', value: 'SON' }
+];
+
+export default class ECADIndices extends Component {
   constructor (props) {
     super(props);
-    this.changeElement = this.changeElement.bind(this);
-    this.changePeriod = this.changePeriod.bind(this);
+    this.changeIndex = this.changeIndex.bind(this);
+    this.changeYear = this.changeYear.bind(this);
+    this.changeSeason = this.changeSeason.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
     this.adagucMouseDown = this.adagucMouseDown.bind(this);
@@ -60,11 +68,12 @@ export default class ECADHomogeneity extends Component {
     // this.debouncedHover = this.debouncedHover.bind(this);
     this.handleClickedPoint = this.handleClickedPoint.bind(this);
     this.state = {
-      selectedElement: elementList[0].key,
-      selectedElementname: elementList[0].value,
-      selectedPeriod: periodList[5].key,
+      selectedIndex: indexList[0].key,
+      selectedIndexname: indexList[0].value,
+      selectedYear: yearList[0].key,
+      selectedSeason: seasonList[0].key,
+      selectedSeasonname: seasonList[0].value,
       geojson: null,
-      selectedPoint: null,
       hoveredFeatureIndex: null
     };
   }
@@ -99,39 +108,32 @@ export default class ECADHomogeneity extends Component {
     }
   }
 
-  changeElement (selected) {
+  changeIndex (selected) {
     this.setState({
-      selectedElement: selected.key
+      selectedIndex: selected.key
     }, () => {
-      this.fetchHomogeneity();
+      this.fetchIndices();
     });
   }
 
-  changePeriod (selected) {
+  changeYear (selected) {
     this.setState({
-      selectedPeriod: selected.key
+      selectedYear: selected.key
     }, () => {
-      this.fetchHomogeneity();
+      this.fetchIndices();
     });
   }
 
-  // fetchHomogInfoForId () {
-  //   const homoginfoURL = 'http://eobsdata.knmi.nl:8080/homogeneityinfo?element=' +
-  //     this.state.selectedElement +
-  //     '&startperiod=' +
-  //     this.state.selectedPeriod.substr(0, 4) +
-  //     '&endperiod=' +
-  //     this.state.selectedPeriod.substr(5, 4) +
-  //     '&station_id=' +
-  //     this.state.geojson.features[this.state.hoveredFeatureIndex].properties;
-  //   fetch(homoginfoURL, {
-  //     method: 'GET',
-  //     mode: 'cors'
-  //   });
-  // }
+  changeSeason (selected) {
+    this.setState({
+      selectedSeason: selected.key
+    }, () => {
+      this.fetchIndices();
+    });
+  }
 
   // fetchStationInfoForId () {
-  //   const stationinfoURL = 'http://eobsdata.knmi.nl:8080/stationinfo?' +
+  //   const stationinfoURL = 'http://birdexp07.knmi.nl/ecadbackend/stationinfo?' +
   //     '&station_id=' +
   //     this.state.geojson.features[this.state.hoveredFeatureIndex].properties;
   //   // const newFeature = (name, id) => {
@@ -152,6 +154,7 @@ export default class ECADHomogeneity extends Component {
 
   handleClickedPoint (featureIndex) {
     if (!this.state.geojson.features[featureIndex]) {
+      console.log('Featureindex not found', featureIndex);
       return;
     }
     if (!this.previousHoverProps) {
@@ -162,15 +165,17 @@ export default class ECADHomogeneity extends Component {
     }
     this.setState(produce(this.state, draft => {
       draft.hoveredFeatureIndex = featureIndex;
-      // draft.geojson.features[featureIndex].properties.fill = '#000';
-      draft.selectedPoint = {
-        type: 'FeatureCollection',
-        features: [draft.geojson.features[featureIndex]]
-      };
-      draft.selectedPoint.features[0].properties.fill = '#00F';
-    }), () => {
-      console.log(JSON.stringify(this.state.selectedPoint, null, 2));
-    });
+      draft.geojson.features[featureIndex].properties.fill = '#000';
+      if (this.previousHoverProps) {
+        if (this.previousHoverProps.featureIndex !== featureIndex) {
+          draft.geojson.features[this.previousHoverProps.featureIndex].properties.fill = this.previousHoverProps.fill;
+          this.previousHoverProps = {
+            featureIndex: featureIndex,
+            fill: this.state.geojson.features[featureIndex].properties.fill
+          };
+        }
+      }
+    }));
     //   this.fetchStationInfoForId();
   }
 
@@ -193,27 +198,21 @@ export default class ECADHomogeneity extends Component {
   //   this.debouncedHover(args);
   // }
 
-  fetchHomogeneity () {
-    const ecadURL = 'http://eobsdata.knmi.nl:8080/homogeneity?element=' +
-      this.state.selectedElement +
-      '&startperiod=' +
-      this.state.selectedPeriod.substr(0, 4) +
-      '&endperiod=' +
-      this.state.selectedPeriod.substr(5, 4);
-    const newFeature = (name, lat, lon, id, index, snhsigo) => {
+  fetchIndices () {
+    const ecadURL = 'http://birdexp07.knmi.nl/ecadbackend/indices?index=' +
+      this.state.selectedIndex +
+      '&year=' +
+      this.state.selectedYear +
+      '&season=' +
+      this.state.selectedSeason;
+    const newFeature = (name, lat, lon, id, indvalue, unit) => {
       return {
         type: 'Feature',
         properties: {
           name: name,
           id: id,
-          index: index,
-          snh_sigo: snhsigo
-          // snh_year: snh_year,
-          // bhr_sigo: bhr_sigo,
-          // bhr_year: bhr_year,
-          // pet_sigo: pet_sigo,
-          // pet_year: pet_year,
-          // neu_sigo: neu_sigo
+          indvalue: indvalue,
+          unit: unit
         },
         geometry: {
           type: 'Point',
@@ -229,22 +228,22 @@ export default class ECADHomogeneity extends Component {
       mode: 'cors'
     }).then(data => {
       return data.json();
-    }).then(homogeneityJSON => {
+    }).then(IndicesJSON => {
       const pointGeoJson = {
         type: 'FeatureCollection',
         features: []
       };
-      homogeneityJSON.forEach(dataPoint => {
-        const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon, dataPoint.sta_id, dataPoint.index, dataPoint.snh_sigo);
+      IndicesJSON.forEach(dataPoint => {
+        const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon, dataPoint.sta_id, dataPoint.ind_value, dataPoint.unit);
         feature.properties.drawFunction = ECADDrawFunctionSolidCircle;
-        if (dataPoint.homog === 0) {
+        if (dataPoint.ind_value < 10) {
           feature.properties.fill = '#008000';
-        } else if (dataPoint.homog === 1) {
+        } else if (dataPoint.ind_value >= 10) {
           feature.properties.fill = '#ffff00';
-        } else if (dataPoint.homog === 2) {
-          feature.properties.fill = '#ee0000';
-        } else {
-          feature.properties.fill = '#808080';
+        // } else if (dataPoint.homog === 2) {
+        //   feature.properties.fill = '#ee0000';
+        // } else {
+        //   feature.properties.fill = '#808080';
         }
         pointGeoJson.features.push(feature);
       });
@@ -253,15 +252,15 @@ export default class ECADHomogeneity extends Component {
   }
 
   onUpdate (update) {
-    this.fetchHomogeneity();
+    this.fetchIndices();
   }
   onChange (values) {
     this.onUpdate(values);
   }
   render () {
     return (<div>
-      <div className={'ECADHomogeneityContainer'}>
-        <div className={'ECADHomogeneityMapContainer'}>
+      <div className={'ECADIndicesContainer'}>
+        <div className={'ECADIndicesMapContainer'}>
           <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}
             webMapJSInitializedCallback={(webMapJS) => {
               webMapJS.hideMapPin();
@@ -270,8 +269,8 @@ export default class ECADHomogeneity extends Component {
             }}
           >
             <ReactWMJSLayer {...baseLayer} />
-            <ReactWMJSLayer geojson={this.state.selectedPoint} />
             <ReactWMJSLayer
+              id={generateLayerId()}
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
               drawMode={this.state.drawMode}
@@ -284,31 +283,38 @@ export default class ECADHomogeneity extends Component {
               exitDrawModeCallback={() => { this.setState({ isInEditMode: false }); }}
               featureNrToEdit={this.state.currentFeatureNrToEdit}
             />
-            <ReactWMJSLayer geojson={this.state.selectedPoint} />
           </ReactWMJSMap>
         </div>
-        <div className={'ECADHomogeneityControlsContainer'}>
+        <div className={'ECADIndicesControlsContainer'}>
           <Row>
             <SimpleDropDown
-              selected={this.state.selectedElement}
-              list={elementList}
-              onChange={(selected) => { this.changeElement(selected); }}
+              selected={this.state.selectedIndex}
+              list={indexList}
+              onChange={(selected) => { this.changeIndex(selected); }}
             />
           </Row>
           <Row>
             <SimpleDropDown
-              selected={this.state.selectedPeriod}
-              list={periodList}
-              onChange={(selected) => { this.changePeriod(selected); }}
+              selected={this.state.selectedYear}
+              list={yearList}
+              onChange={(selected) => { this.changeYear(selected); }}
+            />
+          </Row>
+          <Row>
+            <SimpleDropDown
+              selected={this.state.selectedSeason}
+              list={seasonList}
+              onChange={(selected) => { this.changeSeason(selected); }}
             />
           </Row>
           <Row>
             <Col>
-              <ECADStationInfoComponent stationId={this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.id} />
               {this.state.hoveredFeatureIndex}<hr />
               {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.name}
-              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.index}
-              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.snh_sigo}
+              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.ind_value}
+              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.unit}
+              {this.state.hoveredFeatureIndex && this.state.selectedYear} {this.state.hoveredFeatureIndex &&
+              this.state.selectedSeasonname} {this.state.hoveredFeatureIndex && this.state.selectedIndexname}
             </Col>
           </Row>
         </div>

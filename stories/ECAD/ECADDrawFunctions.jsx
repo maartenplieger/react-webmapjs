@@ -25,6 +25,7 @@ export const ECADDrawFunctionSolidCircle = (args) => {
   context.arc(coord.x, coord.y, 8, 0, 2 * Math.PI, false);
   context.fillStyle = properties.fill;
   context.fill();
+  context.stroke();
 };
 
 export const getPixelCoordFromGeoCoord = (featureCoords, webmapjs) => {
@@ -47,8 +48,44 @@ export const getPixelCoordFromGeoCoord = (featureCoords, webmapjs) => {
   return XYCoords;
 };
 
+export const getLatLonCoordFromPixelCoord = (pixelCoords, webmapjs) => {
+  const { width, height } = webmapjs.getSize();
+  const bbox = webmapjs.getBBOX();
+  const proj = webmapjs.getProj4();
+
+  console.log(pixelCoords);
+  const geoX = (pixelCoords.x / width) * (bbox.right - bbox.left) + bbox.left;
+  const geoY = (pixelCoords.y / height) * (bbox.bottom - bbox.top) + bbox.top;
+
+  console.log(geoX, geoY);
+  var from = getProj4(proj.crs);
+  var to = getProj4(proj.lonlat);
+
+  let coordinates = { x: geoX, y: geoY };
+  coordinates = proj.proj4.transform(from, to, coordinates);
+  return coordinates;
+};
+
+export const getLatLonCoordFromGeoCoord = (featureCoords, webmapjs) => {
+  const proj = webmapjs.getProj4();
+  const XYCoords = [];
+
+  var to = getProj4(proj.lonlat);
+  var from = getProj4(proj.crs);
+
+  for (let j = 0; j < featureCoords.length; j++) {
+    if (featureCoords[j].length < 2) continue;
+    let coordinates = { x: featureCoords[j][0], y: featureCoords[j][1] };
+    console.log(coordinates);
+    coordinates = proj.proj4.transform(from, to, coordinates);
+    console.log(coordinates);
+    XYCoords.push(coordinates);
+  }
+  return XYCoords;
+};
+
 export const fetchStationInfoForId = (stationid) => {
-  const stationinfoURL = 'http://eobsdata.knmi.nl:8080/stationinfo?' +
+  const stationinfoURL = 'http://birdexp07.knmi.nl/ecadbackend/stationinfo?' +
       '&station_id=' +
       stationid;
     // const newFeature = (name, id) => {

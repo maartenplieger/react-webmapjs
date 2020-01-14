@@ -5,12 +5,12 @@ import {
   generateMapId,
   generateLayerId
   // setFeatureLayers
-} from '../src/index';
+} from '../../src/index';
 import { Row, Col } from 'reactstrap';
-import SimpleDropDown from '../src/SimpleDropDown';
+import SimpleDropDown from '../../src/SimpleDropDown';
 // import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
 // import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
-import './ECADIndices.css';
+import './ECADAnomaly.css';
 // import { debounce } from 'debounce';
 import { ECADDrawFunctionSolidCircle, distance, getPixelCoordFromGeoCoord } from './ECADDrawFunctions';
 import produce from 'immer';
@@ -37,6 +37,11 @@ const indexList = [
   { key: 'PRCPTOT', value: 'Total precipitation amount' }
 ];
 
+const climperiodList = [
+  { key: '19611990', value: '1961-1990' },
+  { key: '19812010', value: '1981-2010' }
+];
+
 const yearList = [
   { key: '2015', value: '2015' },
   { key: '2016', value: '2016' },
@@ -54,10 +59,11 @@ const seasonList = [
   { key: '6', value: 'SON' }
 ];
 
-export default class ECADIndices extends Component {
+export default class ECADAnomaly extends Component {
   constructor (props) {
     super(props);
     this.changeIndex = this.changeIndex.bind(this);
+    this.changeClimPeriod = this.changeClimPeriod.bind(this);
     this.changeYear = this.changeYear.bind(this);
     this.changeSeason = this.changeSeason.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -70,6 +76,7 @@ export default class ECADIndices extends Component {
     this.state = {
       selectedIndex: indexList[0].key,
       selectedIndexname: indexList[0].value,
+      selectedClimPeriod: climperiodList[0].key,
       selectedYear: yearList[0].key,
       selectedSeason: seasonList[0].key,
       selectedSeasonname: seasonList[0].value,
@@ -112,7 +119,15 @@ export default class ECADIndices extends Component {
     this.setState({
       selectedIndex: selected.key
     }, () => {
-      this.fetchIndices();
+      this.fetchAnomaly();
+    });
+  }
+
+  changeClimPeriod (selected) {
+    this.setState({
+      selectedClimPeriod: selected.key
+    }, () => {
+      this.fetchAnomaly();
     });
   }
 
@@ -120,7 +135,7 @@ export default class ECADIndices extends Component {
     this.setState({
       selectedYear: selected.key
     }, () => {
-      this.fetchIndices();
+      this.fetchAnomaly();
     });
   }
 
@@ -128,12 +143,12 @@ export default class ECADIndices extends Component {
     this.setState({
       selectedSeason: selected.key
     }, () => {
-      this.fetchIndices();
+      this.fetchAnomaly();
     });
   }
 
   // fetchStationInfoForId () {
-  //   const stationinfoURL = 'http://eobsdata.knmi.nl:8080/stationinfo?' +
+  //   const stationinfoURL = 'http://birdexp07.knmi.nl/ecadbackend/stationinfo?' +
   //     '&station_id=' +
   //     this.state.geojson.features[this.state.hoveredFeatureIndex].properties;
   //   // const newFeature = (name, id) => {
@@ -198,20 +213,24 @@ export default class ECADIndices extends Component {
   //   this.debouncedHover(args);
   // }
 
-  fetchIndices () {
-    const ecadURL = 'http://eobsdata.knmi.nl:8080/indices?index=' +
+  fetchAnomaly () {
+    const ecadURL = 'http://birdexp07.knmi.nl/ecadbackend/anomaly?index=' +
       this.state.selectedIndex +
-      '&year=' +
-      this.state.selectedYear +
+      '&climperiod=' +
+      this.state.selectedClimPeriod +
       '&season=' +
-      this.state.selectedSeason;
-    const newFeature = (name, lat, lon, id, indvalue, unit) => {
+      this.state.selectedSeason +
+      '&year=' +
+      this.state.selectedYear;
+    const newFeature = (name, lat, lon, id, clim, anom, value, unit) => {
       return {
         type: 'Feature',
         properties: {
           name: name,
           id: id,
-          indvalue: indvalue,
+          clim: clim,
+          value: value,
+          anom: anom,
           unit: unit
         },
         geometry: {
@@ -228,13 +247,13 @@ export default class ECADIndices extends Component {
       mode: 'cors'
     }).then(data => {
       return data.json();
-    }).then(IndicesJSON => {
+    }).then(AnomalyJSON => {
       const pointGeoJson = {
         type: 'FeatureCollection',
         features: []
       };
-      IndicesJSON.forEach(dataPoint => {
-        const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon, dataPoint.sta_id, dataPoint.ind_value, dataPoint.unit);
+      AnomalyJSON.forEach(dataPoint => {
+        const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon, dataPoint.sta_id, dataPoint.clim, dataPoint.anom, dataPoint.value, dataPoint.unit);
         feature.properties.drawFunction = ECADDrawFunctionSolidCircle;
         if (dataPoint.ind_value < 10) {
           feature.properties.fill = '#008000';
@@ -252,15 +271,15 @@ export default class ECADIndices extends Component {
   }
 
   onUpdate (update) {
-    this.fetchIndices();
+    this.fetchAnomaly();
   }
   onChange (values) {
     this.onUpdate(values);
   }
   render () {
     return (<div>
-      <div className={'ECADIndicesContainer'}>
-        <div className={'ECADIndicesMapContainer'}>
+      <div className={'ECADAnomalyContainer'}>
+        <div className={'ECADAnomalyMapContainer'}>
           <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}
             webMapJSInitializedCallback={(webMapJS) => {
               webMapJS.hideMapPin();
@@ -270,6 +289,7 @@ export default class ECADIndices extends Component {
           >
             <ReactWMJSLayer {...baseLayer} />
             <ReactWMJSLayer
+              id={generateLayerId()}
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
               drawMode={this.state.drawMode}
@@ -284,7 +304,7 @@ export default class ECADIndices extends Component {
             />
           </ReactWMJSMap>
         </div>
-        <div className={'ECADIndicesControlsContainer'}>
+        <div className={'ECADAnomalyControlsContainer'}>
           <Row>
             <SimpleDropDown
               selected={this.state.selectedIndex}
@@ -294,9 +314,9 @@ export default class ECADIndices extends Component {
           </Row>
           <Row>
             <SimpleDropDown
-              selected={this.state.selectedYear}
-              list={yearList}
-              onChange={(selected) => { this.changeYear(selected); }}
+              selected={this.state.selectedClimPeriod}
+              list={climperiodList}
+              onChange={(selected) => { this.changeClimPeriod(selected); }}
             />
           </Row>
           <Row>
@@ -307,12 +327,20 @@ export default class ECADIndices extends Component {
             />
           </Row>
           <Row>
+            <SimpleDropDown
+              selected={this.state.selectedYear}
+              list={yearList}
+              onChange={(selected) => { this.changeYear(selected); }}
+            />
+          </Row>
+          <Row>
             <Col>
               {this.state.hoveredFeatureIndex}<hr />
               {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.name}
-              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.ind_value}
+              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.anom}
               {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.unit}
-              {this.state.hoveredFeatureIndex && this.state.selectedYear} {this.state.hoveredFeatureIndex && this.state.selectedSeasonname} {this.state.hoveredFeatureIndex && this.state.selectedIndexname}
+              {this.state.hoveredFeatureIndex && this.state.selectedYear} {this.state.hoveredFeatureIndex &&
+              this.state.selectedSeasonname} {this.state.hoveredFeatureIndex && this.state.selectedIndexname}
             </Col>
           </Row>
         </div>

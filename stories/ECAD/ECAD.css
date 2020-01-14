@@ -44,3 +44,17 @@ UL {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; line-he
 
 
 HR.ruler {color: #000000; line-height: 1px}
+
+
+.ECADLoading {
+  position: absolute;
+  float: right;
+  left: 30vw;
+  top: 30vh;
+  z-index: 1000000;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid black;
+  margin:20px;
+  padding:20px;
+}

@@ -5,15 +5,16 @@ import {
   generateMapId,
   generateLayerId
   // setFeatureLayers
-} from '../src/index';
+} from '../../src/index';
 import { Row, Col } from 'reactstrap';
-import SimpleDropDown from '../src/SimpleDropDown';
+import SimpleDropDown from '../../src/SimpleDropDown';
 // import { Slider, Rail, Handles, Tracks, Ticks } from 'react-compound-slider';
 // import { SliderRail, Handle, Track, Tick } from '../src/ReactBootStrapSliderComponents'; // example render components - source below
-import './ECADTrends.css';
+import './ECADHomogeneity.css';
 // import { debounce } from 'debounce';
 import { ECADDrawFunctionSolidCircle, distance, getPixelCoordFromGeoCoord } from './ECADDrawFunctions';
 import produce from 'immer';
+import ECADStationInfoComponent from './ECADStationInfoComponent';
 
 // import moment from 'moment';
 
@@ -32,51 +33,46 @@ const baseLayer = {
   id: generateLayerId()
 };
 
-const indexList = [
-  { key: 'ID', value: 'Ice Days' },
-  { key: 'PRCPTOT', value: 'Total precipitation amount' }
+const elementList = [
+  { key: 'temp', value: 'Temperature' },
+  { key: 'prec', value: 'Precipitation' }
 ];
 
 const periodList = [
-  { key: '19511978', value: '1951-1978' },
-  { key: '19792018', value: '1979-2018' }
+  { key: '1901-1950', value: '1901-1950' },
+  { key: '1951-1978', value: '1951-2078' },
+  { key: '1851-2018', value: '1851-2018' },
+  { key: '1901-2018', value: '1901-2018' },
+  { key: '1951-2018', value: '1951-2018' },
+  { key: '1979-2018', value: '1979-2018' }
 ];
 
-const seasonList = [
-  { key: '0', value: 'Annual' },
-  { key: '1', value: 'Winter-half (ONDJFM)' },
-  { key: '2', value: 'Summer-half (AMJJAS)' },
-  { key: '3', value: 'DJF' },
-  { key: '4', value: 'MAM' },
-  { key: '5', value: 'JJA' },
-  { key: '6', value: 'SON' }
-];
-
-export default class ECADTrends extends Component {
+export default class ECADHomogeneity extends Component {
   constructor (props) {
     super(props);
-    this.changeIndex = this.changeIndex.bind(this);
+    this.changeElement = this.changeElement.bind(this);
     this.changePeriod = this.changePeriod.bind(this);
-    this.changeSeason = this.changeSeason.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
     this.adagucMouseDown = this.adagucMouseDown.bind(this);
+    this.processClosestPoint = this.processClosestPoint.bind(this);
     // this.hoverCallback = this.hoverCallback.bind(this);
     // this.handleHover = this.handleHover.bind(this);
     // this.debouncedHover = this.debouncedHover.bind(this);
     this.handleClickedPoint = this.handleClickedPoint.bind(this);
     this.state = {
-      selectedIndex: indexList[0].key,
-      selectedIndexname: indexList[0].value,
-      selectedPeriod: periodList[0].key,
-      selectedSeason: seasonList[0].key,
-      selectedSeasonname: seasonList[0].value,
+      selectedElement: elementList[0].key,
+      selectedElementname: elementList[0].value,
+      selectedPeriod: periodList[5].key,
       geojson: null,
-      hoveredFeatureIndex: null
+      selectedPoint: null,
+      hoveredFeatureIndex: null,
+      processing: false
     };
   }
-  adagucMouseDown (event) {
+  processClosestPoint (event) {
     const { geojson } = this.state;
+
     if (!geojson || !this.webMapJS) return;
     let smallestDistance = null;
     let featureIndexWithSmallestDistance = null;
@@ -91,7 +87,7 @@ export default class ECADTrends extends Component {
           continue;
         }
         for (let j = 0; j < XYCoords.length; j++) {
-          const d = distance({ x: event.mouseX, y: event.mouseY }, XYCoords[j]);
+          const d = distance({ x: event.x, y: event.y }, XYCoords[j]);
           if (!smallestDistance || smallestDistance > d) {
             smallestDistance = d;
             featureIndexWithSmallestDistance = featureIndex;
@@ -100,17 +96,25 @@ export default class ECADTrends extends Component {
       }
     }
     if (featureIndexWithSmallestDistance !== null && smallestDistance < 8) {
-      console.log(featureIndexWithSmallestDistance, smallestDistance);
-      console.log(this.state.geojson.features[featureIndexWithSmallestDistance]);
       this.handleClickedPoint(featureIndexWithSmallestDistance);
     }
   }
 
-  changeIndex (selected) {
+  adagucMouseDown (event) {
+    this.setState({ processing: true }, () => {
+      setTimeout(() => {
+        this.processClosestPoint(event);
+        this.setState({ processing: false });
+      }, 100);
+    });
+    this.forceUpdate();
+  }
+
+  changeElement (selected) {
     this.setState({
-      selectedIndex: selected.key
+      selectedElement: selected.key
     }, () => {
-      this.fetchTrends();
+      this.fetchHomogeneity();
     });
   }
 
@@ -118,20 +122,27 @@ export default class ECADTrends extends Component {
     this.setState({
       selectedPeriod: selected.key
     }, () => {
-      this.fetchTrends();
+      this.fetchHomogeneity();
     });
   }
 
-  changeSeason (selected) {
-    this.setState({
-      selectedSeason: selected.key
-    }, () => {
-      this.fetchTrends();
-    });
-  }
+  // fetchHomogInfoForId () {
+  //   const homoginfoURL = 'http://birdexp07.knmi.nl/ecadbackend/homogeneityinfo?element=' +
+  //     this.state.selectedElement +
+  //     '&startperiod=' +
+  //     this.state.selectedPeriod.substr(0, 4) +
+  //     '&endperiod=' +
+  //     this.state.selectedPeriod.substr(5, 4) +
+  //     '&station_id=' +
+  //     this.state.geojson.features[this.state.hoveredFeatureIndex].properties;
+  //   fetch(homoginfoURL, {
+  //     method: 'GET',
+  //     mode: 'cors'
+  //   });
+  // }
 
   // fetchStationInfoForId () {
-  //   const stationinfoURL = 'http://eobsdata.knmi.nl:8080/stationinfo?' +
+  //   const stationinfoURL = 'http://birdexp07.knmi.nl/ecadbackend/stationinfo?' +
   //     '&station_id=' +
   //     this.state.geojson.features[this.state.hoveredFeatureIndex].properties;
   //   // const newFeature = (name, id) => {
@@ -152,7 +163,6 @@ export default class ECADTrends extends Component {
 
   handleClickedPoint (featureIndex) {
     if (!this.state.geojson.features[featureIndex]) {
-      console.log('Featureindex not found', featureIndex);
       return;
     }
     if (!this.previousHoverProps) {
@@ -163,17 +173,14 @@ export default class ECADTrends extends Component {
     }
     this.setState(produce(this.state, draft => {
       draft.hoveredFeatureIndex = featureIndex;
-      draft.geojson.features[featureIndex].properties.fill = '#000';
-      if (this.previousHoverProps) {
-        if (this.previousHoverProps.featureIndex !== featureIndex) {
-          draft.geojson.features[this.previousHoverProps.featureIndex].properties.fill = this.previousHoverProps.fill;
-          this.previousHoverProps = {
-            featureIndex: featureIndex,
-            fill: this.state.geojson.features[featureIndex].properties.fill
-          };
-        }
-      }
+      // draft.geojson.features[featureIndex].properties.fill = '#000';
+      draft.selectedPoint = {
+        type: 'FeatureCollection',
+        features: [draft.geojson.features[featureIndex]]
+      };
+      draft.selectedPoint.features[0].properties.fill = '#00F';
     }));
+    this.webMapJS.draw();
     //   this.fetchStationInfoForId();
   }
 
@@ -196,21 +203,27 @@ export default class ECADTrends extends Component {
   //   this.debouncedHover(args);
   // }
 
-  fetchTrends () {
-    const ecadURL = 'http://eobsdata.knmi.nl:8080/trends?index=' +
-      this.state.selectedIndex +
-      '&period=' +
-      this.state.selectedPeriod +
-      '&season=' +
-      this.state.selectedSeason;
-    const newFeature = (name, lat, lon, id, trendvalue, unit) => {
+  fetchHomogeneity () {
+    const ecadURL = 'http://birdexp07.knmi.nl/ecadbackend/homogeneity?element=' +
+      this.state.selectedElement +
+      '&startperiod=' +
+      this.state.selectedPeriod.substr(0, 4) +
+      '&endperiod=' +
+      this.state.selectedPeriod.substr(5, 4);
+    const newFeature = (name, lat, lon, id, index, snhsigo) => {
       return {
         type: 'Feature',
         properties: {
           name: name,
           id: id,
-          trendvalue: trendvalue,
-          unit: unit
+          index: index,
+          snh_sigo: snhsigo
+          // snh_year: snh_year,
+          // bhr_sigo: bhr_sigo,
+          // bhr_year: bhr_year,
+          // pet_sigo: pet_sigo,
+          // pet_year: pet_year,
+          // neu_sigo: neu_sigo
         },
         geometry: {
           type: 'Point',
@@ -226,22 +239,22 @@ export default class ECADTrends extends Component {
       mode: 'cors'
     }).then(data => {
       return data.json();
-    }).then(TrendsJSON => {
+    }).then(homogeneityJSON => {
       const pointGeoJson = {
         type: 'FeatureCollection',
         features: []
       };
-      TrendsJSON.forEach(dataPoint => {
-        const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon, dataPoint.sta_id, dataPoint.trendvalue, dataPoint.trendlabel);
+      homogeneityJSON.forEach(dataPoint => {
+        const feature = newFeature(dataPoint.sta_name, dataPoint.lat, dataPoint.lon, dataPoint.sta_id, dataPoint.index, dataPoint.snh_sigo);
         feature.properties.drawFunction = ECADDrawFunctionSolidCircle;
-        if (dataPoint.ind_value < 10) {
+        if (dataPoint.homog === 0) {
           feature.properties.fill = '#008000';
-        } else if (dataPoint.ind_value >= 10) {
+        } else if (dataPoint.homog === 1) {
           feature.properties.fill = '#ffff00';
-        // } else if (dataPoint.homog === 2) {
-        //   feature.properties.fill = '#ee0000';
-        // } else {
-        //   feature.properties.fill = '#808080';
+        } else if (dataPoint.homog === 2) {
+          feature.properties.fill = '#ee0000';
+        } else {
+          feature.properties.fill = '#808080';
         }
         pointGeoJson.features.push(feature);
       });
@@ -250,24 +263,26 @@ export default class ECADTrends extends Component {
   }
 
   onUpdate (update) {
-    this.fetchTrends();
+    this.fetchHomogeneity();
   }
   onChange (values) {
     this.onUpdate(values);
   }
   render () {
     return (<div>
-      <div className={'ECADTrendsContainer'}>
-        <div className={'ECADTrendsMapContainer'}>
+      <div className={'ECADHomogeneityContainer'}>
+        <div className={'ECADHomogeneityMapContainer'}>
+          { this.state.processing && <div className='ECADLoading'>Processing ...</div> }
           <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}
             webMapJSInitializedCallback={(webMapJS) => {
               webMapJS.hideMapPin();
-              webMapJS.addListener('beforemousedown', this.adagucMouseDown, true);
+              webMapJS.addListener('mouseclicked', this.adagucMouseDown, true);
               this.webMapJS = webMapJS;
             }}
           >
             <ReactWMJSLayer {...baseLayer} />
             <ReactWMJSLayer
+              id={'stationlayer'}
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
               drawMode={this.state.drawMode}
@@ -279,15 +294,17 @@ export default class ECADTrends extends Component {
               }}
               exitDrawModeCallback={() => { this.setState({ isInEditMode: false }); }}
               featureNrToEdit={this.state.currentFeatureNrToEdit}
+              simplifyResolutionInDegrees={0.1}
             />
+            <ReactWMJSLayer id={'selectedstation'} geojson={this.state.selectedPoint} />
           </ReactWMJSMap>
         </div>
-        <div className={'ECADTrendsControlsContainer'}>
+        <div className={'ECADHomogeneityControlsContainer'}>
           <Row>
             <SimpleDropDown
-              selected={this.state.selectedIndex}
-              list={indexList}
-              onChange={(selected) => { this.changeIndex(selected); }}
+              selected={this.state.selectedElement}
+              list={elementList}
+              onChange={(selected) => { this.changeElement(selected); }}
             />
           </Row>
           <Row>
@@ -298,19 +315,12 @@ export default class ECADTrends extends Component {
             />
           </Row>
           <Row>
-            <SimpleDropDown
-              selected={this.state.selectedSeason}
-              list={seasonList}
-              onChange={(selected) => { this.changeSeason(selected); }}
-            />
-          </Row>
-          <Row>
             <Col>
+              <ECADStationInfoComponent stationId={this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.id} />
               {this.state.hoveredFeatureIndex}<hr />
               {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.name}
-              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.trendvalue}
-              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.unit}
-              {this.state.hoveredFeatureIndex && this.state.selectedYear} {this.state.hoveredFeatureIndex && this.state.selectedSeasonname} {this.state.hoveredFeatureIndex && this.state.selectedIndexname}
+              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.index}
+              {this.state.hoveredFeatureIndex && this.state.geojson.features[this.state.hoveredFeatureIndex].properties.snh_sigo}
             </Col>
           </Row>
         </div>

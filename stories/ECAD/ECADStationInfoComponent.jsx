@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './ECAD.css';
-const ecadStationsInfoURL = 'http://eobsdata.knmi.nl:8080/stationsinfo?';
+const ecadStationsInfoURL = 'http://birdexp07.knmi.nl/ecadbackend/stationsinfo?';
 /*
 {
     "station_id": 162,
@@ -50,14 +50,12 @@ export default class ECADStationInfoComponent extends Component {
     }).then(data => {
       return data.json();
     }).then(data => {
-      console.log('datra', data);
       this.setState({ stationData: data[0] });
     });
   }
 
   renderStationInfoHTML (stationData) {
     if (!stationData) return null;
-    console.log('stationData', stationData);
     return (<tbody>
       {/* <tr>
         <td className='head1' colSpan='5'>

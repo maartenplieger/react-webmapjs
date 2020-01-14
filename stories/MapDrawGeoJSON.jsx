@@ -93,6 +93,7 @@ export default class drawPolyStory extends Component {
           >
             <ReactWMJSLayer {...baseLayer} />
             <ReactWMJSLayer
+              id={generateLayerId()}
               geojson={this.state.geojson}
               isInEditMode={this.state.isInEditMode}
               drawMode={this.state.drawMode}

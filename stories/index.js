@@ -34,14 +34,14 @@ import ReduxReactCounterDemo from '../src/ReduxReactCounterDemo';
 import ExperimentDemo from '../src/Experiment/ExperimentDemo';
 import tilesettings from '../src/tilesettings';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
-import ECADDataAvailability from './ECADDataAvailability';
-import ECADSeriesLength from './ECADSeriesLength';
-import ECADHomogeneity from './ECADHomogeneity';
-import ECADIndices from './ECADIndices';
-import ECADTrends from './ECADTrends';
-import ECADAnomaly from './ECADAnomaly';
-import ECADClimatology from './ECADClimatology';
-import ECADStationInfoComponent from './ECADStationInfoComponent';
+import ECADDataAvailability from './ECAD/ECADDataAvailability';
+import ECADSeriesLength from './ECAD/ECADSeriesLength';
+import ECADHomogeneity from './ECAD/ECADHomogeneity';
+import ECADIndices from './ECAD/ECADIndices';
+import ECADTrends from './ECAD/ECADTrends';
+import ECADAnomaly from './ECAD/ECADAnomaly';
+import ECADClimatology from './ECAD/ECADClimatology';
+import ECADStationInfoComponent from './ECAD/ECADStationInfoComponent';
 import GeoRouteWarningDemo from './GeoRouteWarningDemo';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { simplePointsGeojson, simpleFlightRoutePointsGeoJSON, simpleFlightRouteLineStringGeoJSON, simpleSmallLineStringGeoJSON } from './geojsonExamples';
@@ -511,7 +511,7 @@ storiesOf('ReactWMJSMap', module)
         <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...overLayer} />
-          <ReactWMJSLayer geojson={simplePointsGeojson} />
+          <ReactWMJSLayer id={generateLayerId()} geojson={simplePointsGeojson} />
         </ReactWMJSMap>
       </div>
     );
@@ -522,7 +522,7 @@ storiesOf('ReactWMJSMap', module)
         <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...overLayer} />
-          <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
+          <ReactWMJSLayer id={generateLayerId()} geojson={simpleFlightRoutePointsGeoJSON} />
         </ReactWMJSMap>
       </div>
     );
@@ -533,7 +533,7 @@ storiesOf('ReactWMJSMap', module)
         <ReactWMJSMap id={generateMapId()} bbox={[-2000000, 4000000, 3000000, 10000000]} enableInlineGetFeatureInfo={false}>
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...overLayer} />
-          <ReactWMJSLayer geojson={simpleFlightRouteLineStringGeoJSON} />
+          <ReactWMJSLayer id={generateLayerId()} geojson={simpleFlightRouteLineStringGeoJSON} />
         </ReactWMJSMap>
       </div>
     );
@@ -618,7 +618,7 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
-              <ReactWMJSLayer geojson={this.state.gaforResultSimplified} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={this.state.gaforResultSimplified} />
             </ReactWMJSMap>
           </div>
           <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
@@ -676,9 +676,9 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
-              <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
-              {/* <ReactWMJSLayer geojson={this.state.gaforResult} /> */}
-              <ReactWMJSLayer geojson={this.state.gaforHit} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={simpleFlightRoutePointsGeoJSON} />
+              {/* <ReactWMJSLayer id={generateLayerId()} geojson={this.state.gaforResult} /> */}
+              <ReactWMJSLayer id={generateLayerId()} geojson={this.state.gaforHit} />
             </ReactWMJSMap>
           </div>
           <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
@@ -738,9 +738,9 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
-              <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={simpleFlightRoutePointsGeoJSON} />
               {/* <ReactWMJSLayer geojson={this.state.gaforResult} /> */}
-              <ReactWMJSLayer geojson={this.state.gaforHit} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={this.state.gaforHit} />
             </ReactWMJSMap>
           </div>
           {/* <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
@@ -818,8 +818,8 @@ storiesOf('ReactWMJSMap', module)
           <div style={{ height: '100vh' }}>
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
-              <ReactWMJSLayer geojson={simpleSmallLineStringGeoJSON} />
-              <ReactWMJSLayer geojson={this.state.gaforResult} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={simpleSmallLineStringGeoJSON} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={this.state.gaforResult} />
             </ReactWMJSMap>
           </div>
           <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '33%', fontSize: '11px' }}>
@@ -899,8 +899,8 @@ storiesOf('ReactWMJSMap', module)
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
               {/* <ReactWMJSLayer {...dwdGaforLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} /> */}
-              <ReactWMJSLayer geojson={simpleFlightRoutePointsGeoJSON} />
-              <ReactWMJSLayer geojson={this.state.gaforResult} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={simpleFlightRoutePointsGeoJSON} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={this.state.gaforResult} />
             </ReactWMJSMap>
           </div>
           <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '60%', fontSize: '11px' }}>
@@ -976,7 +976,7 @@ storiesOf('ReactWMJSMap', module)
             <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
               <ReactWMJSLayer {...overLayer} />
               <ReactWMJSLayer {...baseLayer} />
-              <ReactWMJSLayer geojson={this.state.warnResultSimplified} />
+              <ReactWMJSLayer id={generateLayerId()} geojson={this.state.warnResultSimplified} />
             </ReactWMJSMap>
           </div>
           <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '30%', fontSize: '11px' }}>
