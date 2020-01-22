@@ -32,7 +32,7 @@ import PropTypes from 'prop-types';
 import ReactBootstrapSlider from '../src/UIComponents/ReactBootStrapSlider';
 import ReduxReactCounterDemo from '../src/ReduxDemo/ReduxReactCounterDemo';
 import ExperimentDemo from '../src/MapAnimationExperiment/ExperimentDemo';
-import tilesettings from '../src/tilesettings';
+import tilesettings from '../src/ReactWMJSMap/tilesettings';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
 import { simplePointsGeojson, simpleSmallLineStringGeoJSON } from './geojsonExamples';
 
