@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'throttle-debounce';
-import { WMJSMap, WMJSLayer, WMJSBBOX } from 'adaguc-webmapjs';
+import { WMJSMap, WMJSLayer, WMJSBBOX } from '../adaguc-webmapjs/index';
 import tileRenderSettings from './tilesettings.json';
 import ReactWMJSLayer from './ReactWMJSLayer.jsx';
 import { layerSetStyles, layerChangeStyle, layerSetDimensions, mapChangeDimension, mapStopAnimation } from '../ReactWMJSCore/ReactWMJSActions';
