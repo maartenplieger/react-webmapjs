@@ -7,8 +7,8 @@ import {
 } from '../src/index';
 import { simplePolygonGeoJSON, simplePointsGeojson, simpleBoxGeoJSON } from './geojsonExamples';
 import { Button, Form, FormGroup, Label } from 'reactstrap';
-import SimpleDropDown from '../src/SimpleDropDown';
-import { lineString } from '../src/AdagucMapDraw';
+import SimpleDropDown from '../src/UIComponents/SimpleDropDown';
+import { lineString } from '../src/ReactWMJS/AdagucMapDraw';
 import './MapDrawGeoJSON.css';
 
 const baseLayer = {
