@@ -21,7 +21,7 @@ import { SimpleLayerManager,
   getWMJSMapById
 } from '../src/index';
 import Provider from '../storyComponents/Provider';
-import ConnectedReactWMJSMap from '../storyComponents/ConnectedReactWMJSMap';
+import ReduxConnectedReactWMJSMap from '../src/ReactWMJSMap/ReduxConnectedReactWMJSMap';
 import { mount } from 'enzyme';
 import { Button, Input, Label } from 'reactstrap';
 import '../storyComponents/storybook.css';
@@ -167,7 +167,7 @@ storiesOf('Simple layer manager', module).add('Simple Layer manager and Time sli
   const story = (
     <Provider store={window.store} >
       <div style={{ height: '100vh' }}>
-        <ConnectedReactWMJSMap />
+        <ReduxConnectedReactWMJSMap />
       </div>
       <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
         <SimpleLayerManager
@@ -534,7 +534,7 @@ storiesOf('ReactWMJSMap with redux', module)
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
-          <ConnectedReactWMJSMap />
+          <ReduxConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <Button onClick={() => {
@@ -557,7 +557,7 @@ storiesOf('ReactWMJSMap with redux', module)
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
-          <ConnectedReactWMJSMap />
+          <ReduxConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ul>
@@ -603,7 +603,7 @@ storiesOf('ReactWMJSMap with redux', module)
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
-          <ConnectedReactWMJSMap />
+          <ReduxConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ConnectedLayerEnableButton store={window.store} />
@@ -640,7 +640,7 @@ storiesOf('ReactWMJSMap with redux', module)
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
-          <ConnectedReactWMJSMap />
+          <ReduxConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ConnectedLayerChangeOpacityInput store={window.store} />
@@ -697,7 +697,7 @@ storiesOf('ReactWMJSMap with redux', module)
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
-          <ConnectedReactWMJSMap />
+          <ReduxConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ConnectedChangeDimension store={window.store} />
@@ -749,7 +749,7 @@ storiesOf('ReactWMJSMap with redux', module)
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '100vh' }}>
-          <ConnectedReactWMJSMap />
+          <ReduxConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
           <ConnectedUserNamePasswordModal store={window.store} />

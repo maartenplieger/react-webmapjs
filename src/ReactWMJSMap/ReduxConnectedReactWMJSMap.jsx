@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { WEBMAPJS_REDUCERNAME, webMapJSReducer, ReactWMJSLayer, ReactWMJSMap } from '../src/index';
+import { WEBMAPJS_REDUCERNAME, webMapJSReducer, ReactWMJSLayer, ReactWMJSMap } from '../index';
 class ConnectedReactWMJSMap extends Component {
   render () {
     return (

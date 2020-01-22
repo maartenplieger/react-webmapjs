@@ -1,4 +1,4 @@
-export * from './ReducerManager';
+export * from './ReactWMJSCore/ReducerManager';
 export * from './ReactWMJSCore/ReactWMJSActions';
 export * from './ReactWMJSCore/ReactWMJSConstants';
 export * from './ReactWMJSCore/ReactWMJSParseLayer';
