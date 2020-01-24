@@ -1,7 +1,7 @@
 // ============================================================================
 // Name        : WMJSTools
 // Author      : MaartenPlieger (plieger at knmi.nl)
-// Version     : 3.2.0 (September 2018)
+// Version     : 3.2.1 (September 2018)
 // Description : WMJSTools provides a set of useful JS functions
 // ============================================================================
 

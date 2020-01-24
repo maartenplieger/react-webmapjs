@@ -1,5 +1,3 @@
-import { jquery } from './WMJSExternalDependencies.js';
-
 import { isDefined } from './WMJSTools.js';
 
 var numImagesLoading = 0;
@@ -11,7 +9,9 @@ var numImagesLoading = 0;
   */
 
 export default class WMJSImage {
-  constructor (src, callback, __type, options) {
+  constructor (src, callback, options) {
+    console.log(options);
+    if (!options) return;
     this.randomize = true;
     this._srcLoaded = undefined;
     this._isLoaded = undefined;
@@ -19,6 +19,7 @@ export default class WMJSImage {
     this._hasError = undefined;
     this._opacity = undefined;
     if (isDefined(options) && isDefined(options.randomizer)) {
+      console.log(options);
       if (options.randomizer === false) {
         this.randomize = false;
       }
@@ -45,16 +46,10 @@ export default class WMJSImage {
     this._getImageWithHeaders = this._getImageWithHeaders.bind(this);
     this.init();
     this.srcToLoad = src;
-    this._type = __type;
     this.loadEventCallback = callback;
-    if (!jquery) { console.warn('WMJSImage: jquery is not defined, assuming unit test is running'); return; }
-    this.el = jquery(document.createElement('img'));
-    this.el.on('load', () => {
-      this.loadEvent(this, false);
-    });
-    this.el.on('error', (e) => {
-      this.loadEvent(this, true);
-    });
+    this.el = new Image();
+    this.el.addEventListener('load', () => { this.loadEvent(this, false); });
+    this.el.addEventListener('error', () => { this.loadEvent(this, true); });
     this.el.onselectstart = () => { return false; };
     this.el.ondrag = () => { return false; };
     this.headers = [];
@@ -66,6 +61,7 @@ export default class WMJSImage {
     this._hasError = false;
     this._opacity = 1;
     this._stopLoading = false;
+    this._toResolve = [];
   }
 
   isLoaded () {
@@ -126,7 +122,10 @@ export default class WMJSImage {
    */
   load () {
     this._stopLoading = false;
-    this._load();
+    return new Promise((resolve, reject) => {
+      this._toResolve.push({ resolve: resolve, reject: reject });
+      this._load();
+    });
   }
 
   _getImageWithHeaders (url, headers) {
@@ -153,7 +152,7 @@ export default class WMJSImage {
       response.arrayBuffer().then((buffer) => {
         var base64Flag = 'data:image/png;base64,';
         var imageStr = arrayBufferToBase64(buffer);
-        this.getElement()[0].src = base64Flag + imageStr;
+        this.getElement().src = base64Flag + imageStr;
       });
     }).catch((e) => {
       console.error('Unable to fetch image ' + url + ' with headers [' + JSON.stringify(headers) + ']');
@@ -182,11 +181,11 @@ export default class WMJSImage {
       this.srcToLoad = hostName + this.srcToLoad;
     }
 
-    if (this.srcToLoad.startsWith('http') === false && this.srcToLoad.startsWith('//') === false) {
-      console.error('Source does not start with http');
-      this.loadEvent(this, true);
-      return;
-    }
+    // if (this.srcToLoad.startsWith('http') === false && this.srcToLoad.startsWith('//') === false) {
+    //   console.error('Source does not start with http');
+    //   this.loadEvent(this, true);
+    //   return;
+    // }
 
     if (this.srcToLoad === this._srcLoaded) {
       this.loadEvent(this, false);
@@ -216,10 +215,15 @@ export default class WMJSImage {
     } else {
       /* Do a standard img.src url request */
       if (this.randomize) {
-        this.getElement()[0].src = this.srcToLoad + '&' + Math.random();
+        let newSrc = this.srcToLoad;
+        if (this.srcToLoad.indexOf('?') === -1) {
+          newSrc += '?';
+        }
+        newSrc += '&' + Math.random();
+        this.getElement().src = newSrc;
         // this.el.attr('src', this.srcToLoad + '&' + Math.random());
       } else {
-        this.getElement()[0].src = this.srcToLoad;
+        this.getElement().src = this.srcToLoad;
         // this.el.attr('src', this.srcToLoad);
       }
     }
@@ -231,6 +235,14 @@ export default class WMJSImage {
     this._isLoading = false;
     this._isLoaded = true;
     this._srcLoaded = this.srcToLoad;
+    for (let j = 0; j < this._toResolve.length; j++) {
+      if (hasError) {
+        this._toResolve[j].reject(new Error('unable to load image ' + this.srcToLoad));
+      } else {
+        this._toResolve[j].resolve(this);
+      }
+    }
+    this._toResolve.length = 0;
     if (isDefined(this.loadEventCallback)) {
       this.loadEventCallback(this);
     }
@@ -254,8 +266,8 @@ export default class WMJSImage {
     h = parseInt(h);
     if (w === 0 || h === 0) return;
     if (isNaN(w) || isNaN(h)) return;
-    this.el.width(parseInt(w) + 'px');
-    this.el.height(parseInt(h) + 'px');
+    this.el.width = parseInt(w) + 'px';
+    this.el.height = parseInt(h) + 'px';
   };
 
   setZIndex (z) {

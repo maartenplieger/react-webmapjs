@@ -1,12 +1,12 @@
 import WMJSImage from './WMJSImage.js';
 import { error, debug } from './WMJSConstants.js';
 import { isDefined } from './WMJSTools.js';
-import { jquery } from './WMJSExternalDependencies.js';
 export default class WMJSCanvasBuffer {
   constructor (webmapJSCallback, _type, _imageStore, w, h, internalCallbacks) {
-    if (!jquery) { console.warn('WMJSCanvasBuffer: jquery is not defined, assuming unit test is running'); return; }
-    this.canvas = jquery('<canvas/>', { 'class':'WMJSCanvasBuffer' }).width(w).height(h);
-    this._ctx = this.canvas[0].getContext('2d');
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = w;
+    this.canvas.height = h;
+    this._ctx = this.canvas.getContext('2d');
     this._ctx.canvas.width = w;
     this._ctx.canvas.height = h;
     // TODO: Check if this really gives sharper instead of blurier images...
@@ -31,14 +31,14 @@ export default class WMJSCanvasBuffer {
     this._type = _type;
     this._webmapJSCallback = webmapJSCallback;
     this._internalCallbacks = internalCallbacks;
-    if (this._type === 'imagebuffer') {
-      this.canvas.addClass('wmjsimagebuffer');
-    }
-    if (this._type === 'legendbuffer') {
-      this.canvas.addClass('wmjslegendbuffer');
-    }
+    // if (this._type === 'imagebuffer') {
+    //   this.canvas.addClass('wmjsimagebuffer');
+    // }
+    // if (this._type === 'legendbuffer') {
+    //   this.canvas.addClass('wmjslegendbuffer');
+    // }
 
-    this.canvas.addClass('WMJSCanvasBuffer-noselect');
+    // this.canvas.addClass('WMJSCanvasBuffer-noselect');
     /* Bind */
     this.getCanvasContext = this.getCanvasContext.bind(this);
     this.imageLoadComplete = this.imageLoadComplete.bind(this);
@@ -77,7 +77,7 @@ export default class WMJSCanvasBuffer {
 
   hide () {
     this.hidden = true;
-    this.canvas.hide();
+    this.canvas.style.display = 'none';
     this.layers.length = 0;
     this.layerstodisplay.length = 0;
   };
@@ -123,7 +123,7 @@ export default class WMJSCanvasBuffer {
         // Draw
         let op = this.layerstodisplay[j].opacity;
         this._ctx.globalAlpha = op;
-        let el = this.layerstodisplay[j].image.getElement()[0];
+        let el = this.layerstodisplay[j].image.getElement();
         if (this._type === 'legendbuffer') {
           let legendW = parseInt(el.width) + 4;
           let legendH = parseInt(el.height) + 4;
@@ -195,7 +195,7 @@ export default class WMJSCanvasBuffer {
       }
     }
 
-    this.canvas.show();
+    this.canvas.style.display = 'inline-block';
     if (this._type === 'imagebuffer') {
       this._webmapJSCallback.triggerEvent('aftercanvasdisplay', this._ctx);
       if (this._internalCallbacks && this._internalCallbacks.aftercanvasdisplay) {
@@ -229,8 +229,8 @@ export default class WMJSCanvasBuffer {
     if (this._width === w && this._height === h) return;
     this._width = w;
     this._height = h;
-    this.canvas.width(w);
-    this.canvas.height(h);
+    this.canvas.width = w;
+    this.canvas.height = h;
     this._ctx.canvas.height = h;
     this._ctx.canvas.width = w;
   };

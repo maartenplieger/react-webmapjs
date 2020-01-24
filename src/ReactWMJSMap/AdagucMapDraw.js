@@ -319,7 +319,7 @@ export default class AdagucMapDraw extends PureComponent {
       const imageWidth = (featureProperties && featureProperties.imageWidth) || this.defaultIconProps.imageWidth;
       const imageHeight = (featureProperties && featureProperties.imageHeight) || this.defaultIconProps.imageHeight;
 
-      ctx.drawImage(image.getElement()[0],
+      ctx.drawImage(image.getElement(),
         parseInt(_coord.x) - imageWidth / 2,
         parseInt(_coord.y) - imageHeight / 2,
         imageWidth,

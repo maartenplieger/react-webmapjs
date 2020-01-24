@@ -1,11 +1,15 @@
 import WMJSImage from './WMJSImage.js';
 import { WMJSKVP } from './WMJSTools.js';
 export default class WMJSImageStore {
-  constructor (maxNumberOfImages, _type, options) {
+  /**
+   * Constructs a new WMJSImageStore with given amount of image cache.
+   * @param {*} maxNumberOfImages
+   * @param {*} options
+   */
+  constructor (maxNumberOfImages, options) {
     this.imagesbysrc = {};
     this.imageLife = 0;
     this._imageLifeCounter = 0;
-    this._type = _type;
     this._loadEventCallbackList = []; // Array of callbacks, as multiple instances can register listeners
     this._maxNumberOfImages = maxNumberOfImages;
     this._options = options;
@@ -17,6 +21,11 @@ export default class WMJSImageStore {
     this.getNumImagesLoading = this.getNumImagesLoading.bind(this);
     this.getImage = this.getImage.bind(this);
     this.emptyImage = new WMJSImage();
+    this.load = this.load.bind(this);
+  }
+
+  load (imageUrl) {
+    return this.getImage(imageUrl).load();
   }
 
   imageLoadEventCallback (_img, hasError) {
@@ -101,6 +110,11 @@ export default class WMJSImageStore {
     return numLoading;
   };
 
+  /**
+   * Get an WMJSImage object for given URL
+   * @param {*} src The url for the image
+   * @returns WMJSImage object
+   */
   getImage (src, loadOptions) {
     if (!src) {
       console.log('getImage, no src set');
@@ -110,12 +124,15 @@ export default class WMJSImageStore {
     let image = this.getImageForSrc(src);
     if (image !== undefined) {
       image.imageLife = this._imageLifeCounter++;
+      // console.log("Found image");
       return image;
     }
 
     /** Create or reuse an image **/
     if (this._getKeys(this.imagesbysrc).length < this._maxNumberOfImages) {
-      image = new WMJSImage(src, this.imageLoadEventCallback, this._type, this._options);
+      // console.log("Creating new image: "+this.images.length);
+      // console.log(type);
+      image = new WMJSImage(src, this.imageLoadEventCallback, this._options);
       image.setSource(src, loadOptions);
       image.KVP = new WMJSKVP(src);
       this.imagesbysrc[src] = image;
@@ -134,6 +151,7 @@ export default class WMJSImageStore {
           }
         }
       });
+      // console.log('Reusing image ' + imageId + ' with lifetime ' + minImageLife);
       if (imageId === -1) {
         console.error('not enough cache for ' + this._type);
         return this.emptyImage;

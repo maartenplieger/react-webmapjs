@@ -35,8 +35,10 @@ import ExperimentDemo from '../src/MapAnimationExperiment/ExperimentDemo';
 import tilesettings from '../src/ReactWMJSMap/tilesettings';
 import MapDrawGeoJSON from './MapDrawGeoJSON';
 import { simplePointsGeojson, simpleSmallLineStringGeoJSON } from './geojsonExamples';
+import WMJSLayerManager from '../src/ReactWMJSLayerManager/WMJSLayerManager';
 
 import '../styles/stories.css';
+import { WMJSLayer } from '../src/adaguc-webmapjs';
 const $ = window.jQuery || window.$ || global.$ || global.jQuery;
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -761,6 +763,22 @@ storiesOf('ReactWMJSMap with redux', module)
 
 storiesOf('React Redux example', module)
   .add(reduxReactCounterDemo.title, reduxReactCounterDemo.storyFn);
+
+storiesOf('React WMJS Layermanager', module)
+  .add('React WMJS Layermanager', () => {
+    store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
+    const story = (
+      <Provider store={window.store} >
+        <div style={{ height: '70vh' }}>
+          <ReduxConnectedReactWMJSMap />
+        </div>
+        <div style={{ height: '30vh' }}>
+          <WMJSLayerManager />
+        </div>
+      </Provider>
+    );
+    return story;
+  });
 
 const experimentDemo = {
   title: 'experimentDemo',

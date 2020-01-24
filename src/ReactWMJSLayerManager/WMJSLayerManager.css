@@ -1,0 +1,349 @@
+.ReduxWMJSLayerManagerWrapper {
+    display: grid;
+    grid-gap: 0px;
+    grid-template-rows: 0px 1fr 48px;
+    grid-template-columns: 0px 1fr;
+    grid-template-areas:"ReduxWMJSLayerManagerHeader ReduxWMJSLayerManagerHeader  ReduxWMJSLayerManagerHeader"
+                        "ReduxWMJSLayerManagerSideBar ReduxWMJSLayerManagerContent ReduxWMJSLayerManagerContent"
+                        "ReduxWMJSLayerManagerSideBar ReduxWMJSLayerManagerFooter ReduxWMJSLayerManagerFooter";
+    background-color: #fff;
+    color: #444;
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+    
+}
+
+.ReduxWMJSLayerManagerContent {
+    grid-area: ReduxWMJSLayerManagerContent;
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:2px 0 0 0;
+    color:white;
+    
+    overflow: visible;
+    background-color: #01A2B4; 
+}
+
+.ReduxWMJSLayerManagerSideBar {
+    grid-area: ReduxWMJSLayerManagerSideBar;
+    background-color: #999;
+}
+
+.ReduxWMJSLayerManagerHeader {
+    grid-area: ReduxWMJSLayerManagerHeader;
+    background-color: #999;
+}
+
+
+.ReduxWMJSLayerManagerFooter {
+    grid-area: ReduxWMJSLayerManagerFooter;
+    background-color: #0FD4DC;
+    color:black;
+    padding:5px 0 0 20px;
+    margin:0;
+    box-shadow: 0px -2px 4px -1px rgba(0,0,0,0.2),0px -4px 5px 0px rgba(0,0,0,0.14),0px -1px 10px 0px rgba(0,0,0,0.12);
+}
+
+
+.ReduxWMJSLayerManagerTimeSelectorContent {
+  margin-right: 0;
+  height: 100%;
+  /* background-color: #555; */
+  display: inline-block;
+  
+}
+
+.ReduxWMJSLayerManagerTimeSelectorContentRef {
+  height:100%;
+  width: 100%;
+  display: block;
+  position: absolute;
+  
+}
+
+.ReactWMJSLayerRowTimeBlock,.ReactWMJSLayerRowTimeBlockSelected,.ReactWMJSLayerRowTimeBlockCurrentTime {
+    z-index: 1000;
+    cursor:pointer;
+    display: inline-block;
+    position: absolute;
+    /* background-color:#05A0B6; */
+    /* background-color:#0ED3DB; */
+    background-color:white;
+    
+    top:10%;
+    height:80%;
+    padding:0;
+    margin:0;
+    border:none;
+    /* overflow: hidden; */
+    line-height: 20px;
+    font-size:10px;
+    font-family: Roboto;
+    color: grey;
+    box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+    border-radius: 3px;
+  }
+.ReactWMJSLayerRowTimeBlockSelected {
+  background-color: #E1E143;
+  box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.5);
+  z-index:1010; 
+  height:90%;
+  top:5%;
+  color: #444;
+}
+.ReactWMJSLayerRowTimeBlock:focus,.ReactWMJSLayerRowTimeBlockSelected:focus{
+  border:none;/*1px solid #2196f3;*/
+  outline:none;
+}
+
+.ReactWMJSLayerRowTimeBlock:hover{
+  background-color:#2196f3;
+  z-index:1015;
+  height:90%;
+  top:5%;
+  box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.5);
+  transition: background-color .1s;  
+  color:black;
+}
+
+.ReactWMJSLayerRowTimeBlockCurrentTime{
+  background-color: white;
+  /* box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.5); */
+  border:1px solid white;
+  z-index:1050; 
+  height:100%;
+  top:0;
+  cursor:default;
+}
+
+.ReactWMJSLayerRowTimeBlockTooltipText{
+  visibility: hidden;
+  color: black;
+  position: absolute;
+  z-index:2000;
+  margin-left:-50px;
+  margin-top:-50px;
+  padding:3px;
+  border-radius: 2px;
+  background-color:white;
+  box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.5);
+}
+.ReactWMJSLayerRowTimeBlock:hover .ReactWMJSLayerRowTimeBlockTooltipText {
+  visibility: visible;
+  z-index:2000;
+}
+.ReactWMJSLayerRowTimeBlockSelected:hover .ReactWMJSLayerRowTimeBlockTooltipText {
+  visibility: visible;
+  z-index:2000;
+}
+.ReactWMJSLayerRowTimeBlockSelected .ReactWMJSLayerRowTimeBlockTooltipText {
+  visibility: visible;
+  z-index:2000;
+}
+.ReactWMJSLayerTimeFocusButton{
+  z-index: 1001;
+  position: absolute;
+  display: inline-block;
+  width: 32px;
+  height: 100%;
+  color: green;
+  top: 0px;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.ReactWMJSLayerTimeFocusButtonTooltipText {
+  visibility: visible;
+  color: black;
+  position: absolute;
+  z-index:2000;
+  margin-left:-90px;
+  margin-top:-50px;
+  padding:3px;
+  border-radius: 2px;
+  background-color:white;
+  box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.5);
+}
+
+.SortableReactWMJSLayerRow .ReactWMJSLayerTimeFocusButton:hover {
+  overflow: unset;
+}
+
+.SortableReactWMJSLayerRow .ReactWMJSLayerTimeFocusButton:hover .ReactWMJSLayerTimeFocusButtonTooltipText  {
+  visibility: visible;
+}
+
+.SortableReactWMJSLayerRow {
+    background-color: #CBF0E9;
+    border-radius:3px;
+    /* border:2px solid #CBF0E9; */
+    display: block;
+    line-height: 20px;
+    /* border-radius: 0.25rem; */
+    white-space:nowrap;
+    margin: 2px 4px 4px 4px; 
+    padding: 2px;
+    /* box-shadow: 2px 2px 6px 1px rgba(0, 0, 0, 0.6); */
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+    z-index:30;
+  }
+
+  
+  
+  .SortableReactWMJSLayerDragHandle {
+    float:left;
+    cursor: grab;
+    color: white;
+    height:48px;
+    background-color:rgba(0,0,0,0.0);
+    border:none;
+    color:black;
+    overflow: hidden;
+    width: 32px;
+    line-height: 46px;
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  .DragHandleTooltipText {
+    visibility: hidden;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 24px;
+    color: black;
+    position: absolute;
+    z-index:2000;
+    margin-left:-20px;
+    margin-top:-50px;
+    padding:3px;
+    border-radius: 2px;
+    background-color:white;
+    box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.5);
+  }
+
+  .SortableReactWMJSLayerDragHandle:hover{
+    background-color:rgba(0,0,0,0.6);
+    border-radius: 0.25em;
+    color:white;
+  }
+
+  .SortableReactWMJSLayerDragHandle:hover .DragHandleTooltipText {
+    visibility: visible;
+  }
+
+  .SortableReactWMJSLayerDragHandleIcon{
+    color:black;
+   
+  }
+
+  .SortableReactWMJSLayerRow .btn {
+    background-color:rgba(0,0,0,0);
+    border:none;
+    color:black;
+    overflow: hidden;
+    min-width: 24px;
+    width: auto;
+    font-size:14px;
+    font-family: Roboto;
+  
+  padding:2px;
+
+  }
+
+  .SortableReactWMJSLayerRow .btn-secondary:hover {
+    /* color: #fff; */
+    /* background-color: #5a6268; */
+    /* border-color: #545b62; */
+    background-image: radial-gradient(circle farthest-side,rgba(0,0,0,0.055),rgba(0,0,0,0.055) 80%,rgba(0,0,0,0) 100%);
+}
+
+.ReactWMJSDropDown {
+  /* cursor:pointer;
+  display: inline-block;
+  position: absolute;
+  background-color:white; */
+  /* top:10%;
+  height:80%; */
+  display: inline-block;
+  padding:0;
+  margin:0;
+  text-overflow: clip;
+  display: inline-block;
+  /* overflow: hidden; */
+  
+  /* border:none;
+  line-height: 20px;
+  font-size:10px;
+  font-family: Roboto;
+  color: grey;
+  box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+  border-radius: 3px; */
+}
+
+.ReactWMJSDropDownTooltipText{
+  visibility: hidden;
+  color: black;
+  position: absolute;
+  z-index:2000;
+  margin-left:-50px;
+  margin-top:-50px;
+  padding:3px;
+  border-radius: 2px;
+  background-color:white;
+  box-shadow: 0px 0px 2px 1px rgba(0,0,0,0.5);
+}
+
+.btn-secondary:hover .ReactWMJSDropDownTooltipText {
+  visibility: visible;
+  z-index:2000;
+}
+
+.ReduxWMJSLayerManagerContentEmptyLayerText{
+  padding:6px;
+  font-size:14px;
+  font-family: Roboto;
+}
+
+/* CSS for componentes in react-webmapjs */
+
+.ReactWMJSLayer {
+  width:100%;
+
+  padding:2px;
+  margin:0;
+  word-wrap: break-word;
+  border: 1px solid rgba(0,0,0,0.5);
+
+
+  line-height:14px;
+  font-size:10px;
+
+  display:block;
+  background:rgba(255,255,255,0.5);
+  display:none;
+}
+
+.ReactWMJSLayerProps {
+  position:absolute;
+  overflow: hidden;
+  display:block;
+  padding:0;
+  margin:0;
+  z-index:100;
+
+}
+
+.ReactWMJSMapComponent{
+  position:absolute;
+  overflow: hidden;
+  display:block;
+  padding:0;
+  margin:0;
+  z-index:10;
+}
+

@@ -118,7 +118,7 @@ export default class WMJSTileRenderer {
           /* Here we display lower resolution images, if not available switch to an even higher resolution */
           if (image.isLoaded() && !image.hasError()) {
             try {
-              ctx.drawImage(image.getElement()[0], parseInt(bl.x), parseInt(bl.y), parseInt(tr.x - bl.x) + 1, parseInt(tr.y - bl.y) + 1);
+              ctx.drawImage(image.getElement(), parseInt(bl.x), parseInt(bl.y), parseInt(tr.x - bl.x) + 1, parseInt(tr.y - bl.y) + 1);
             } catch (e) {
             }
           } else {
@@ -138,7 +138,7 @@ export default class WMJSTileRenderer {
           if (image.isLoaded() && !image.hasError()) {
             imagesToRender.push({
               image: image,
-              i: image.getElement()[0],
+              i: image.getElement(),
               x:  parseInt(bl.x),
               y: parseInt(bl.y),
               w: parseInt(tr.x - bl.x) + 1,

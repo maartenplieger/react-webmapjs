@@ -641,7 +641,7 @@ export default class WMJSMap {
               if (image.isLoaded() === false && image.isLoading() === false) {
                 image.load();
               } else {
-                let el = image.getElement()[0];
+                let el = image.getElement();
                 let legendW = parseInt(el.width) + 4;
                 let legendH = parseInt(el.height) + 4;
                 legendPosX += (legendW + 4);

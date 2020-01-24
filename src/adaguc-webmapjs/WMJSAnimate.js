@@ -1,6 +1,5 @@
 import { error } from './WMJSConstants.js';
 import WMJSTimer from './WMJSTimer.js';
-import { jquery } from './WMJSExternalDependencies.js';
 export default class WMJSAnimate {
   constructor (_map) {
     _map.animationDelay = 100;
@@ -25,10 +24,10 @@ export default class WMJSAnimate {
     this._divAnimationInfo.style.fontFamily = '"Courier New", "Lucida Console", Monospace';
     this._divAnimationInfo.style.fontSize = '10px';
     _map.getBaseElement().append(this._divAnimationInfo);
-    if (!jquery) { console.warn('WMJSAnimate: jquery is not defined, assuming unit test is running'); return; }
-    jquery(this._divAnimationInfo).mouseout(() => {
-      _map.mouseHoverAnimationBox = false;
-    });
+    // if (!jquery) { console.warn('WMJSAnimate: jquery is not defined, assuming unit test is running'); return; }
+    // jquery(this._divAnimationInfo).mouseout(() => {
+    //   _map.mouseHoverAnimationBox = false;
+    // });
     _map.isAnimatingLoopRunning = false;
     this._map = _map;
 
