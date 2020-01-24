@@ -767,19 +767,43 @@ storiesOf('React Redux example', module)
 storiesOf('React WMJS Layermanager', module)
   .add('React WMJS Layermanager', () => {
     store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
-    class SimplePresets extends Component {
+    class SimpleGeoWebPresets extends Component {
       render () {
+        const harmonieAirTemperature = {
+          service: 'https://adaguc-services-geoweb.knmi.nl//adaguc-services//adagucserver?dataset=HARM_N25&',
+          name: 'air_temperature__at_2m',
+          id: generateLayerId()
+        };
+        const harmoniePrecipitation = {
+          service: 'https://adaguc-services-geoweb.knmi.nl//adaguc-services//adagucserver?dataset=HARM_N25&',
+          name: 'precipitation_flux',
+          id: generateLayerId()
+        };
+        const obsTemperature = {
+          service: 'https://adaguc-services-geoweb.knmi.nl//adaguc-services//adagucserver?dataset=OBS&',
+          name: '10M/ta',
+          id: generateLayerId()
+        };
+        const presetHarmonie = {
+          layers: [harmonieAirTemperature]
+        };
+        const presetRadar = {
+          layers: [radarLayer]
+        };
+        const presetHarmoniePrecipAndObs = {
+          layers: [harmoniePrecipitation, obsTemperature]
+        };
         const layers = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[0];
         if (layers.length === 0) return (<div>No layers</div>);
-        const isLayerEnabled = layers.enabled;
-        return (<div>
-          <Button onClick={() => {
-            store.dispatch(layerChangeEnabled({ layerId: radarLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabled }));
-          }}>{!isLayerEnabled ? 'Enable' : 'Disable'}</Button>
-        </div>);
+        return (
+          <div>
+            <Button onClick={() => { store.dispatch(setLayers({ layers: presetHarmonie.layers, mapPanelId: 'mapid_1' })); }}>Harmonie</Button>
+            <Button onClick={() => { store.dispatch(setLayers({ layers: presetRadar.layers, mapPanelId: 'mapid_1' })); }}>Radar</Button>
+            <Button onClick={() => { store.dispatch(setLayers({ layers: presetHarmoniePrecipAndObs.layers, mapPanelId: 'mapid_1' })); }}>Precip + Obs</Button>
+          </div>);
       }
     };
-    const ConnectedSimplePresets = connect(mapStateToProps)(SimplePresets);
+    const ConnectedSimpleGeoWebPresets = connect(mapStateToProps)(SimpleGeoWebPresets);
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '70vh' }}>
@@ -788,8 +812,35 @@ storiesOf('React WMJS Layermanager', module)
         <div style={{ height: '30vh' }}>
           <WMJSLayerManager />
         </div>
-        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <ConnectedSimplePresets store={window.store} />
+        <div style={{ position:'absolute', left:'0px', top: '10px', zIndex: '10000' }}>
+          <ConnectedSimpleGeoWebPresets store={window.store} />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '100px', zIndex: '10000' }}>
+          <SimpleLayerManager
+            store={window.store}
+            mapId='mapid_1'
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: radarLayer, title: 'KNMI precipitation radar' },
+              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+              { layer: dwdRadarLayer, title: 'DWD Radar' }
+            ]}
+          />
+        </div>
+        <div style={{ position:'absolute', left:'200px', bottom: '20px', zIndex: '10000', right:'200px' }}>
+          <SimpleTimeSlider
+            store={window.store}
+            mapId='mapid_1'
+            startValue={moment.utc().subtract(6, 'h').toISOString()}
+            endValue={moment.utc().add(-5, 'm').toISOString()}
+            interval={300}
+            layerNameMappings={[
+              { layer: dwdWarningLayer, title: 'DWD Warnings' },
+              { layer: radarLayer, title: 'KNMI precipitation radar' },
+              { layer: msgCppLayer, title: 'MSG-CPP precipitation' },
+              { layer: dwdRadarLayer, title: 'DWD Radar' }
+            ]}
+          />
         </div>
       </Provider>
     );
