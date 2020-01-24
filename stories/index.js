@@ -767,6 +767,19 @@ storiesOf('React Redux example', module)
 storiesOf('React WMJS Layermanager', module)
   .add('React WMJS Layermanager', () => {
     store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
+    class SimplePresets extends Component {
+      render () {
+        const layers = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[0];
+        if (layers.length === 0) return (<div>No layers</div>);
+        const isLayerEnabled = layers.enabled;
+        return (<div>
+          <Button onClick={() => {
+            store.dispatch(layerChangeEnabled({ layerId: radarLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabled }));
+          }}>{!isLayerEnabled ? 'Enable' : 'Disable'}</Button>
+        </div>);
+      }
+    };
+    const ConnectedSimplePresets = connect(mapStateToProps)(SimplePresets);
     const story = (
       <Provider store={window.store} >
         <div style={{ height: '70vh' }}>
@@ -774,6 +787,9 @@ storiesOf('React WMJS Layermanager', module)
         </div>
         <div style={{ height: '30vh' }}>
           <WMJSLayerManager />
+        </div>
+        <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
+          <ConnectedSimplePresets store={window.store} />
         </div>
       </Provider>
     );
