@@ -68,9 +68,9 @@ let WebMapJSMapNo = 0;
 let WebMapJSMapInstanceIds = [];
 /* Global image stores */
 let maxAnimationSteps = 72;
-var legendImageStore = new WMJSImageStore(maxAnimationSteps * 6, 'wmjslegendbuffer');
-var getMapImageStore = new WMJSImageStore(maxAnimationSteps * 6, 'wmjsimagebuffer');
-var bgMapImageStore = new WMJSImageStore(360, 'wmjsimagebuffer', { randomizer:false });
+var legendImageStore = new WMJSImageStore(maxAnimationSteps * 6);
+var getMapImageStore = new WMJSImageStore(maxAnimationSteps * 6);
+var bgMapImageStore = new WMJSImageStore(360, { randomizer:false });
 
 /* GetFeature info handling */
 class GetFeatureInfoObject {

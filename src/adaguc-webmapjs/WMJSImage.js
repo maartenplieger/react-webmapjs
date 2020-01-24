@@ -10,8 +10,6 @@ var numImagesLoading = 0;
 
 export default class WMJSImage {
   constructor (src, callback, options) {
-    console.log(options);
-    if (!options) return;
     this.randomize = true;
     this._srcLoaded = undefined;
     this._isLoaded = undefined;
@@ -19,7 +17,6 @@ export default class WMJSImage {
     this._hasError = undefined;
     this._opacity = undefined;
     if (isDefined(options) && isDefined(options.randomizer)) {
-      console.log(options);
       if (options.randomizer === false) {
         this.randomize = false;
       }
@@ -44,6 +41,7 @@ export default class WMJSImage {
     this.setZIndex = this.setZIndex.bind(this);
     this.getElement = this.getElement.bind(this);
     this._getImageWithHeaders = this._getImageWithHeaders.bind(this);
+    this._toResolve = [];
     this.init();
     this.srcToLoad = src;
     this.loadEventCallback = callback;
@@ -61,7 +59,7 @@ export default class WMJSImage {
     this._hasError = false;
     this._opacity = 1;
     this._stopLoading = false;
-    this._toResolve = [];
+    this._toResolve.length = 0;
   }
 
   isLoaded () {
