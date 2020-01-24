@@ -15,11 +15,11 @@ module.exports = {
   ],
   module: {
     rules: [
-      {
-        test: /\.js?$/,
-        loaders: [require.resolve('@storybook/addon-storysource/loader')],
-        enforce: 'pre',
-      },
+      // {
+      //   test: /\.js?$/,
+      //   loaders: [require.resolve('@storybook/addon-storysource/loader')],
+      //   enforce: 'pre',
+      // },
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"]
