@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import { createStore } from 'redux';
 import { storiesOf, specs, describe, it } from '../.storybook/facade';
-import { SimpleLayerManager,
+import {
+  SimpleLayerManager,
   SimpleTimeSlider,
   setLayers,
   setBaseLayers,
@@ -38,7 +39,6 @@ import { simplePointsGeojson, simpleSmallLineStringGeoJSON } from './geojsonExam
 import WMJSLayerManager from '../src/ReactWMJSLayerManager/WMJSLayerManager';
 
 import '../styles/stories.css';
-import { WMJSLayer } from '../src/adaguc-webmapjs';
 const $ = window.jQuery || window.$ || global.$ || global.jQuery;
 // Initialize the store.
 const rootReducer = (state = {}, action = { type:null }) => { return state; };
@@ -155,7 +155,7 @@ const reduxReactCounterDemo = {
   storyFn: () => {
     /* Just a button inside a component to connect it to redux */
     const story = (
-      <Provider store={window.store} >
+      <Provider store={window.store}>
         <ReduxReactCounterDemo />
       </Provider>
     );
@@ -167,15 +167,15 @@ const reduxReactCounterDemo = {
 
 storiesOf('Simple layer manager', module).add('Simple Layer manager and Time slider', () => {
   const story = (
-    <Provider store={window.store} >
+    <Provider store={window.store}>
       <div style={{ height: '100vh' }}>
         <ReduxConnectedReactWMJSMap />
       </div>
       <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
         <SimpleLayerManager
           store={window.store}
-          layers={[ radarLayer ]}
-          mapId={'mapid_1'}
+          layers={[radarLayer]}
+          mapId='mapid_1'
           layerNameMappings={[
             { layer: dwdWarningLayer, title: 'DWD Warnings' },
             { layer: radarLayer, title: 'KNMI precipitation radar' },
@@ -187,7 +187,7 @@ storiesOf('Simple layer manager', module).add('Simple Layer manager and Time sli
       <div style={{ position:'absolute', left:'200px', bottom: '20px', zIndex: '10000', right:'200px' }}>
         <SimpleTimeSlider
           store={window.store}
-          mapId={'mapid_1'}
+          mapId='mapid_1'
           startValue={moment.utc().subtract(6, 'h').toISOString()}
           endValue={moment.utc().add(-5, 'm').toISOString()}
           interval={300}
@@ -199,16 +199,6 @@ storiesOf('Simple layer manager', module).add('Simple Layer manager and Time sli
           ]}
         />
       </div>
-      { // second timeslider element can be used
-        /* <div style={{ position:'absolute', left:'10px', bottom: '150px', zIndex: '10000', width:'500px' }}>
-        <SimpleTimeSlider
-          interval={300}
-          store={window.store}
-          mapId={'mapid_1'}
-          startValue={moment.utc().subtract(6, 'h').toISOString()}
-          endValue={moment.utc().add(-5, 'm').toISOString()}
-        />
-      </div> */}
     </Provider>
   );
   return story;
@@ -218,7 +208,7 @@ storiesOf('ReactWMJSMap', module)
   .add('Map with radar data', () => {
     const story = (
       <div style={{ height: '100vh' }}>
-        <ReactWMJSMap id={generateMapId()} >
+        <ReactWMJSMap id={generateMapId()}>
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
           <ReactWMJSLayer {...overLayer} />
@@ -241,29 +231,32 @@ storiesOf('ReactWMJSMap', module)
     var currentLatestDate;
     return (
       <div style={{ height: '100vh' }}>
-        <ReactWMJSMap id={generateMapId()} >
+        <ReactWMJSMap id={generateMapId()}>
           <ReactWMJSLayer {...baseLayer} />
-          <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => {
-            webMapJS.setAnimationDelay(100);
-            if (layer) {
-              var timeDim = layer.getDimension('time');
-              if (timeDim) {
-                var numTimeSteps = timeDim.size();
-                if (timeDim.getValueForIndex(numTimeSteps - 1) !== currentLatestDate) {
-                  currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
-                  // var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 48);
-                  var dates = [];
-                  for (var j = numTimeSteps - 48; j < numTimeSteps; j++) {
-                    dates.push({ name:'time', value:timeDim.getValueForIndex(j) });
+          <ReactWMJSLayer
+            {...radarLayer}
+            onLayerReady={(layer, webMapJS) => {
+              webMapJS.setAnimationDelay(100);
+              if (layer) {
+                var timeDim = layer.getDimension('time');
+                if (timeDim) {
+                  var numTimeSteps = timeDim.size();
+                  if (timeDim.getValueForIndex(numTimeSteps - 1) !== currentLatestDate) {
+                    currentLatestDate = timeDim.getValueForIndex(numTimeSteps - 1);
+                    // var currentBeginDate = timeDim.getValueForIndex(numTimeSteps - 48);
+                    var dates = [];
+                    for (var j = numTimeSteps - 48; j < numTimeSteps; j++) {
+                      dates.push({ name:'time', value:timeDim.getValueForIndex(j) });
+                    }
+                    webMapJS.stopAnimating();
+                    layer.zoomToLayer();
+                    webMapJS.draw(dates);
                   }
-                  webMapJS.stopAnimating();
-                  layer.zoomToLayer();
-                  webMapJS.draw(dates);
                 }
               }
-            }
-          }} />
-          <ReactWMJSLayer key={'3'} {...overLayer} />
+            }}
+          />
+          <ReactWMJSLayer {...overLayer} />
         </ReactWMJSMap>
       </div>
     );
@@ -271,12 +264,14 @@ storiesOf('ReactWMJSMap', module)
   .add('Passive map without controls', () => {
     const story = (
       <div style={{ height: '100vh' }}>
-        <ReactWMJSMap id={generateMapId()}
+        <ReactWMJSMap
+          id={generateMapId()}
           controls={{}}
           showLegend={false}
           showScaleBar={false}
           passiveMap
-          onClick={() => { console.log('Passive map clicked'); }}>
+          onClick={() => { console.log('Passive map clicked'); }}
+        >
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
           <ReactWMJSLayer {...overLayer} />
@@ -315,14 +310,16 @@ storiesOf('ReactWMJSMap', module)
           featureInfo: [{ name: 'Stationname', temp: 'Temperature [°C]' }]
         };
       }
+
       componentDidMount () {
         console.log('getting Synop');
         this.getWFSdata();
       }
-      // helper function to round time
+
       round (date, duration, method) {
         return moment(Math[method]((+date) / (+duration)) * (+duration));
       }
+
       getWFSdata () {
         // limit query to one observation timepoint
         let querytime = '2019-10-14T10:00:00.000Z';
@@ -330,7 +327,7 @@ storiesOf('ReactWMJSMap', module)
         querytime = this.round(moment().add(-1, 'd'), moment.duration(1, 'hours'), 'ceil').toISOString();
 
         // M_DATE for RBSN-layers, OBSERVATION_TIME for Beobachtungen
-        let cqlexpression = '&cql_filter=INTERSECTS(THE_GEOM, BUFFER(LINESTRING(13.00565 53.6181, 8.732724 48.28535), 0.2))' +
+        const cqlexpression = '&cql_filter=INTERSECTS(THE_GEOM, BUFFER(LINESTRING(13.00565 53.6181, 8.732724 48.28535), 0.2))' +
         ' AND M_DATE = ' + querytime;
         console.log('request url for synop with buffer', this.state.wfsUrl + cqlexpression);
         this.setState({ cqlfilter: cqlexpression });
@@ -344,7 +341,7 @@ storiesOf('ReactWMJSMap', module)
             this.setState({ gaforResult: data });
             console.log('resultsJsonp synop', data);
 
-            let featureInfo = [];
+            const featureInfo = [];
             Object.keys(data.features).forEach((key) => {
               featureInfo.push({ name: data.features[key].properties.NAME, temp: data.features[key].properties.TEMPERATURE });
             });
@@ -352,23 +349,25 @@ storiesOf('ReactWMJSMap', module)
           }
         });
       }
+
       render () {
         console.log('rendering');
-        return (<div>
-          <div style={{ height: '100vh' }}>
-            <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
-              <ReactWMJSLayer {...overLayer} />
-              <ReactWMJSLayer id={generateLayerId()} geojson={simpleSmallLineStringGeoJSON} />
-              <ReactWMJSLayer id={generateLayerId()} geojson={this.state.gaforResult} />
-            </ReactWMJSMap>
+        return (
+          <div>
+            <div style={{ height: '100vh' }}>
+              <ReactWMJSMap id={generateMapId()} enableInlineGetFeatureInfo={false} bbox={[-2000000, 4000000, 3000000, 10000000]}>
+                <ReactWMJSLayer {...overLayer} />
+                <ReactWMJSLayer id={generateLayerId()} geojson={simpleSmallLineStringGeoJSON} />
+                <ReactWMJSLayer id={generateLayerId()} geojson={this.state.gaforResult} />
+              </ReactWMJSMap>
+            </div>
+            <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '33%', fontSize: '11px' }}>
+              <div><h5>Query features along buffered line using WFS and CQL</h5></div>
+              <div>WFS JSONP URL: <pre>{this.state.wfsUrl}</pre></div>
+              <div>CQL expression: <pre>{this.state.cqlfilter}</pre></div>
+              <div><pre>{JSON.stringify(this.state.featureInfo, null, 2)}</pre></div>
+            </div>
           </div>
-          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '33%', fontSize: '11px' }}>
-            <div><h5>Query features along buffered line using WFS and CQL</h5></div>
-            <div>WFS JSONP URL: <pre>{this.state.wfsUrl}</pre></div>
-            <div>CQL expression: <pre>{this.state.cqlfilter}</pre></div>
-            <div><pre>{JSON.stringify(this.state.featureInfo, null, 2)}</pre></div>
-          </div>
-        </div>
         );
       }
     };
@@ -395,6 +394,7 @@ storiesOf('ReactWMJSMap', module)
        *  shiftKeyPressed: Whether the shiftkey is pressed or not
        * }
        */
+
       mapMouseClicked (webMapJS, mouse) {
         console.log('mouseclicked', mouse);
         /* Compose the getfeatureinfo URL for a layer based on the map's pixel coordinates, use json as format */
@@ -415,30 +415,33 @@ storiesOf('ReactWMJSMap', module)
           this.setState({ gfiResult: data });
         });
       }
+
       render () {
-        return (<div>
-          <div style={{ height: '100vh' }}>
-            <ReactWMJSMap
-              id={generateMapId()}
-              enableInlineGetFeatureInfo={false}
-              webMapJSInitializedCallback={(webMapJS) => {
-                /* Disable the map popup getfeatureinfo window */
-                webMapJS.enableInlineGetFeatureInfo(false);
-                /* Add a listener which is triggered when you click on the map */
-                webMapJS.addListener('mouseclicked', (mouse) => {
-                  this.mapMouseClicked(webMapJS, mouse);
-                }, true);
-              }}>
-              <ReactWMJSLayer {...baseLayer} />
-              <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
-              <ReactWMJSLayer {...overLayer} />
-            </ReactWMJSMap>
+        return (
+          <div>
+            <div style={{ height: '100vh' }}>
+              <ReactWMJSMap
+                id={generateMapId()}
+                enableInlineGetFeatureInfo={false}
+                webMapJSInitializedCallback={(webMapJS) => {
+                  /* Disable the map popup getfeatureinfo window */
+                  webMapJS.enableInlineGetFeatureInfo(false);
+                  /* Add a listener which is triggered when you click on the map */
+                  webMapJS.addListener('mouseclicked', (mouse) => {
+                    this.mapMouseClicked(webMapJS, mouse);
+                  }, true);
+                }}
+              >
+                <ReactWMJSLayer {...baseLayer} />
+                <ReactWMJSLayer {...radarLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
+                <ReactWMJSLayer {...overLayer} />
+              </ReactWMJSMap>
+            </div>
+            <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '80%', fontSize: '11px' }}>
+              <div>URL: <pre>{this.state.gfiUrl}</pre></div>
+              <div>GetFeatureInfo result: <pre>{JSON.stringify(this.state.gfiResult, null, 2)}</pre></div>
+            </div>
           </div>
-          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '80%', fontSize: '11px' }}>
-            <div>URL: <pre>{this.state.gfiUrl}</pre></div>
-            <div>GetFeatureInfo result: <pre>{JSON.stringify(this.state.gfiResult, null, 2)}</pre></div>
-          </div>
-        </div>
         );
       }
     };
@@ -455,6 +458,7 @@ storiesOf('ReactWMJSMap', module)
           gfiResult: null
         };
       }
+
       /**
        * This function is triggered when the map is clicked
        * @param {*} webMapJS The WebMapJS instance
@@ -489,30 +493,33 @@ storiesOf('ReactWMJSMap', module)
           this.setState({ gfiResult: data });
         });
       }
+
       render () {
-        return (<div>
-          <div style={{ height: '100vh' }}>
-            <ReactWMJSMap
-              id={generateMapId()}
-              enableInlineGetFeatureInfo={false}
-              webMapJSInitializedCallback={(webMapJS) => {
-                /* Disable the map popup getfeatureinfo window */
-                webMapJS.enableInlineGetFeatureInfo(false);
-                /* Add a listener which is triggered when you click on the map */
-                webMapJS.addListener('mouseclicked', (mouse) => {
-                  this.mapMouseClicked(webMapJS, mouse);
-                }, true);
-              }}>
-              <ReactWMJSLayer {...baseLayer} />
-              <ReactWMJSLayer {...dwdWarningLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
-              <ReactWMJSLayer {...overLayer} />
-            </ReactWMJSMap>
+        return (
+          <div>
+            <div style={{ height: '100vh' }}>
+              <ReactWMJSMap
+                id={generateMapId()}
+                enableInlineGetFeatureInfo={false}
+                webMapJSInitializedCallback={(webMapJS) => {
+                  /* Disable the map popup getfeatureinfo window */
+                  webMapJS.enableInlineGetFeatureInfo(false);
+                  /* Add a listener which is triggered when you click on the map */
+                  webMapJS.addListener('mouseclicked', (mouse) => {
+                    this.mapMouseClicked(webMapJS, mouse);
+                  }, true);
+                }}
+              >
+                <ReactWMJSLayer {...baseLayer} />
+                <ReactWMJSLayer {...dwdWarningLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
+                <ReactWMJSLayer {...overLayer} />
+              </ReactWMJSMap>
+            </div>
+            <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '80%', fontSize: '11px' }}>
+              <div>URL: <pre>{this.state.gfiUrl}</pre></div>
+              <div>GetFeatureInfo result: <div dangerouslySetInnerHTML={{ __html:this.state.gfiResult }} /></div>
+            </div>
           </div>
-          <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000', backgroundColor: '#CCCCCCC0', padding: '20px', overflow: 'auto', width: '80%', fontSize: '11px' }}>
-            <div>URL: <pre>{this.state.gfiUrl}</pre></div>
-            <div>GetFeatureInfo result: <div dangerouslySetInnerHTML={{ __html:this.state.gfiResult }} /></div>
-          </div>
-        </div>
         );
       }
     };
@@ -521,7 +528,7 @@ storiesOf('ReactWMJSMap', module)
   .add('Map DWD Warning WMS', () => {
     const story = (
       <div style={{ height: '100vh' }}>
-        <ReactWMJSMap id={generateMapId()} >
+        <ReactWMJSMap id={generateMapId()}>
           <ReactWMJSLayer {...baseLayer} />
           <ReactWMJSLayer {...dwdWarningLayer} onLayerReady={(layer, webMapJS) => { layer.zoomToLayer(); }} />
           <ReactWMJSLayer {...overLayer} />
@@ -534,20 +541,14 @@ storiesOf('ReactWMJSMap with redux', module)
   .add('setLayers action', () => {
     store.dispatch(setLayers({ layers: [], mapPanelId: 'mapid_1' }));
     const story = (
-      <Provider store={window.store} >
+      <Provider store={window.store}>
         <div style={{ height: '100vh' }}>
           <ReduxConnectedReactWMJSMap />
         </div>
         <div style={{ position:'absolute', left:'10px', top: '10px', zIndex: '10000' }}>
-          <Button onClick={() => {
-            store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
-          }}>SetLayer Radar</Button>
-          <Button onClick={() => {
-            store.dispatch(setLayers({ layers: [msgCppLayer], mapPanelId: 'mapid_1' }));
-          }}>SetLayer MSGCPP</Button>
-          <Button onClick={() => {
-            store.dispatch(setLayers({ layers: [dwdWarningLayer], mapPanelId: 'mapid_1' }));
-          }}>SetLayer DWD Warnings</Button>
+          <Button onClick={() => { store.dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' })); }}>SetLayer Radar</Button>
+          <Button onClick={() => { store.dispatch(setLayers({ layers: [msgCppLayer], mapPanelId: 'mapid_1' })); }}>SetLayer MSGCPP</Button>
+          <Button onClick={() => { store.dispatch(setLayers({ layers: [dwdWarningLayer], mapPanelId: 'mapid_1' })); }}>SetLayer DWD Warnings</Button>
         </div>
 
       </Provider>
@@ -557,7 +558,7 @@ storiesOf('ReactWMJSMap with redux', module)
     const { dispatch } = store;
     dispatch(setLayers({ layers: [radarLayer], mapPanelId: 'mapid_1' }));
     const story = (
-      <Provider store={window.store} >
+      <Provider store={window.store}>
         <div style={{ height: '100vh' }}>
           <ReduxConnectedReactWMJSMap />
         </div>
@@ -573,7 +574,8 @@ storiesOf('ReactWMJSMap with redux', module)
                   <li key={key}>
                     <Button
                       style={{ height: '30px' }}
-                      onClick={() => { dispatch(setBaseLayers({ baseLayers: [{ baseLayer: true, name:tilesettingName, type:'twms' }], mapPanelId: 'mapid_1' })); }}>
+                      onClick={() => { dispatch(setBaseLayers({ baseLayers: [{ baseLayer: true, name:tilesettingName, type:'twms' }], mapPanelId: 'mapid_1' })); }}
+                    >
                       {tilesettingName}
                     </Button>
                   </li>
@@ -597,7 +599,8 @@ storiesOf('ReactWMJSMap with redux', module)
         return (<div>
           <Button onClick={() => {
             store.dispatch(layerChangeEnabled({ layerId: radarLayer.id, mapPanelId: 'mapid_1', enabled: !isLayerEnabled }));
-          }}>{!isLayerEnabled ? 'Enable' : 'Disable'}</Button>
+          }}>{!isLayerEnabled ? 'Enable' : 'Disable'}
+          </Button>
         </div>);
       }
     };
@@ -779,6 +782,11 @@ storiesOf('React WMJS Layermanager', module)
           name: 'precipitation_flux',
           id: generateLayerId()
         };
+        const harmoniePressure = {
+          service: 'https://adaguc-services-geoweb.knmi.nl//adaguc-services//adagucserver?dataset=HARM_N25&',
+          name: 'air_pressure_at_sea_level',
+          id: generateLayerId()
+        };
         const obsTemperature = {
           service: 'https://adaguc-services-geoweb.knmi.nl//adaguc-services//adagucserver?dataset=OBS&',
           name: '10M/ta',
@@ -791,10 +799,10 @@ storiesOf('React WMJS Layermanager', module)
           layers: [radarLayer]
         };
         const presetHarmoniePrecipAndObs = {
-          layers: [harmoniePrecipitation, obsTemperature]
+          layers: [harmoniePrecipitation, obsTemperature, radarLayer, harmoniePressure]
         };
         const layers = store.getState()['react-webmapjs'].webmapjs.mapPanel[0].layers[0];
-        if (layers.length === 0) return (<div>No layers</div>);
+        if (!layers || layers.length === 0) return (<div>No layers</div>);
         return (
           <div>
             <Button onClick={() => { store.dispatch(setLayers({ layers: presetHarmonie.layers, mapPanelId: 'mapid_1' })); }}>Harmonie</Button>
@@ -827,7 +835,7 @@ storiesOf('React WMJS Layermanager', module)
             ]}
           />
         </div>
-        <div style={{ position:'absolute', left:'200px', bottom: '20px', zIndex: '10000', right:'200px' }}>
+        <div style={{ position:'absolute', left:'350px', top: '10px', zIndex: '10000', right:'200px' }}>
           <SimpleTimeSlider
             store={window.store}
             mapId='mapid_1'

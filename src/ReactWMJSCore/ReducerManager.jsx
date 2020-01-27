@@ -4,7 +4,6 @@ Based on https://redux.js.org/recipes/code-splitting
 
 */
 
-
 import { combineReducers } from 'redux';
 
 export function createReducerManager (initialReducers) {
@@ -26,7 +25,7 @@ export function createReducerManager (initialReducers) {
       // If any reducers have been removed, clean up their state first
       if (keysToRemove.length > 0) {
         state = { ...state };
-        for (let key of keysToRemove) {
+        for (const key of keysToRemove) {
           delete state[key];
         }
         keysToRemove.length = 0;

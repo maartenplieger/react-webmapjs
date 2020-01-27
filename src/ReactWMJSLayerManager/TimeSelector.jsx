@@ -326,7 +326,8 @@ class ReactWMJSTimeSelector extends Component {
               left: startX + 'px',
               width: (timeBlockWidth) + 'px'
             }}
-          >{contents}<span className='ReactWMJSLayerRowTimeBlockTooltipText'>{previousTime.format('YYYY-MM-DD HH:mm')} UTC</span>
+          >{contents}
+          {/* <span className='ReactWMJSLayerRowTimeBlockTooltipText'>{previousTime.format('YYYY-MM-DD HH:mm')} UTC</span> */}
           </button>);
         }
         lastBlockWidth = w;

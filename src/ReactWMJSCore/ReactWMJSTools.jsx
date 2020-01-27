@@ -61,7 +61,7 @@ export const getWMJSMapById = (wmjsMapId) => {
  * @param {array} layers Layers of the mappanel in the state.
  */
 export const getLayerIndexFromAction = (action, layers) => {
-  if (!action.payload.layerId && !action.payload.layerIndex) {
+  if (!action.payload.layerId && action.payload.layerIndex === null) {
     console.warn(action.type + ': invalid action payload, either layerId or layerIndex is required', action);
     return null;
   }

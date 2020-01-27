@@ -48,7 +48,7 @@ import { jquery, proj4, moment } from './WMJSExternalDependencies.js';
 import WMJSDialog from './WMJSDialog.js';
 import { WMJSDateOutSideRange, WMJSDateTooEarlyString, WMJSDateTooLateString, WMSVersion, WMJSProj4Defs } from './WMJSConstants.js';
 // var Hammer = require(['hammerjs']);
-var pjson = require('../../package.json');
+var pjson = require('../../../package.json');
 
 let enableConsoleDebugging = false;
 let enableConsoleErrors = true;

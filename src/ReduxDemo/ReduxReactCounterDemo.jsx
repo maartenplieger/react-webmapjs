@@ -38,15 +38,19 @@ class ReduxReactCounterDemo extends Component {
     /* Register this new reduxReactCounterDemoReducer reducer with the reducerManager */
     window.reducerManager.add(REDUXREACTCOUNTERDEMO_REDUCERNAME, reduxReactCounterDemoReducer);
   }
+
   componentDidMount () {
     console.log('componentDidMount. You can attach your events now');
   }
+
   componentWillUnmount () {
     console.log('componentWillUnmount. You can detach your events now');
   }
+
   componentDidUpdate (prevProps) {
     console.log('componentDidUpdate:', prevProps.value, this.props.value);
   }
+
   render () {
     return (
       <div style={{ height: '100%' }}>

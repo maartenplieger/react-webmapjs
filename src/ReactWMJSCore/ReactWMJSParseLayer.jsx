@@ -1,16 +1,15 @@
-import WMJSGetServiceFromStore from '../adaguc-webmapjs/WMJSGetServiceFromStore';
+import WMJSGetServiceFromStore from '../ReactWMJSMap/adaguc-webmapjs/WMJSGetServiceFromStore';
 import { serviceSetLayers, layerSetStyles, layerSetDimensions, layerChangeStyle, layerChangeDimension } from './ReactWMJSActions';
 
 export const parseWMJSLayerAndDispatchActions = (wmjsLayer, dispatch, mapPanelId, xml2jsonrequestURL, forceRefresh = false) => {
   // console.log('parseWMJSLayerAndDispatchActions');
   return new Promise((resolve, reject) => {
     wmjsLayer.parseLayer((_layer) => {
-      let wmjsLayer = _layer;
       if (wmjsLayer && wmjsLayer.hasError === false) {
         if (dispatch) {
-          let service = WMJSGetServiceFromStore(wmjsLayer.service, xml2jsonrequestURL);
+          const service = WMJSGetServiceFromStore(wmjsLayer.service, xml2jsonrequestURL);
           /* Update list of layers for service */
-          let done = (layers) => {
+          const done = (layers) => {
             dispatch(serviceSetLayers({ service:wmjsLayer.service, layers:layers }));
             /* Update style information in services for a layer */
             dispatch(layerSetStyles({ service: wmjsLayer.service, name:wmjsLayer.name, styles:wmjsLayer.getStyles() }));
@@ -39,7 +38,7 @@ export const parseWMJSLayerAndDispatchActions = (wmjsLayer, dispatch, mapPanelId
                 }
               }
 
-              let dimension = {
+              const dimension = {
                 name: wmjsLayer.dimensions[d].name,
                 units: wmjsLayer.dimensions[d].units,
                 currentValue: wmjsLayer.dimensions[d].currentValue

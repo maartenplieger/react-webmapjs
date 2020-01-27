@@ -11,22 +11,26 @@ import OpacitySelector from './OpacitySelector';
 class ReactWMJSLayerRow extends Component {
   renderEnabled (layer, enableLayer) {
     if (!layer) { return (<div>-</div>); }
-    let enabled = layer.enabled !== false;
-    return (<Button onClick={(e) => { enableLayer(!enabled); e.stopPropagation(); e.preventDefault(); }}>
-      <Icon name={enabled ? 'eye' : 'eye-slash'} />
-      <span className='ReactWMJSDropDownTooltipText'>Toggle this layer's visibility</span>
-    </Button>);
+    const enabled = layer.enabled !== false;
+    return (
+      <Button onClick={(e) => { enableLayer(!enabled); e.stopPropagation(); e.preventDefault(); }}>
+        <Icon name={enabled ? 'eye' : 'eye-slash'} />
+        <span className='ReactWMJSDropDownTooltipText'>Toggle this layer's visibility</span>
+      </Button>);
   }
+
   renderDelete (layer, deleteLayer) {
     if (!layer) { return (<div>-</div>); }
-    return (<Button onClick={(e) => { deleteLayer(); e.stopPropagation(); e.preventDefault(); }}>
-      <Icon name={'trash'} />
-      <span className='ReactWMJSDropDownTooltipText'>Remove this layer</span>
-    </Button>);
+    return (
+      <Button onClick={(e) => { deleteLayer(); e.stopPropagation(); e.preventDefault(); }}>
+        <Icon name='trash' />
+        <span className='ReactWMJSDropDownTooltipText'>Remove this layer</span>
+      </Button>);
   }
+
   renderFocus (layer, focusLayer) {
     if (!layer) { return (<div>-</div>); }
-    return (<Button onClick={(e) => { focusLayer(); e.stopPropagation(); e.preventDefault(); }}><Icon name={'window-maximize'} /></Button>);
+    return (<Button onClick={(e) => { focusLayer(); e.stopPropagation(); e.preventDefault(); }}><Icon name='window-maximize' /></Button>);
   }
 
   renderLayers (services, layer, isOpen, toggle, selectLayer) {
@@ -34,12 +38,12 @@ class ReactWMJSLayerRow extends Component {
       return (<div><Button>Select service...</Button></div>);
     }
     const layers = services[layer.service].layers;
-    let filteredLayers = layers.filter(l => l.name === layer.name);
+    const filteredLayers = layers.filter(l => l.name === layer.name);
     const currentValue = filteredLayers.length === 1 && filteredLayers[0].text ? filteredLayers[0].text : 'none';
     return (
       <Dropdown isOpen={isOpen} toggle={toggle}>
         <DropdownToggle caret>
-          { currentValue }
+          {currentValue}
           <span className='ReactWMJSDropDownTooltipText'>Select a layer</span>
         </DropdownToggle>
         <DropdownMenu>
@@ -66,7 +70,7 @@ class ReactWMJSLayerRow extends Component {
     return (
       <Dropdown isOpen={isOpen} toggle={toggle}>
         <DropdownToggle caret>
-          { currentValue }
+          {currentValue}
           <span className='ReactWMJSDropDownTooltipText'>
             Select a style for layer <strong>{layer.name}</strong>
           </span>
@@ -86,7 +90,7 @@ class ReactWMJSLayerRow extends Component {
   render () {
     const { dispatch, layerIndex } = this.props;
 
-    if (layerIndex > (this.props.activeMapPanel.layers.length - 1) ) {
+    if (layerIndex > (this.props.activeMapPanel.layers.length - 1)) {
       console.error('Trying to add more layers to the layermanager than which are available in the map.');
       return <div />;
     }
@@ -152,12 +156,14 @@ class ReactWMJSLayerRow extends Component {
             )
           }
         </Col>
-        <Col xs='8'>{ <ReactWMJSTimeSelector
-          layer={this.props.activeMapPanel.layers[layerIndex]}
-          activeMapPanel={this.props.activeMapPanel}
-          layerManager={this.props.layerManager}
-          dispatch={this.props.dispatch}
-        /> }</Col>
+        <Col xs='8'>
+          <ReactWMJSTimeSelector
+            layer={this.props.activeMapPanel.layers[layerIndex]}
+            activeMapPanel={this.props.activeMapPanel}
+            layerManager={this.props.layerManager}
+            dispatch={this.props.dispatch}
+          />
+        </Col>
       </Row>);
   }
 }
